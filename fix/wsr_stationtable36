@@ -1,0 +1,37 @@
+NO  ID    STATION NAME                        HIRES     LAT    LON 
+1   20674	Dikson 	Severnoe                    Yes       7350  08042	
+2   21824	Tiksi   Yakutskoe	                  Yes       7163  12885 	
+3   21946	Chokurdah   Yakutskoe               Yes       7062  14788	
+4   23330	Salehard   Ob-Irtyshskoe            Yes       6653  06653	
+5   23955	Aleksandrovskoe  Zapadno-Sibirskoe  Yes       6043  07787 
+6   24125	Olenek  Yakutskoe	                  Yes	      6850  11243
+7   24266	Verhoiansk 	Yakutskoe	              Yes       6755  13338	
+8   24343	Zhigansk  Yakutskoe	                Yes       6677  12340	
+9   24641	Viliuysk 	Yakutskoe                 Yes       6377  12162	
+10  24688	Oymiakon 	Yakutskoae               	Yes       6347  14280	
+11  24726	Mirnyy 	Yakutskoe	                  Yes       6255  11400	
+12  24944	Olekminsk  Yakutskoe                Yes       6040  12042	
+13  24959	Yakutsk   Yakutskoe                 Yes       6208  12975	
+14  25123	Cherskiy 	Yakutskoe	                Yes       6875  16130	
+15  25400	Zyrianka 	Yakutskoe	                Yes       6573  15090	
+16  25913	Magadan  Kolymskoe                  Yes       5958  15078	
+17  28275	Tobolsk   Ob-Irtyshskoe             Yes       5815  06818	
+18  28698	Omsk 	 Ob-Irtyshskoe                Yes       5493  07340	
+19  29231	Kolpashevo 	Zapadno-Sibirskoe	      Vektor M  5830  08290 
+20  29572	Emelianovo  Srednesibirskoe         Yes       5618  09262	
+21  29612	Barabinsk   Zapadno-Sibirskoe                 5537  07840	
+22  29634	Novosibirsk   Zapadno-Sibirskoe	    Vektor M  5503  08290	
+23  29839	Barnaul  Zapadno-Sibirskoe          Yes	      5335  08382
+24  29862	Hakasskaia (Abakan)	Srednesibirskoe	Yes	      5377  09132
+25  30054	Vitim   Yakutskoe                   Yes	      5945  11258
+26  30554	Bagdarin  Zabaykalskoe                        5447  11358	
+27  30758	Chita   Zabaykalskoe                Yes       5202  11333	
+28  31004	Aldan   Yakutskoe                   Yes       5862  12537
+29  31369	Nikolaevsk 	Dalnevostochnoe         Yes	      5315  14070
+30  31538	Sutur   Dalnevostochnoe             Yes	      5007  13213
+31  31736	Habarovsk   Dalnevostochnoe	        Yes       4853  13523	
+32  31770	Sovetskaia  Gavan Dalnevostochnoe	  Yes	      4900  14027
+33  31873	Dalnerechensk   Primorskoe          Yes       4593  13374	
+34  31977	Sad-gorod   Primorskoe              Yes	      4327  13205
+35  32389	Kliuchi  Kamchatskoe                Yes	      5632  16083
+36  32540	Petropavlovsk  Kamchatskoe          Yes	      5302  15872

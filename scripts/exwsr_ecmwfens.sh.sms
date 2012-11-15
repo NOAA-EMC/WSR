@@ -1,0 +1,257 @@
+#####################################################################
+set +xa
+echo "------------------------------------------------"
+echo "JECMFENS - ECMWF ensemble postprocessing"
+echo "------------------------------------------------"
+echo "History: JAN 2001 - ECMWF ensemble conversion job based on "
+echo "                    Tim Marchok's Cray job by Richard Wobus "
+echo "         FEB 2001 - correct headers on statistics, add rh700"
+echo "         AUG 2005 - added hooks for getting TC tracks for each"
+echo "                    member, plus mean track (Marchok)"
+set -xa
+#####################################################################
+
+###########################################################
+# Processing/Flow of script
+# 1) Copy this job's input files to the working directory
+# 2) Extract variables to be processed from input files
+# 3) Convert ensemble header extensions and make statistics
+# 4) Append results to output files
+# 5) Save output files to $COMOUT
+# 6) Remove files located in this job's working directory
+###########################################################
+
+cd $DATA
+
+msg="HAS BEGUN on `hostname`"
+postmsg "$jlogfile" "$msg"
+
+#####################################################################
+# Set names of executable utilities
+#####################################################################
+
+wgrib="/nwprod/util/exec/wgrib -ncep_opn"
+getvhour=/nwprod/util/exec/nhour
+ndate=/nwprod/util/exec/ndate
+
+#########################################################
+# !!! DEFINE MAXIMUM NUMBER OF PERTURBATION RECORDS
+# (This number does NOT include the LRC or HRC)
+#########################################################
+
+maxmem=50
+
+#####################################################################
+# Set date variables to process yesterday's data
+#####################################################################
+
+tdate=$PDYm1
+
+cent=`echo $tdate | cut -c1-2 `
+yy=`  echo $tdate | cut -c3-4 `
+mm=`  echo $tdate | cut -c5-6 `
+dd=`  echo $tdate | cut -c7-8 `
+
+indate=$cent$yy$mm$dd
+
+cent=`echo $indate | cut -c1-2 `
+yy=`  echo $indate | cut -c3-4 `
+mm=`  echo $indate | cut -c5-6 `
+dd=`  echo $indate | cut -c7-8 `
+
+yyyymmdd=$indate
+yyyymmddhh=${yyyymmdd}12
+ymdh=${indate}12
+imdh=${mm}${dd}12
+hh=12
+echo " Date to copy is $indate"
+yymmddhh=${yy}${mm}${dd}${hh}
+
+#####################################################################
+#
+#   Now process all the records into the forecast output files.
+#
+#####################################################################
+
+echo " "
+echo "*----------------------------------------------------------*"
+echo "        NOW COPYING RECORDS TO FORECAST FILES...."
+echo "*----------------------------------------------------------*"
+echo "The time just before copying begins is: `date`"     
+
+hourix=0
+
+while [ ${hourix} -lt 21 ]; 
+do
+  let hourinc=hourix*12
+  vymdh=` ${ndate} ${hourinc} ${ymdh}`
+  vmdh=`  echo ${vymdh} | cut -c5-10`
+  vhour=` ${getvhour} ${vymdh} ${ymdh}`
+
+  echo "vmdh = $vmdh"
+
+  # Construct the ECMWF file name.  
+  # Each file name contains the initial time and
+  # the time at which the forecast is valid.
+
+  ifil=ecens_USE${imdh}00${vmdh}001
+  ifile=${dcom}/$yyyymmdd/wgrbbul/ecmwf/$ifil
+  echo "ifile = $ifile"
+
+  # Copy the file over dcom
+
+  cp $ifile $ifil
+  rcc=$?
+
+  if [ $rcc -ne 0 ]; then
+    echo " "
+    echo "!!! ERROR copying USE${imdh}00${vmdh}001"
+    echo "!!!       from dcom..."
+    echo " "
+    let hourix=hourix+1
+    continue
+  fi
+
+  # The reason we need to use that Fortran program is we need to change 
+  # the GRIB file from ECMWF GRIB format to NCEP GRIB format.
+  $wgrib -s $ifil -d all -grib -o eccut.${ymdh}.f${vhour}
+
+  echo " "
+  echo "*---------------------------------------------------*"
+  echo "  Now in forecast part for ftime= ${hourinc}"
+  echo "*---------------------------------------------------*"
+  echo " "
+
+  resflag=2
+
+  echo "FORECAST: ftype= USE, ftime= $hourinc"
+
+  export pgm=wsr_ecmwfens
+  . prep_step
+
+  export XLFUNIT_11="eccut.${ymdh}.f${vhour}"
+  /nwprod/util/exec/grbindex $XLFUNIT_11 eccut.${ymdh}.f${vhour}.i
+  export XLFUNIT_21="eccut.${ymdh}.f${vhour}.i"
+  export XLFUNIT_51="tmprh700"
+  export XLFUNIT_52="tmpz1000"
+  export XLFUNIT_53="tmpz500"
+  export XLFUNIT_54="tmpt500"
+  export XLFUNIT_55="tmpu500"
+  export XLFUNIT_56="tmpv500"
+  export XLFUNIT_57="tmpt850"
+  export XLFUNIT_58="tmpu850"
+  export XLFUNIT_59="tmpv850"
+  export XLFUNIT_60="tmpt200"
+  export XLFUNIT_61="tmpu200"
+  export XLFUNIT_62="tmpv200"
+  export XLFUNIT_63="tmpmslp"
+  export XLFUNIT_64="tmpprcp"
+  export XLFUNIT_71="tmpprcpmean"
+  export XLFUNIT_72="tmpmslpmean"
+  export XLFUNIT_73="tmpt850mean"
+  export XLFUNIT_74="tmpz500mean"
+  export XLFUNIT_75="tmpz1000mean"
+  export XLFUNIT_76="tmprh700mean"
+  export XLFUNIT_81="tmpprcpspr"
+  export XLFUNIT_82="tmpmslpspr"
+  export XLFUNIT_83="tmpt850spr"
+  export XLFUNIT_84="tmpz500spr"
+  export XLFUNIT_85="tmpz1000spr"
+  export XLFUNIT_86="tmprh700spr"
+
+  echo " &namin"                                      >input1
+  echo "    kres=${resflag},kmaxmem=${maxmem}"       >>input1
+  echo " /"                                          >>input1
+
+  if [ -s eccut.${ymdh}.f${vhour} ]
+  then
+    set +x
+    echo "File ${ifil} is copied/wgribbed as eccut.${ymdh}.f${vhour}"
+    echo "Now converting format..."
+    set -x
+
+    startmsg
+    ${EXECecme}/wsr_ecmwfens <input1 >ec.USE.f${vhour} >> $pgmout 2> errfile
+    export err=$?; err_chk
+
+    cat tmpz500      >>enspost.$prev_cycle.z500
+    cat tmpt500      >>enspost.$prev_cycle.t500
+    cat tmpu500      >>enspost.$prev_cycle.u500
+    cat tmpv500      >>enspost.$prev_cycle.v500
+    cat tmpt850      >>enspost.$prev_cycle.t850
+    cat tmpu850      >>enspost.$prev_cycle.u850
+    cat tmpv850      >>enspost.$prev_cycle.v850
+    cat tmpmslp      >>enspost.$prev_cycle.mslp
+    cat tmpprcp      >>enspost.$prev_cycle.prcp
+    cat tmpt200      >>enspost.$prev_cycle.t200
+    cat tmpu200      >>enspost.$prev_cycle.u200
+    cat tmpv200      >>enspost.$prev_cycle.v200
+    cat tmpz1000     >>enspost.$prev_cycle.z1000
+    cat tmprh700     >>enspost.$prev_cycle.rh700
+    cat tmpprcpmean  >>ensstat.$prev_cycle.prcp
+    cat tmpmslpmean  >>ensstat.$prev_cycle.mslp
+    cat tmpt850mean  >>ensstat.$prev_cycle.t850
+    cat tmpz500mean  >>ensstat.$prev_cycle.z500
+    cat tmpz1000mean >>ensstat.$prev_cycle.z1000
+    cat tmprh700mean >>ensstat.$prev_cycle.rh700
+    cat tmpprcpspr   >>ensstat.$prev_cycle.prcp
+    cat tmpmslpspr   >>ensstat.$prev_cycle.mslp
+    cat tmpt850spr   >>ensstat.$prev_cycle.t850
+    cat tmpz500spr   >>ensstat.$prev_cycle.z500
+    cat tmpz1000spr  >>ensstat.$prev_cycle.z1000
+    cat tmprh700spr  >>ensstat.$prev_cycle.rh700
+    rm tmp*
+  else
+    echo "!!! file ${ifile} is not copied !!!"
+    echo "   "
+  fi
+
+  let hourix=hourix+1
+done
+
+for file in enspost.* ensstat.*
+do
+  /nwprod/util/exec/grbindex ${file} ${file}.i
+done
+
+#############################################
+# Copy output for yesterday data to $COMOUT
+#############################################
+if test "$SENDCOM" = 'YES'
+then
+   mv enspost.* $COMOUT
+   mv ensstat.* $COMOUT
+fi
+
+#############################################
+# Run extrkr.sh to compute the TC storm
+# tracks for each of the 50 member forecasts,
+# then run ens_trak_ave.sh to compute the 
+# ECMWF ensemble mean forecast track.
+#############################################
+if [ ${RUN_TCTRACK} = 'YES' ]
+then
+  
+  export cmodel=ece
+  export CYL=${prev_cyc}
+
+  for pert in p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 \
+            p11 p12 p13 p14 p15 p16 p17 p18 p19 p20   \
+            p21 p22 p23 p24 p25                       \
+            n01 n02 n03 n04 n05 n06 n07 n08 n09 n10   \
+            n11 n12 n13 n14 n15 n16 n17 n18 n19 n20   \
+            n21 n22 n23 n24 n25 c00
+  do
+    export pert
+    sh ${utilscript}/extrkr.sh
+  done
+
+  sh ${utilscript}/ens_trak_ave.sh
+
+fi
+
+cat $pgmout
+
+msg='ENDED NORMALLY.'
+postmsg "$jlogfile" "$msg"
+

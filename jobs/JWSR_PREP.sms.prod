@@ -1,0 +1,130 @@
+#!/bin/sh
+
+########################################
+# Runs WSR Pre-Postprocessing
+########################################
+
+$SMSBIN/smsinit $LOADL_STEP_ID 
+
+export PS4='$SECONDS + '
+date
+
+set -xa
+# 
+# obtain unique process id (pid) and make temp directories
+#
+export pid=$$
+export DATA=/tmpnwprd/${job}.${pid}
+mkdir $DATA
+cd $DATA 
+
+export MP_LABELIO=yes
+export MP_PROCS=16
+export MP_NODES=1
+export MP_PGMMODEL=mpmd
+export MEMORY_AFFINITY=MCM
+
+export memrf_eh=20
+export memec_eh=50
+export memcm_eh=20 
+                                                                                
+export ltime1=0
+export ltime2=240
+export fhint=12
+export idim=144
+export jdim=37
+#export ifort=0
+export ifort=1
+export icopygb=1
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=/com/logs/jlogfile
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+
+export cycle=t${cyc}z 
+
+if test "$cyc" = "00"
+then
+  export prev_cyc=12
+else
+  export prev_cyc=00
+fi
+
+export SENDCOM=YES
+export SENDSMS=YES
+export GET_IOPROFILE=NO
+
+export NET=wsr
+export RUN=wsr
+
+###################################
+# Set up the UTILITIES
+###################################
+export utilities=/nwprod/util/ush
+export utilscript=/nwprod/util/ush
+
+export HOMEutil=/nwprod/util
+export EXECutil=$HOMEutil/exec
+
+export HOMEwsr=/nwprod
+export EXECwsr=$HOMEwsr/exec
+export USHwsr=$HOMEwsr/ush
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+sh $utilscript/setup.sh
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+
+sh $utilscript/setpdy.sh
+. PDY
+#
+#if test "$prev_cyc" = "00"
+#then
+#   export PDYm1=$PDY
+#fi
+
+##############################
+# Define output COMENS Directory 
+##############################
+
+export COMENS=/nwges/${RUN}/${PDY}
+mkdir -p $COMENS 
+chmod 777 $COMENS
+
+env
+
+########################################################
+# Execute the script.
+if [ $GET_IOPROFILE = YES ]; then
+    /usrx/local/mio/tools/bin/miostats -X0 /nw${envir}/scripts/exwsr_prep.sh.sms
+else
+    /nw${envir}/scripts/exwsr_prep.sh.sms
+fi
+########################################################
+
+cat $pgmout
+
+##################################################
+# save the profiling data captured from miostats
+##################################################
+if [ $GET_IOPROFILE = YES ]; then
+    . /com/miostats/.set_IOprofile
+fi
+
+#cd /tmpnwprd
+#rm -rf $DATA
+
+date
+
+$SMSBIN/smscomplete
