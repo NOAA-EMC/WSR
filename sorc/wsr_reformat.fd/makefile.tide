@@ -1,0 +1,30 @@
+SHELL=	/bin/bash
+#
+CMD =   wsr_reformat
+#
+#FC =    xlf -qmaxmem=-1 
+FC =    ifort
+FFLAGS= -list -traceback
+SRCS=	readin.f
+OBJS=   $(SRCS:.f=.o)
+
+# Lines from here on down should not need to be changed.  They are the
+# actual rules which make uses to build a.out.
+#
+all:	$(CMD)
+
+$(CMD):	$(OBJS)
+	$(FC) -o $(@) $(OBJS) 
+
+$(OBJS):        $(SRCS)
+	$(FC) $(FFLAGS) -c $(SRCS)
+
+$(OBJS):        makefile
+
+allclean:       clean all
+
+clean:
+	-rm -f $(OBJS)
+
+clobber:        clean
+	-rm -f $(CMD)

@@ -110,5 +110,7 @@ c     ****************************************
 
 133   continue
 
-      return
+c 20121010 rlw replace return==> stop for ifort
+c      return
+      stop
       end

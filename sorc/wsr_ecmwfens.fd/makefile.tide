@@ -1,0 +1,45 @@
+SHELL=    /bin/bash
+
+#LIBS=     -L/nwprod/lib -lw3_4 -lsp_4 -lip_4 -lbacio_4
+# OPTS= -qnosave -qarch=$(arch) -qrealsize=$(bytes) -qintsize=$(bytes) \
+#  -bnoquiet -qfixed -qsmp=noauto -lessl
+#OPTS= -qnosave -qarch=$(arch) -qrealsize=8 -qintsize=8 \
+#  -bnoquiet -qfixed -qsmp=noauto -lessl
+#OPTS= -r8 -i8
+
+FC=       ifort
+#LIBS=     -L/nwprod/lib -lw3emc_8 -lw3nco_8 -lsp_8 -lip_8 -lbacio_8
+LIBS=     -L/nwprod/lib -lw3nco_8 -lsp_8 -lip_8 -lbacio_8
+SRCS=     ecmwfens.f
+OBJS=     $(SRCS:.f=.o)
+FFLAGS=   -r8 -i8 -list -traceback
+CMD=      wsr_ecmwfens
+
+#OPTS=
+#wsr_ecmwfens:	ecmwfens.f 
+#	ncepxlf $(OPTS) $(LIBS) -o wsr_ecmwfens ecmwfens.f
+#wsr_ecmwfens:	ecmwfens.f 
+#	ifort $(OPTS) -o wsr_ecmwfens ecmwfens.f $(LIBS)
+
+
+# lines from here on down should not need to be changed.  They are the
+# actual rules which make uses to build a.out.
+#
+all:    $(CMD)
+
+$(CMD): $(OBJS)
+	$(FC) $(FFLAGS) -o $(@) $(OBJS) $(LIBS)
+
+$(OBJS):        $(SRCS)
+	$(FC) $(FFLAGS) -c $(SRCS)
+
+$(OBJS):        makefile
+
+allclean:       clean all
+
+clean:
+	-rm -f $(OBJS)
+
+clobber:        clean
+	-rm -f $(CMD)
+

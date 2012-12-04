@@ -1281,8 +1281,8 @@ C$$$
       logical ld
       dimension ld(n),d(n)
 c
-      dmin=1.e40
-      dmax=-1.e40
+      dmin=1.e30
+      dmax=-1.e30
 c
       do i=1,n
         if(ld(i)) then
