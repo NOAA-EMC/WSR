@@ -26,6 +26,11 @@ if (( $# >= 1 )); then
     localprefixptmp=/ptmp/$LOGNAME/o/$expid
     echo localprefixptmp=$localprefixptmp
     if [[ -d $localprefixptmp ]]; then
+      echo localprefixptmp=$localprefixptmp already exists
+    else
+      mkdir -p $localprefixptmp
+    fi
+    if [[ -d $localprefixptmp ]]; then
       cd $localprefixptmp
       rc=$?
       if (( rc == 0 )); then
@@ -33,7 +38,7 @@ if (( $# >= 1 )); then
 	gooddirs=yes
 	dtg=`date +%Y%m%d%H%M%S`
 	echo dtg=$dtg
-	for dir in com tmpnwprd
+	for dir in com tmpnwprd control
 	do
 	  echo $dir rename before
 	  ls -ald ${dir}*
@@ -48,7 +53,7 @@ if (( $# >= 1 )); then
 	  echo $dir rename after
 	  ls -ald ${dir}*
 	done
-	for dir in com/logs com/output/dev/today tmpnwprd
+	for dir in com/logs com/output/dev/today control tmpnwprd
 	do
 	  echo $dir create before
 	  mkdir -p $dir
@@ -64,14 +69,12 @@ if (( $# >= 1 )); then
 	  sed -e"s#EXPID#$expid#" \
 	      -e"s#LOCALPREFIXPTMP#$localprefixptmp#" \
 	      -e"s#LOCALPREFIXSAVE#$localprefixsave#" \
-	      $dirc/$jobcards | cat -
+	      $dirc/$jobcards > control/$jobcards
+          cat control/$jobcards
 	  echo `date` $0 $* jobcards after
 	 if [[ $submit = yes ]]; then
 	  echo `date` $0 $* llsubmit before
-	  sed -e"s#EXPID#$expid#" \
-	      -e"s#LOCALPREFIXPTMP#$localprefixptmp#" \
-	      -e"s#LOCALPREFIXSAVE#$localprefixsave#" \
-	      $dirc/$jobcards | llsubmit -
+	  llsubmit control/$jobcards
 	  echo `date` $0 $* llsubmit after
 	 fi
 	else

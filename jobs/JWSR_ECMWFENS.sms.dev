@@ -112,6 +112,7 @@ export COM=/com/${NET}/${envir}
 if [[ $envir = dev ]]; then
   export COMOUT=$localprefixptmp/com/${NET}/${envir}/${RUN}.${PDYm1}
   export COM=$localprefixptmp/com/${NET}/${envir}
+  export ecedir=$localprefixptmp/com/${NET}/${envir}/wsr.$PDY
 fi
 
 # make sure ECMWF COMOUT directory exists
@@ -133,7 +134,15 @@ else
   if [[ $envir != dev ]]; then
   /nw${envir}/scripts/exwsr_ecmwfens.sh.sms
   else
+  utilscriptsave=$utilscript
+  export utilscript=$localprefixsave/nw$envir/util/ush
+  echo environment listing before
+  env | sort
+  echo environment listing after
+  echo script before
   $localprefixsave/nw${envir}/scripts/exwsr_ecmwfens.sh.sms
+  echo script after
+  export utilscript=$utilscriptsave
   fi
 fi  
 ##############################################

@@ -48,6 +48,9 @@ export SMSBIN=$localprefixsave/nwdev/control
 echo variables needed for dev runs end
 fi
 
-#/nw$envir/jobs/JWSR_ECMWFENS.sms.$envir
-/global/save/wx20rw/s/rw_wsr_ad/nw$envir/jobs/JWSR_ECMWFENS.sms.$envir
+if [[ $envir != dev ]]; then
+/nw$envir/jobs/JWSR_ECMWFENS.sms.$envir
+else
+$localprefixsave/nw$envir/jobs/JWSR_ECMWFENS.sms.$envir
+fi
 
