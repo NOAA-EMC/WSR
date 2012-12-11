@@ -1,0 +1,174 @@
+#!/bin/sh
+
+$SMSBIN/smsinit $LOADL_STEP_ID 
+
+set -xa
+
+export PS4='$SECONDS + '
+date
+# #### 01/16/01 ###############################
+# Process ECMWF ensemble GRIB files to convert the header extensions
+# to NCEP's format and to generate ensemble mean and spread fields
+# #############################################
+
+####################################
+# obtain unique process id (pid) and make temp directory
+####################################
+export pid=$$
+if [[ $envir != dev ]]; then
+export DATA=/tmpnwprd/${job}.${pid}
+else
+export DATA=$localprefixptmp/tmpnwprd/${job}.${pid}
+fi
+mkdir -p $DATA
+cd $DATA
+
+export cycle=t${cyc}z
+export prev_cycle=t${prev_cyc}z
+ 
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=mrf
+export RUN=wsr
+ 
+####################################
+# File To Log Msgs
+####################################
+if [[ $envir != dev ]]; then
+export jlogfile=/com/logs/jlogfile
+else
+export jlogfile=$localprefixptmp/com/logs/jlogfile
+fi
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# SENDSMS  - Flag Events on SMS
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+####################################
+export SENDCOM=YES
+export SENDSMS=YES
+export SENDDBN=YES
+export SENDTRACKER=YES
+export RUN_TCTRACK=YES
+export GET_IOPROFILE=NO
+if [[ $envir = dev ]]; then
+  export SENDSMS=NO
+  export SENDDBN=NO
+fi
+ 
+####################################
+# Specify Execution Areas
+####################################
+export HOMEgrib=/nwprod/util
+export EXECgrib=$HOMEgrib/exec
+export PARMgrib=$HOMEgrib/parm
+export FIXgrib=$HOMEgrib/fix
+
+export HOMEutil=/nwprod/util
+export EXECutil=$HOMEutil/exec
+export PARMutil=$HOMEutil/parm
+export FIXutil=$HOMEutil/fix
+
+export HOMEecme=/nwprod
+export EXECecme=$HOMEecme/exec
+if [[ $envir = dev ]]; then
+  export HOMEecme=$localprefixsave/nw$envir
+  export EXECecme=$HOMEecme/exec
+fi
+
+##############################
+# Set up the UTILITIES
+##############################
+export utilscript=/nwprod/util/ush
+export USHutil=/nwprod/util/ush
+
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+sh $utilscript/setup.sh
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+
+sh $utilscript/setpdy.sh
+. PDY
+
+##############################################
+# Define COM directories
+##############################################
+export COMOUT=/com/${NET}/${envir}/${RUN}.${PDYm1}
+export COM=/com/${NET}/${envir}
+if [[ $envir = dev ]]; then
+  export COMOUT=$localprefixptmp/com/${NET}/${envir}/${RUN}.${PDYm1}
+  export COM=$localprefixptmp/com/${NET}/${envir}
+  export ecedir=$localprefixptmp/com/${NET}/${envir}/wsr.$PDY
+fi
+
+# make sure ECMWF COMOUT directory exists
+mkdir -p $COMOUT
+mkdir -p $COM/${RUN}.${PDY}
+
+##############################################
+# Define Incoming Product directory
+##############################################
+export dcom=${DCOMROOT}/us007003
+
+env
+
+##############################################
+# Execute the script
+if [ $GET_IOPROFILE = YES ]; then
+   /usrx/local/mio/tools/bin/miostats -X0 /nw${envir}/scripts/exwsr_ecmwfens.sh.sms
+else
+  if [[ $envir != dev ]]; then
+  /nw${envir}/scripts/exwsr_ecmwfens.sh.sms
+  else
+  utilscriptsave=$utilscript
+  export utilscript=$localprefixsave/nw$envir/util/ush
+  echo environment listing before
+  env | sort
+  echo environment listing after
+  echo script before
+  $localprefixsave/nw${envir}/scripts/exwsr_ecmwfens.sh.sms
+  echo script after
+  export utilscript=$utilscriptsave
+  fi
+fi  
+##############################################
+
+echo "`hostname`--`date`" >$COMOUT/where_ecmwf_tracker_${cycle}_ran
+
+cat $pgmout
+
+msg="ENDED NORMALLY."
+postmsg "$jlogfile" "$msg"
+
+##################################################
+# save the profiling data captured from miostats
+##################################################
+if [ $GET_IOPROFILE = YES ]; then
+    . /com/miostats/.set_IOprofile
+fi
+
+##############################
+# Remove the Temporary working directory
+##############################
+if [[ $envir != dev ]]; then
+cd /tmpnwprd
+rm -rf $DATA
+fi
+
+date
+
+$SMSBIN/endt
