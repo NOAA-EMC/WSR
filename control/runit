@@ -1,0 +1,97 @@
+#!/bin/ksh
+#
+# run one of the wsr jobs
+#
+echo `date` $0 $* begin
+if (( $# >= 1 )); then
+  job=$1
+  jobcards=wsr_$job.job
+  echo jobcards=$jobcards
+  submit=no
+  if (( $# >= 2 )); then
+    if [[ $2 = submit ]]; then
+      submit=yes
+    fi
+  fi
+  if [[ -s $jobcards ]]; then
+    echo `date` $0 $* set up directories for $jobcards
+    dirc=`pwd`
+    basedir=`dirname $dirc`
+    basedird=`dirname $basedir`
+    basedirdb=`basename $basedird`
+    expid=$basedirdb
+    echo expid=$expid
+    localprefixsave=$basedird
+    echo localprefixsave=$localprefixsave
+    localprefixptmp=/ptmp/$LOGNAME/o/$expid
+    echo localprefixptmp=$localprefixptmp
+    if [[ -d $localprefixptmp ]]; then
+      echo localprefixptmp=$localprefixptmp already exists
+    else
+      mkdir -p $localprefixptmp
+    fi
+    if [[ -d $localprefixptmp ]]; then
+      cd $localprefixptmp
+      rc=$?
+      if (( rc == 0 )); then
+	pwd
+	gooddirs=yes
+	dtg=`date +%Y%m%d%H%M%S`
+	echo dtg=$dtg
+	for dir in com tmpnwprd control
+	do
+	  echo $dir rename before
+	  ls -ald ${dir}*
+	  if [[ -d $dir ]]; then
+	    echo $dir remove if empty
+	    find $dir -type d -depth -ls -exec rmdir {} \;
+	    ls -ald ${dir}*
+	  fi
+	  if [[ -d $dir ]]; then
+	    mv $dir $dir.$dtg
+	  fi
+	  echo $dir rename after
+	  ls -ald ${dir}*
+	done
+	for dir in com/logs com/output/dev/today control tmpnwprd
+	do
+	  echo $dir create before
+	  mkdir -p $dir
+	  rc=$?
+	  if (( rc != 0 )); then
+	    echo mkdir $dir FAILED rc=$rc
+	    gooddirs=no
+	  fi
+	  echo $dir create after
+	done
+	if [[ $gooddirs = yes ]]; then
+	  echo `date` $0 $* jobcards before
+	  sed -e"s#EXPID#$expid#" \
+	      -e"s#LOCALPREFIXPTMP#$localprefixptmp#" \
+	      -e"s#LOCALPREFIXSAVE#$localprefixsave#" \
+	      $dirc/$jobcards > control/$jobcards
+          cat control/$jobcards
+	  echo `date` $0 $* jobcards after
+	 if [[ $submit = yes ]]; then
+	  echo `date` $0 $* llsubmit before
+	  llsubmit control/$jobcards
+	  echo `date` $0 $* llsubmit after
+	 fi
+	else
+	  echo SUBMIT SKIPPED BECAUSE gooddirs=$gooddirs
+	fi
+      else
+	echo cd $localprefixptmp FAILED rc=$rc
+      fi
+    else
+      echo localprefixptmp=$localprefixptmp DOES NOT EXIST
+    fi
+  else
+    echo jobcards=$jobcards DOES NOT EXIST
+    ls -al wsr*job
+  fi
+else
+  echo one argument required: job
+  ls -al wsr*job
+fi
+echo `date` $0 $* end
