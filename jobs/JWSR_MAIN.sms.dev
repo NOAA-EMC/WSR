@@ -1,0 +1,172 @@
+#!/bin/sh
+
+###############################################################
+# Runs WSR Main program
+# Usage:JWSR_MAIN.sms.prod
+# Change history log:
+# 2006-12-12 Yucheng Song Modified for WSR 2007
+#  
+##############################################################
+
+$SMSBIN/smsinit $LOADL_STEP_ID 
+
+set -xa
+# 
+# obtain unique process id (pid) and make temp directories
+#
+export PS4='$SECONDS + '
+
+export pid=$$
+  if [[ $envir != dev ]]; then
+export DATA=$PTMP/tmpnwprd/${job}.${pid}
+  else
+export DATA=$localprefixptmp/tmpnwprd/${job}.${pid}
+  fi
+mkdir -p $DATA
+cd $DATA 
+
+####################################
+# File To Log Msgs
+####################################
+  if [[ $envir != dev ]]; then
+export jlogfile=/com/logs/jlogfile
+  else
+export jlogfile=$localprefixptmp/com/logs/jlogfile
+  fi
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+
+export cycle=t${cyc}z 
+
+  if [[ $envir = !dev ]]; then
+export SENDCOM=YES
+export SENDSMS=YES
+export SENDDTS=NOS
+  else
+export SENDSMS=NO
+export SENDDTS=NO
+export PRINTSDM=NO
+  fi
+export RAWINSONDES=NO
+export PRINTSDM=YES
+export XLFRTEOPTS="unit_vars=yes"
+export WGRIB=${wgrib:-/nwprod/util/exec/wgrib}
+
+export NET=wsr
+export RUN=wsr
+
+###################################
+# Set up the UTILITIES
+###################################
+export utilities=/nwprod/util/ush
+export utilscript=/nwprod/util/ush
+
+export HOMEutil=/nw${envir}/util
+export EXECutil=$HOMEutil/exec
+
+  if [[ $envir != dev ]]; then
+export HOMEwsr=${HOMEwsr:-/nw${envir}}
+  else
+export HOMEwsr=$localprefixsave/${HOMEwsr:-/nw${envir}}
+  fi
+export EXECwsr=$HOMEwsr/exec
+export FIXwsr=$HOMEwsr/fix
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+sh $utilscript/setup.sh
+
+
+##############################
+# Define for graphics
+##############################
+export PATH=$PATH:/usrx/local/grads/bin
+export GADDIR=/usrx/local/grads/dat
+export GASCRP=/usrx/local/grads/gslib
+
+##############################
+# Define GES Directories
+##############################
+  if [[ $envir != dev ]]; then
+export GESdir=/nwges/wsr
+  else
+export GESdir=$prefixlocalptmp/nwges/wsr
+  fi
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+sh $utilscript/setpdy.sh
+. PDY
+
+export PDY=`head -1 $GESdir/targdata.d`
+
+##############################
+# Define GES Directories
+##############################
+  if [[ $envir != dev ]]; then
+export COMENS=/nwges/wsr
+export COMOUT=/com/${NET}/${envir}/${RUN}.${PDY}
+  else
+export COMENS=$prefixlocalptmp/nwges/wsr
+export COMOUT=$prefixlocalptmp/com/${NET}/${envir}/${RUN}.${PDY}
+  fi
+mkdir -p $COMOUT
+
+#######################################################
+# Special WSR VARS                                    #
+# hhdiff: the ensemble date difference in hours       #
+#      between EC and NCEP                            #
+#      nvar is the total vars we have                 #
+#      nv is the total vars we used for norm          #
+#      nvr is the total number of points in VR region # 
+#      Previously set to be 100 since 1000KM radius   # 
+#      nd: no. of grid point drops if obs are taken   #
+#######################################################
+export idim=144
+export jdim=37
+export nd=25
+export nvr=500
+export hhdiff=00
+export memec=51
+export memnc=84
+export memcm=42
+export nv=9
+export nvar=20
+export nflights=90
+export nrawin=34
+export phase=1
+if [[ $PDY -ge 20110226 ]]
+then
+export phase=2
+fi
+
+env
+
+########################################################
+# Execute the script.
+  if [[ $envir != dev ]]; then
+/nw${envir}/scripts/exwsr_main.sh.sms
+  else
+echo environment listing before
+env | sort
+echo environment listing after
+echo `date` script before
+$localprefixsave/nw${envir}/scripts/exwsr_main.sh.sms
+echo `date`script after
+  fi
+########################################################
+
+cat $pgmout
+
+cd /tmpnwprd
+rm -rf $DATA
+
+date
+
+$SMSBIN/smscomplete
