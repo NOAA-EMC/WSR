@@ -24,21 +24,25 @@ export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=MCM
 
 set -x
-#export envir=prod
+export envir=prod
 export envir=dev
 export cyc=00
 export prev_cyc=12
 export job=wsr_ecmwfens_00
 
+  if [[ $envir != dev ]]; then
 
-if [[ $envir != dev ]]; then
 SMSNAME=%SMSNAME% export SMSNAME
 SMSNODE=%SMSNODE% export SMSNODE
 SMSPASS=%SMSPASS% export SMSPASS
 SMS_PROG=%SMS_PROG% export SMS_PROG
 
 SMSBIN=/nwprod/sms/bin export SMSBIN
-else
+
+  else
+
+echo `date` $job job begin
+
 echo veriables needed for dev runs begin
 export DCOMROOT=/dcom
 export expid=EXPID
@@ -46,11 +50,29 @@ export localprefixptmp=LOCALPREFIXPTMP
 export localprefixsave=LOCALPREFIXSAVE
 export SMSBIN=$localprefixsave/nwdev/control
 echo variables needed for dev runs end
+
+  fi
+
+  if [[ $envir != dev ]]; then
+
+/nw$envir/jobs/JWSR_ECMWFENS.sms.$envir
+
+  else
+
+echo `date` $job environment before
+env|sort
+
+echo `date` $job j-job before
+$localprefixsave/nw$envir/jobs/JWSR_ECMWFENS.sms.$envir
+echo `date` $job j-job after
+
+chainsubmit=LOCALCHAINOPTION
+echo chainsubmit=$chainsubmit
+if [[ $chainsubmit = yes ]]; then
+  llsubmit LOCALPREFIXPTMP/control/wsr_prep.job
 fi
 
-if [[ $envir != dev ]]; then
-/nw$envir/jobs/JWSR_ECMWFENS.sms.$envir
-else
-$localprefixsave/nw$envir/jobs/JWSR_ECMWFENS.sms.$envir
-fi
+echo `date` $job job end
+
+  fi
 

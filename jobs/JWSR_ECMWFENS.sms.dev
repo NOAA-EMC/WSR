@@ -15,11 +15,11 @@ date
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-if [[ $envir != dev ]]; then
+  if [[ $envir != dev ]]; then
 export DATA=/tmpnwprd/${job}.${pid}
-else
+  else
 export DATA=$localprefixptmp/tmpnwprd/${job}.${pid}
-fi
+  fi
 mkdir -p $DATA
 cd $DATA
 
@@ -35,11 +35,11 @@ export RUN=wsr
 ####################################
 # File To Log Msgs
 ####################################
-if [[ $envir != dev ]]; then
+  if [[ $envir != dev ]]; then
 export jlogfile=/com/logs/jlogfile
-else
+  else
 export jlogfile=$localprefixptmp/com/logs/jlogfile
-fi
+  fi
 
 ####################################
 # Determine Job Output Name on System
@@ -60,10 +60,10 @@ export SENDDBN=YES
 export SENDTRACKER=YES
 export RUN_TCTRACK=YES
 export GET_IOPROFILE=NO
-if [[ $envir = dev ]]; then
-  export SENDSMS=NO
-  export SENDDBN=NO
-fi
+  if [[ $envir = dev ]]; then
+export SENDSMS=NO
+export SENDDBN=NO
+  fi
  
 ####################################
 # Specify Execution Areas
@@ -80,10 +80,10 @@ export FIXutil=$HOMEutil/fix
 
 export HOMEecme=/nwprod
 export EXECecme=$HOMEecme/exec
-if [[ $envir = dev ]]; then
-  export HOMEecme=$localprefixsave/nw$envir
-  export EXECecme=$HOMEecme/exec
-fi
+  if [[ $envir = dev ]]; then
+export HOMEecme=$localprefixsave/nw$envir
+export EXECecme=$HOMEecme/exec
+  fi
 
 ##############################
 # Set up the UTILITIES
@@ -109,11 +109,11 @@ sh $utilscript/setpdy.sh
 ##############################################
 export COMOUT=/com/${NET}/${envir}/${RUN}.${PDYm1}
 export COM=/com/${NET}/${envir}
-if [[ $envir = dev ]]; then
-  export COMOUT=$localprefixptmp/com/${NET}/${envir}/${RUN}.${PDYm1}
-  export COM=$localprefixptmp/com/${NET}/${envir}
-  export ecedir=$localprefixptmp/com/${NET}/${envir}/wsr.$PDY
-fi
+  if [[ $envir = dev ]]; then
+export COMOUT=$localprefixptmp/com/${NET}/${envir}/${RUN}.${PDYm1}
+export COM=$localprefixptmp/com/${NET}/${envir}
+export ecedir=$localprefixptmp/com/${NET}/${envir}/wsr.$PDY
+  fi
 
 # make sure ECMWF COMOUT directory exists
 mkdir -p $COMOUT
@@ -131,9 +131,9 @@ env
 if [ $GET_IOPROFILE = YES ]; then
    /usrx/local/mio/tools/bin/miostats -X0 /nw${envir}/scripts/exwsr_ecmwfens.sh.sms
 else
-  if [[ $envir != dev ]]; then
+    if [[ $envir != dev ]]; then
   /nw${envir}/scripts/exwsr_ecmwfens.sh.sms
-  else
+    else
   utilscriptsave=$utilscript
   export utilscript=$localprefixsave/nw$envir/util/ush
   echo environment listing before
@@ -143,7 +143,7 @@ else
   $localprefixsave/nw${envir}/scripts/exwsr_ecmwfens.sh.sms
   echo script after
   export utilscript=$utilscriptsave
-  fi
+    fi
 fi  
 ##############################################
 
@@ -164,10 +164,10 @@ fi
 ##############################
 # Remove the Temporary working directory
 ##############################
-if [[ $envir != dev ]]; then
+  if [[ $envir != dev ]]; then
 cd /tmpnwprd
 rm -rf $DATA
-fi
+  fi
 
 date
 

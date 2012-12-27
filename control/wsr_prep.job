@@ -1,11 +1,15 @@
 # @ job_name = jwsr_prep_00
-# @ output = /com/output/prod/today/wsr_prep_00.o$(jobid)
-# @ error = /com/output/prod/today/wsr_prep_00.o$(jobid)
+##@ output = /com/output/prod/today/wsr_prep_00.o$(jobid)
+# @ output = LOCALPREFIXPTMP/com/output/dev/today/wsr_prep_00.o$(jobid)
+##@ error = /com/output/prod/today/wsr_prep_00.o$(jobid)
+# @ error = LOCALPREFIXPTMP/com/output/dev/today/wsr_prep_00.o$(jobid)
 # @ shell = /bin/sh
-# @ class = prod
+##@ class = prod
+# @ class = dev
 # @ wall_clock_limit = 01:20:00
 # @ job_type = parallel
-# @ initialdir = /tmpnwprd
+##@ initialdir = /tmpnwprd
+# @ initialdir = LOCALPREFIXPTMP/tmpnwprd
 ## @ node_usage = not_shared
 ## @ network.MPI = sn_all,shared,us
 ### @ resources = ConsumableCpus(1) ConsumableMemory(1750 MB)
@@ -14,8 +18,10 @@
 # @ total_tasks = 16
 # @ node = 1
 # @ notification = never
-# @ account_no = GEN-OPS
-# @ group = nwprod
+##@ account_no = GEN-OPS
+# @ account_no = GEN-T2O
+##@ group = nwprod
+# @ group = devonprod
 # @ queue
 
 export MP_SHARED_MEMORY=yes
@@ -23,8 +29,11 @@ export MEMORY_AFFINITY=MCM
 
 set -x
 export envir=prod
+export envir=dev
 export cyc=00
 export job=wsr_prep_00
+
+  if [[ $envir != dev ]]; then
 
 SMSNAME=%SMSNAME% export SMSNAME
 SMSNODE=%SMSNODE% export SMSNODE
@@ -33,23 +42,40 @@ SMS_PROG=%SMS_PROG% export SMS_PROG
 
 SMSBIN=/nwprod/sms/bin export SMSBIN
 
+  else
+
+echo `date` $job job begin
+
+echo veriables needed for dev runs begin
+export DCOMROOT=/dcom
+export expid=EXPID
+export localprefixptmp=LOCALPREFIXPTMP
+export localprefixsave=LOCALPREFIXSAVE
+export SMSBIN=$localprefixsave/nwdev/control
+echo variables needed for dev runs end
+
+  fi
+
+  if [[ $envir != dev ]]; then
+
 /nw$envir/jobs/JWSR_PREP.sms.$envir
 
+  else
 
-%manual
-################################################################################
-TASKSCRIPT DOCUMENTATION BLOCK
+echo `date` $job environment before
+env|sort
 
-PURPOSE:  Executes the job that creates the initial conditions for
-          the Winter Storm Recon Forecast.
-######################################################################
+echo `date` $job j-job before
+$localprefixsave/nw$envir/jobs/JWSR_PREP.sms.$envir
+echo `date` $job j-job after
 
-######################################################################
-# Job specific troubleshooting instructions:
-#  see generic troubleshoot manual page
-#
-######################################################################
+chainsubmit=LOCALCHAINOPTION
+echo chainsubmit=$chainsubmit
+if [[ $chainsubmit = yes ]]; then
+  llsubmit LOCALPREFIXPTMP/control/wsr_main.job
+fi
 
-%include /sms/smsnets/scripts/smsProduction.man
-%end
+echo `date` $job job end
+
+  fi
 
