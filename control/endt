@@ -1,0 +1,4 @@
+#!/bin/ksh
+#
+echo `date` $0 $* version for dev testing
+

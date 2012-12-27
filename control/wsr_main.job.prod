@@ -1,0 +1,53 @@
+# @ job_name = jwsr_main_00
+# @ output = /com/output/prod/today/wsr_main_00.o$(jobid)
+# @ error = /com/output/prod/today/wsr_main_00.o$(jobid)
+# @ shell = /bin/sh
+# @ job_type = parallel
+# @ node = 2
+# @ total_tasks = 48
+# @ class = prod
+# @ node_usage = not_shared
+# @ wall_clock_limit = 00:45:00
+# @ initialdir = /tmpnwprd
+# @ notification = never
+### @ resources = ConsumableCpus(1) ConsumableMemory(500 MB)
+# @ resources = ConsumableMemory(500 MB)
+# @ task_affinity = core(1)
+# @ account_no = GEN-OPS
+# @ group = nwprod
+# @ queue
+
+export MP_SHARED_MEMORY=yes
+export MEMORY_AFFINITY=MCM
+
+set -x
+export envir=prod
+export cyc=00
+export job=wsr_main_00
+
+SMSNAME=%SMSNAME% export SMSNAME
+SMSNODE=%SMSNODE% export SMSNODE
+SMSPASS=%SMSPASS% export SMSPASS
+SMS_PROG=%SMS_PROG% export SMS_PROG
+
+SMSBIN=/nwprod/sms/bin export SMSBIN
+
+/nw$envir/jobs/JWSR_MAIN.sms.$envir
+
+
+%manual
+################################################################################
+TASKSCRIPT DOCUMENTATION BLOCK
+
+PURPOSE:  Executes the job that creates the Winter Storm Recon Files.
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+%include /sms/smsnets/scripts/smsProduction.man
+%end
+
