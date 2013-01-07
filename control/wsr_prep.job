@@ -1,21 +1,30 @@
 # @ job_name = jwsr_prep_00
+#BSUB -J jwsr_prep_00
 ##@ output = /com/output/prod/today/wsr_prep_00.o$(jobid)
 # @ output = LOCALPREFIXPTMP/com/output/dev/today/wsr_prep_00.o$(jobid)
+#BSUB -o LOCALPREFIXPTMP/com/output/dev/today/wsr_prep_00.o.%J
 ##@ error = /com/output/prod/today/wsr_prep_00.o$(jobid)
 # @ error = LOCALPREFIXPTMP/com/output/dev/today/wsr_prep_00.o$(jobid)
+#BSUB -e LOCALPREFIXPTMP/com/output/dev/today/wsr_prep_00.o.%J
 # @ shell = /bin/sh
+#BSUB -L /bin/ksh
 ##@ class = prod
 # @ class = dev
+#BSUB -q "dev"
 # @ wall_clock_limit = 01:20:00
+#BSUB -W "01:20"
 # @ job_type = parallel
+#BSUB -a poe
 ##@ initialdir = /tmpnwprd
 # @ initialdir = LOCALPREFIXPTMP/tmpnwprd
 ## @ node_usage = not_shared
+#BSUB -x
 ## @ network.MPI = sn_all,shared,us
 ### @ resources = ConsumableCpus(1) ConsumableMemory(1750 MB)
 # @ resources = ConsumableMemory(1750 MB)
 # @ task_affinity = cpu(1)
 # @ total_tasks = 16
+#BSUB -n 16
 # @ node = 1
 # @ notification = never
 ##@ account_no = GEN-OPS
@@ -24,10 +33,41 @@
 # @ group = devonprod
 # @ queue
 
+mach=`uname -n`
+machl=`echo $mach|cut -c1`
+case $machl in
+  (c)
+    echo `date` job starting on cirrus
+    cluster=ccs
+  ;;
+  (s)
+    echo `date` job starting on stratus
+    cluster=ccs
+  ;;
+  (t)
+    echo `date` job starting on tide
+    #export MP_TASK_AFFINITY=core
+    cluster=wcoss
+  ;;
+  (g)
+    echo `date` job starting on gyre
+    cluster=wcoss
+  ;;
+  (*)
+     echo UNKNOWN MACHINE $mach
+  ;;
+esac
+  if [[ $cluster = ccs ]]; then
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=MCM
+  fi
+
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+export MP_INSTANCES=16
 
 set -x
+
 export envir=prod
 export envir=dev
 export cyc=00
@@ -45,6 +85,10 @@ SMSBIN=/nwprod/sms/bin export SMSBIN
   else
 
 echo `date` $job job begin
+
+echo `date` before sorted environment
+env|sort
+echo `date` after sorted environment
 
 echo veriables needed for dev runs begin
 export DCOMROOT=/dcom

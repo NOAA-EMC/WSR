@@ -1,3 +1,13 @@
+#BSUB -J jwsr_ecmwfens_00
+#BSUB -o LOCALPREFIXPTMP/com/output/dev/today/ecmwfens_00.o.%J
+#BSUB -e LOCALPREFIXPTMP/com/output/dev/today/ecmwfens_00.o.%J
+#BSUB -q "dev"
+#BSUB -W "01:00"
+######BSUB -R "affinity[core(1)]"
+#BSUB -R "rusage[mem=500]"
+#BSUB -L /bin/ksh
+####BSUB -q "hpc_ibm"
+######BSUB -x
 # @ job_name = jwsr_ecmwfens_00
 ##@ output = /com/output/prod/today/ecmwfens_00.o$(jobid)
 # @ output = LOCALPREFIXPTMP/com/output/dev/today/ecmwfens_00.o$(jobid)
@@ -20,8 +30,34 @@
 # @ group = devonprod
 # @ queue
 
+mach=`uname -n`
+machl=`echo $mach|cut -c1`
+case $machl in
+  (c)
+    echo `date` job starting on cirrus
+    cluster=ccs
+  ;;
+  (s)
+    echo `date` job starting on stratus
+    cluster=ccs
+  ;;
+  (t)
+    echo `date` job starting on tide
+    #export MP_TASK_AFFINITY=core
+    cluster=wcoss
+  ;;
+  (g)
+    echo `date` job starting on gyre
+    cluster=wcoss
+  ;;
+  (*)
+     echo UNKNOWN MACHINE $mach
+  ;;
+esac
+  if [[ $cluster = ccs ]]; then
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=MCM
+  fi
 
 set -x
 export envir=prod
@@ -42,6 +78,11 @@ SMSBIN=/nwprod/sms/bin export SMSBIN
   else
 
 echo `date` $job job begin
+echo mach=$mach machl=$machl
+
+echo `date` before sorted environment
+env|sort
+echo `date` after sorted environment
 
 echo veriables needed for dev runs begin
 export DCOMROOT=/dcom
@@ -63,7 +104,8 @@ echo `date` $job environment before
 env|sort
 
 echo `date` $job j-job before
-$localprefixsave/nw$envir/jobs/JWSR_ECMWFENS.sms.$envir
+$(LAUNCH) $localprefixsave/nw$envir/jobs/JWSR_ECMWFENS.sms.$envir
+#          $localprefixsave/nw$envir/jobs/JWSR_ECMWFENS.sms.$envir
 echo `date` $job j-job after
 
 chainsubmit=LOCALCHAINOPTION

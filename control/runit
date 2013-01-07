@@ -3,6 +3,32 @@
 # run one of the wsr jobs
 #
 echo `date` $0 $* begin
+mach=`uname -n`
+machl=`echo $mach|cut -c1`
+case $machl in
+  (c)
+    echo `date` job starting on cirrus
+    cluster=ccs
+  ;;
+  (s)
+    echo `date` job starting on stratus
+    cluster=ccs
+  ;;
+  (t)
+    echo `date` job starting on tide
+    #export MP_TASK_AFFINITY=core
+    cluster=wcoss
+  ;;
+  (g)
+    echo `date` job starting on gyre
+    cluster=wcoss
+  ;;
+  (*)
+     echo UNKNOWN MACHINE $mach
+     cluster=null
+  ;;
+esac
+
 if (( $# >= 1 )); then
   job=$1
   args=good
@@ -133,9 +159,19 @@ if (( $# >= 1 )); then
 	    echo `date` $0 $* jobcards after
 	    if [[ $submit = yes ]]; then
 	      if [[ $chainfirst = yes ]]; then
-		echo `date` $0 $* llsubmit before
-		llsubmit control/$jobcards
-		echo `date` $0 $* llsubmit after
+		echo `date` $0 $* submit before
+                case $cluster in
+		  (ccs)
+		    llsubmit control/$jobcards
+		  ;; 
+		  (wcoss)
+		    bsub <control/$jobcards
+		  ;; 
+		  (*)
+                    echo CANNOT SUBMIT TO UNKNOWN CLUSTER $cluster
+		  ;; 
+                esac
+		echo `date` $0 $* submit after
 	      fi
 	    fi
 	  else
@@ -155,7 +191,9 @@ else
   args=bad
 fi
 if [[ $args = bad ]]; then
-  echo one argument required: job
+  echo one argument required: job flags
+  echo job:  ecmwf prep main pm epm
+  echo flags:  submit submitold submitnew old new
   ls -al wsr*job
 fi
 echo `date` $0 $* end
