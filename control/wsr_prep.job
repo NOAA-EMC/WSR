@@ -17,11 +17,13 @@
 #BSUB -a poe
 ##@ initialdir = /tmpnwprd
 # @ initialdir = LOCALPREFIXPTMP/tmpnwprd
+#BSUB -cwd LOCALPREFIXPTMP/tmpnwprd
 ## @ node_usage = not_shared
 #BSUB -x
 ## @ network.MPI = sn_all,shared,us
 ### @ resources = ConsumableCpus(1) ConsumableMemory(1750 MB)
 # @ resources = ConsumableMemory(1750 MB)
+#BSUB -R "rusage[mem=1750]"
 # @ task_affinity = cpu(1)
 # @ total_tasks = 16
 #BSUB -n 16
@@ -38,33 +40,37 @@ machl=`echo $mach|cut -c1`
 case $machl in
   (c)
     echo `date` job starting on cirrus
-    cluster=ccs
+    export wsrmachine=ccs
   ;;
   (s)
     echo `date` job starting on stratus
-    cluster=ccs
+    export wsrmachine=ccs
   ;;
   (t)
     echo `date` job starting on tide
     #export MP_TASK_AFFINITY=core
-    cluster=wcoss
+    export wsrmachine=wcoss
   ;;
   (g)
     echo `date` job starting on gyre
-    cluster=wcoss
+    export wsrmachine=wcoss
   ;;
   (*)
-     echo UNKNOWN MACHINE $mach
+    echo UNKNOWN MACHINE $mach
+    export wsrmachine=unknown
   ;;
 esac
-  if [[ $cluster = ccs ]]; then
+  if [[ $wsrmachine = ccs ]]; then
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=MCM
-  fi
-
+  else
+pwd
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
 export MP_INSTANCES=16
+export PATH="$PATH:."
+module list
+  fi
 
 set -x
 
@@ -116,7 +122,17 @@ echo `date` $job j-job after
 chainsubmit=LOCALCHAINOPTION
 echo chainsubmit=$chainsubmit
 if [[ $chainsubmit = yes ]]; then
-  llsubmit LOCALPREFIXPTMP/control/wsr_main.job
+  case $wsrmachine in
+    (ccs)
+      llsubmit LOCALPREFIXPTMP/control/wsr_main.job
+    ;;
+    (wcoss)
+      bsub <LOCALPREFIXPTMP/control/wsr_main.job
+    ;;
+    (*)
+      echo UNKNOWN CLUSTER $wsrmachine
+    ;;
+  esac
 fi
 
 echo `date` $job job end

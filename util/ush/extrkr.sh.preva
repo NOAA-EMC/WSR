@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/usr/bin/ksh
 
 export PS4=' + extrkr.sh line $LINENO: '
 
@@ -297,10 +297,10 @@ case ${cmodel} in
        echo " "; echo " ++ operational UKMET chosen"    ;
        echo " "                                         ;
        set -x                                           ;
-       ukmetdir=/com/ukmet/prod/ukmet.${PDY}              ;
+       ukmetdir=/com/mrf/prod/ukmet.${PDY}              ;
        ukmetgfile=ukmet.t${CYL}z.ukmet                  ;
        ukmetifile=ukmet.t${CYL}z.ukmeti                 ;
-       COM=/com/ukmet/${envir}/ukmet.${PDY}               ;
+       COM=/com/mrf/${envir}/ukmet.${PDY}               ;
        fcstlen=72                                       ;
        fcsthrs=' 00 12 24 36 48 60 72 99 99 99 99 99 99 
                  99 99 99 99 99 99 99 99 99 99 99 99 99 
@@ -320,7 +320,7 @@ case ${cmodel} in
        ecmwfdir=/dcom/us007003/${PDY}/wgrbbul/ecmwf     ;
        ecmwfgfile=                                      ;
        ecmwfifile=                                      ;
-       COM=/com/ecmwf/${envir}/ecmwf.${PDY}               ;
+       COM=/com/mrf/${envir}/ecmwf.${PDY}               ;
        [[ ! -d $COM ]] && mkdir -p $COM                 ;
        fcstlen=240                                      ;
        fcsthrs=' 00 06 12 18 24 30 36 42 48 54 60 66 72 78
@@ -478,16 +478,12 @@ case ${cmodel} in
        sdd=`echo ${PDY} | cut -c7-8`                    ;
        shh=${CYL}                                       ;
        symd=`echo ${PDY} | cut -c3-8`                   ;
-       #ecedir=/com/mrf/prod/wsr.${PDY}                  ;
-       #ecedir=${ecedir:-/com/mrf/prod/wsr.${PDY}}                  ;
-       ecedir=${ecedir:-/com/gens/prod/ecme.${PDY}}                  ;
+       ecedir=${ecedir:-/com/mrf/prod/wsr.${PDY}}       ;
+       ecedir=`dirname $ecedir`/wsr.${PDY}              ;
        ecegfile=                                        ;
        eceifile=                                        ;
-       #COM=/com/mrf/${envir}/wsr.${PDY}                 ;
-       #COM=${COM:-/com/mrf/${envir}}                 ;
-       COM=${COM:-/com/gens/${envir}}                 ;
-       #COM=$COM/wsr.${PDY}
-       COM=$COM/ecme.${PDY}
+       COM=${COM:-/com/mrf/${envir}}                    ;
+       COM=$COM/wsr.${PDY}                              ;
        fcstlen=240                                      ;
        fcsthrs=' 00 12 24 36 48 60 72 84 96 108 120 132 144   
                  156 168 180 192 204 216 228 240 99 99 99 99  
@@ -540,7 +536,7 @@ case ${cmodel} in
        echo " "; echo " ++ operational Canadian global model chosen"   ;
        echo " "                                         ;
        set -x                                           ;
-       cmcdir=/dcom_canned/us007003/${PDY}/wgrbbul/cmc         ;
+       cmcdir=/dcom/us007003/${PDY}/wgrbbul/cmc         ;
        cmcgfile=cmc_${PDY}${CYL}f                       ;
        cmcifile=nonexistant                             ;
        COM=/com/gens/prod/cmce.${PDY}/${CYL}/track      ;
@@ -745,12 +741,6 @@ d6ahead_str="${d6ahead_ymd} ${d6ahead_hh}00"
 if [ ${modtyp} = 'global' ]
 then
 
-  #FAF  synvitdir=/com/gfs/prod/gfs.${PDY}
-  #FAF  synvitfile=gfs.t${CYL}z.syndata.tcvitals.tm00
-  #FAF  synvit6ago_dir=/com/gfs/prod/gfs.${d6ago_4ymd}
-  #FAF  synvit6ago_file=gfs.t${d6ago_hh}z.syndata.tcvitals.tm00
-  #FAF  synvit6ahead_dir=/com/gfs/prod/gfs.${d6ahead_4ymd}
-  #FAF  synvit6ahead_file=gfs.t${d6ahead_hh}z.syndata.tcvitals.tm00
   synvitdir=/com/gfs/prod/gfs.${PDY}
   synvitfile=gfs.t${CYL}z.syndata.tcvitals.tm00
   synvit6ago_dir=/com/gfs/prod/gfs.${d6ago_4ymd}
@@ -760,12 +750,6 @@ then
 
 else
       
-  #FAF synvitdir=/com/nam/prod/nam.${PDY}
-  #FAF synvitfile=nam.t${CYL}z.syndata.tcvitals.tm00
-  #FAF synvit6ago_dir=/com/nam/prod/nam.${d6ago_4ymd}
-  #FAF synvit6ago_file=nam.t${d6ago_hh}z.syndata.tcvitals.tm00
-  #FAF synvit6ahead_dir=/com/nam/prod/nam.${d6ahead_4ymd}
-  #FAF synvit6ahead_file=nam.t${d6ahead_hh}z.syndata.tcvitals.tm00
   synvitdir=/com/nam/prod/nam.${PDY}
   synvitfile=nam.t${CYL}z.syndata.tcvitals.tm00
   synvit6ago_dir=/com/nam/prod/nam.${d6ago_4ymd}
@@ -819,16 +803,15 @@ fi
 # UPDATE 5/12/98 MARCHOK: nawk logic is added to screen NHC 
 #   vitals such as "91L NAMELESS" or "89E NAMELESS", since TPC 
 #   does not want tracks for such storms.
-# UPDATE 11/30/12 FAFJ: no nawk during WCOSS transfer, using awk instead
 
 grep "${d6ago_str}" ${archsyndir}/syndat_tcvitals.${CENT}${syy}   | \
-      grep -v TEST | awk 'substr($0,6,1) !~ /[8]/ {print $0}' \
+      grep -v TEST | nawk 'substr($0,6,1) !~ /[8]/ {print $0}' \
       >${DATA}/tmprawvit.${atcfout}.${PDY}${CYL}
 grep "${dnow_str}"  ${archsyndir}/syndat_tcvitals.${CENT}${syy}   | \
-      grep -v TEST | awk 'substr($0,6,1) !~ /[8]/ {print $0}' \
+      grep -v TEST | nawk 'substr($0,6,1) !~ /[8]/ {print $0}' \
       >>${DATA}/tmprawvit.${atcfout}.${PDY}${CYL}
 grep "${d6ahead_str}" ${archsyndir}/syndat_tcvitals.${CENT}${syy} | \
-      grep -v TEST | awk 'substr($0,6,1) !~ /[8]/ {print $0}' \
+      grep -v TEST | nawk 'substr($0,6,1) !~ /[8]/ {print $0}' \
       >>${DATA}/tmprawvit.${atcfout}.${PDY}${CYL}
 
 #PRODTEST#
@@ -956,8 +939,8 @@ mv ${DATA}/vitals.${atcfout}.${PDY}${CYL}.y4 ${DATA}/vitals.${atcfout}.${PDY}${C
 export pgm=supvit
 . prep_step
 
-export FORT31=${DATA}/vitals.${atcfout}.${PDY}${CYL}       
-export FORT51=${DATA}/vitals.upd.${atcfout}.${PDY}${CYL}  
+export XLFUNIT_31=${DATA}/vitals.${atcfout}.${PDY}${CYL}       
+export XLFUNIT_51=${DATA}/vitals.upd.${atcfout}.${PDY}${CYL}  
 
 msg="$pgm start for $atcfout at ${CYL}z"
 postmsg "$jlogfile" "$msg"
@@ -2537,10 +2520,10 @@ if [ ${gettrk_rcc} -eq 0 ]; then
         cp ${DATA}/trak.${atcfout}.atcfunix.${PDY}${CYL} ${COM}/${atcfout}.t${CYL}z.cyclone.trackatcfunix
       fi
 
-      #tmscrdir=/nfsuser/g01/wx20tm/trak/prod
+      tmscrdir=/nfsuser/g01/wx20tm/trak/prod
 
-      #tmtrakstat=${tmsclrdir}/tracker.prod.status
-      #echo "${atcfout} tracker completed okay for ${PDY}${CYL}" >>${tmtrakstat}
+      tmtrakstat=${tmscrdir}/tracker.prod.status
+      echo "${atcfout} tracker completed okay for ${PDY}${CYL}" >>${tmtrakstat}
 
       export SENDDBN=${SENDDBN:-YES}
       export SENDTRACKER=${SENDTRACKER:-NO}
@@ -2631,13 +2614,13 @@ if [ ${gettrk_rcc} -eq 0 ]; then
 
 else
 
-  #if [ ${PARAFLAG} = 'YES' ]
-  #then
-  #  echo " "
-  #else
-  #  tmtrakstat=/nfsuser/g01/wx20tm/trak/prod/tracker.prod.status
-  #  echo "ERROR: ${atcfout} tracker FAILED for ${PDY}${CYL}" >>${tmtrakstat}
-  #fi
+  if [ ${PARAFLAG} = 'YES' ]
+  then
+    echo " "
+  else
+    tmtrakstat=/nfsuser/g01/wx20tm/trak/prod/tracker.prod.status
+    echo "ERROR: ${atcfout} tracker FAILED for ${PDY}${CYL}" >>${tmtrakstat}
+  fi
 
   set +x
   echo " "

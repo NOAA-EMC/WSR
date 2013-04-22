@@ -334,7 +334,7 @@ case ${cmodel} in
        atcfout="emx"                                    ;
        modtyp='global'                                  ;
        SENDTRACKER=NO                                   ;
-       SENDDBN=NO                                       ;
+       SENDDBN=YES                                       ;
        model=4                                         ;;
 
   ngm) set +x                                       ;
@@ -463,7 +463,7 @@ case ${cmodel} in
        atcfout="a${pert_posneg}${pert_num}"             ;
        modtyp='global'                                  ;
        SENDTRACKER=NO                                   ;
-       SENDDBN=NO                                       ;
+       SENDDBN=YES                                       ;
        model=10                                        ;;
 
   ece) set +x                                           ;
@@ -478,16 +478,10 @@ case ${cmodel} in
        sdd=`echo ${PDY} | cut -c7-8`                    ;
        shh=${CYL}                                       ;
        symd=`echo ${PDY} | cut -c3-8`                   ;
-       #ecedir=/com/mrf/prod/wsr.${PDY}                  ;
-       #ecedir=${ecedir:-/com/mrf/prod/wsr.${PDY}}                  ;
-       ecedir=${ecedir:-/com/gens/prod/ecme.${PDY}}                  ;
+       ecedir=/com/mrf/prod/wsr.${PDY}                  ;
        ecegfile=                                        ;
        eceifile=                                        ;
-       #COM=/com/mrf/${envir}/wsr.${PDY}                 ;
-       #COM=${COM:-/com/mrf/${envir}}                 ;
-       COM=${COM:-/com/gens/${envir}}                 ;
-       #COM=$COM/wsr.${PDY}
-       COM=$COM/ecme.${PDY}
+       COM=/com/mrf/${envir}/wsr.${PDY}                 ;
        fcstlen=240                                      ;
        fcsthrs=' 00 12 24 36 48 60 72 84 96 108 120 132 144   
                  156 168 180 192 204 216 228 240 99 99 99 99  
@@ -501,7 +495,7 @@ case ${cmodel} in
        atcfout="e${pert_posneg}${pert_num}"             ;
        modtyp='global'                                  ;
        SENDTRACKER=NO                                   ;
-       SENDDBN=NO                                       ;
+       SENDDBN=YES                                       ;
        model=11                                        ;;
 
   sref) set +x                                          ;
@@ -533,7 +527,7 @@ case ${cmodel} in
        atcfout="ammn"                                   ;
        modtyp='global'                                  ;
        SENDTRACKER=NO                                   ;
-       SENDDBN=NO                                       ;
+       SENDDBN=YES                                       ;
        model=14                                        ;;
 
   cmc) set +x                                           ;
@@ -556,7 +550,7 @@ case ${cmodel} in
        atcfout="cmc"                                    ;
        modtyp='global'                                  ;
        SENDTRACKER=NO                                   ;
-       SENDDBN=NO                                       ;
+       SENDDBN=YES                                       ;
        model=15                                        ;;
 
   cens) set +x                                            ;
@@ -584,7 +578,7 @@ case ${cmodel} in
        atcfout="c${pert_posneg}${pert_num}"             ;
        modtyp='global'                                  ;
        SENDTRACKER=NO                                   ;
-       SENDDBN=NO                                       ;
+       SENDDBN=YES                                       ;
        model=16                                        ;;
 
   hwrf) set +x                                            ;
@@ -694,7 +688,7 @@ case ${cmodel} in
        fi
        modtyp='global'                                  ;
        SENDTRACKER=NO                                   ;
-       SENDDBN=NO                                       ;
+       SENDDBN=YES                                       ;
        model=20                                        ;;
 
   *) set +x; echo " "; echo " !!! Model selected is not recognized."             ;
@@ -2539,7 +2533,7 @@ if [ ${gettrk_rcc} -eq 0 ]; then
 
       #tmscrdir=/nfsuser/g01/wx20tm/trak/prod
 
-      #tmtrakstat=${tmsclrdir}/tracker.prod.status
+      #tmtrakstat=${tmscrdir}/tracker.prod.status
       #echo "${atcfout} tracker completed okay for ${PDY}${CYL}" >>${tmtrakstat}
 
       export SENDDBN=${SENDDBN:-YES}

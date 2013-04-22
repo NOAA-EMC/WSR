@@ -181,9 +181,18 @@ c       NCEP PDS extension. *** NOTE: THE VERSION OF GETGBENS
 c       THAT IS CALLED HAS BEEN MODIFIED FROM THE W3LIB VERSION.
 c  Modified getgbens has been renamed getgbece
 
+        print *,'rlwdebug before first call getgbece',lugb,lugi
+        print *,'rlwdebug getgbece args',jf,j,jpds(1),jgds(1)
+        print *,'rlwdebug getgbece args',jens(1)
+        print *,'rlwdebug getgbece args',kf,k,kpds(1),kgds(1)
+        print *,'rlwdebug getgbece args',kens(1)
+        print *,'rlwdebug getgbece args',lb(1),f(1),iret
+        print *,'rlwdebug getgbece args',ktype,kfnum,ktot
+
         call getgbece(lugb,lugi,jf,j,jpds,jgds,jens,
      &                          kf,k,kpds,kgds,kens,lb,f,iret,
      &                          ktype,kfnum,ktot)
+        print *,'rlwdebug after first call getgbece',lugb,lugi
 c
         j=k
         if (iret.eq.0) then
@@ -1413,6 +1422,13 @@ C     INTEGER KPTR(16)
       CHARACTER GRIB(200+17*JF/8)*1
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  READ INDEX FILE
+      print *,'rlwdebug in begin getgbece',lugb,lugi
+        print *,'rlwdebug getgbece args',jf,j,jpds(1),jgds(1)
+        print *,'rlwdebug getgbece args',jens(1)
+        print *,'rlwdebug getgbece args',kf,k,kpds(1),kgds(1)
+        print *,'rlwdebug getgbece args',kens(1)
+        print *,'rlwdebug getgbece args',lb(1),f(1),iret
+        print *,'rlwdebug getgbece args',ktype,kfnum,ktot
       IF(J.LT.0.OR.LUGI.NE.LUX) THEN
         call grib_open_r (lugb,ireto)
         if (ireto.gt.0) then
@@ -1444,6 +1460,7 @@ c       IF(IOS.EQ.0.AND.CHEAD(1)(38:43).EQ.'GB1IX1') THEN
          READ(CHEAD(2),'(8X,3I10,2X,A40)',IOSTAT=IOS) NSKP,NLEN,NNUM
            print *,'nlen= ',nlen,' ios= ',ios,' nskp= ',nskp,' nnum= '
      &           ,nnum
+      print *,'rlwdebug in getgbece after first nnum=',nnum
           IF(IOS.EQ.0) THEN
             NBUF=NNUM*NLEN
             IF(NBUF.GT.MBUF) THEN
@@ -1461,13 +1478,16 @@ c              print *,'************** lux being set equal to lugi'
         ENDIF
       ENDIF
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      print *,'rlwdebug in getgbece before search for request'
 C  SEARCH FOR REQUEST
       KENS=0
       LGRIB=0
       KJ=J
       K=J
       KF=0
+      print *,'rlwdebug in getgbece before if',j,lugi,lux
       IF(J.GE.0.AND.LUGI.EQ.LUX) THEN
+        print *,'rlwdebug in getgbece in begin if',j,lugi,lux
         LPDSP=0
         DO I=1,LPDS
           IF(JPDS(I).NE.-1) THEN
@@ -1476,6 +1496,7 @@ C  SEARCH FOR REQUEST
             JPDSP(LPDSP)=JPDS(I)
           ENDIF
         ENDDO
+        print *,'rlwdebug in getgbece in if after 1 loops'
         LGDSP=0
         IF(JPDS(3).EQ.255) THEN
           DO I=1,LGDS
@@ -1486,6 +1507,7 @@ C  SEARCH FOR REQUEST
             ENDIF
           ENDDO
         ENDIF
+        print *,'rlwdebug in getgbece in if after 2 loops'
         LENSP=0
         IF(JPDS(23).EQ.3 .or. jpds(23).eq.0.or.jpds(23).eq.-1) THEN
           DO I=1,5
@@ -1499,20 +1521,37 @@ C  SEARCH FOR REQUEST
           print *,'!!! jpds(23) != 0 or 3, jpds(23)= ',jpds(23)
         ENDIF
         IRET=99
+        print *,'rlwdebug in getgbece in if after 3 loops'
         DOWHILE(LGRIB.EQ.0.AND.KJ.LT.NNUM)
+          print *,'rlwdebug in getgbece in dowhile begin',lgrib,kj,nnum
           KJ=KJ+1
           LT=0
+          print *,'rlwdebug in getgbece in dowhile before if',lpdsp
           IF(LPDSP.GT.0) THEN
+            print *,'rlwdebug in getgbece in dowhile in if',lpdsp
             CPDS=CBUF((KJ-1)*NLEN+26:(KJ-1)*NLEN+53)
+            print *,'rlwdebug in dw in if after set cpds',cpds(1)
             KPTR=0
-            CALL GBYTE(CBUF,KPTR(3),(KJ-1)*NLEN*8+25*8,3*8)
+            print *,'rlwdebug in dw in if after set kptr',kptr(1)
+crlw replace gbyte with gbytec to process character array
+c           CALL GBYTE(CBUF,KPTR(3),(KJ-1)*NLEN*8+25*8,3*8)
+            CALL GBYTEC(CBUF,KPTR(3),(KJ-1)*NLEN*8+25*8,3*8)
+            print *,'rlwdebug in dw in if after call gbyte',cbuf(1:10)
+            print *,'rlwdebug in dw in if before call fi632',cpds
+            print *,'rlwdebug in dw in if before call fi632',kptr
+            print *,'rlwdebug in dw in if before call fi632',kpds
+            print *,'rlwdebug in dw in if before call fi632',iret
             CALL FI632(CPDS,KPTR,KPDS,IRET)
+            print *,'rlwdebug in dw in if after call fi632',cpds(1)
 c            print *, 'after fi632, iret=',iret
+            print *,'rlwdebug in getgbece in dowhile before loop',lpdsp
             DO I=1,LPDSP
               IP=IPDSP(I)
               LT=LT+ABS(JPDS(IP)-KPDS(IP))
             ENDDO
+            print *,'rlwdebug in getgbece in dowhile after loop'
           ENDIF
+          print *,'rlwdebug in getgbece in dowhile after 1 loop'
           IF(LT.EQ.0.AND.LGDSP.GT.0) THEN
             CGDS=CBUF((KJ-1)*NLEN+54:(KJ-1)*NLEN+95)
             KPTR=0
@@ -1523,6 +1562,7 @@ c            print *, 'after fi633, iret=',iret
               LT=LT+ABS(JGDS(IP)-KGDS(IP))
             ENDDO
           ENDIF
+          print *,'rlwdebug in getgbece in dowhile after 2 loops'
 c          print *, 'lt=',lt,'lensp=',lensp
           IF(LT.EQ.0.AND.LENSP.GT.0) THEN
             CPDS(41:80)=CBUF((KJ-1)*NLEN+113:(KJ-1)*NLEN+152)
@@ -1533,11 +1573,15 @@ c           CALL PDSEUP(KENS,KPROB,XPROB,KCLUST,KMEMBR,45,CPDS)
               LT=LT+ABS(JENS(IP)-KENS(IP))
             ENDDO
           ENDIF
+          print *,'rlwdebug in getgbece in dowhile after 3 loops'
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      print *,'rlwdebug in getgbece before read and unpack'
 C  READ AND UNPACK GRIB DATA
           IF(LT.EQ.0) THEN
-            CALL GBYTE(CBUF,LSKIP,(KJ-1)*NLEN*8,4*8)
-            CALL GBYTE(CBUF,LGRIB,(KJ-1)*NLEN*8+20*8,4*8)
+c           CALL GBYTE(CBUF,LSKIP,(KJ-1)*NLEN*8,4*8)
+            CALL GBYTEC(CBUF,LSKIP,(KJ-1)*NLEN*8,4*8)
+c           CALL GBYTE(CBUF,LGRIB,(KJ-1)*NLEN*8+20*8,4*8)
+            CALL GBYTEC(CBUF,LGRIB,(KJ-1)*NLEN*8+20*8,4*8)
             CGDS=CBUF((KJ-1)*NLEN+54:(KJ-1)*NLEN+95)
             KPTR=0
             CALL FI633(CGDS,KPTR,KGDS,IRET)
@@ -1570,6 +1614,7 @@ c               print *, 'after W3FI63, iret=',iret
         IRET=96
       ENDIF
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      print *,'rlwdebug in end getgbece',lugb,lugi
       RETURN
       END
 c
@@ -1639,7 +1684,8 @@ C
 c
 C     CHECKING TOTAL NUMBER OF BYTES IN PDS (IBYTES)
 c      print *,' '
-      CALL GBYTE(MSGA, IBYTES, 0,24)
+c     CALL GBYTE(MSGA, IBYTES, 0,24)
+      CALL GBYTEC(MSGA, IBYTES, 0,24)
 c      PRINT *,'IBYTES (length of pds) = ',IBYTES
       IF (ILAST.GT.IBYTES) THEN
 C       ILAST=IBYTES
@@ -1652,24 +1698,31 @@ C       ILAST=IBYTES
       ENDIF
 C     UNPACKING FIRST SECTION (GENERAL INFORMATION)
 c
-      CALL GBYTE(MSGA,ludn,40*8,8)
+c     CALL GBYTE(MSGA,ludn,40*8,8)
+      CALL GBYTEC(MSGA,ludn,40*8,8)
 c      print *,'ludn= ',ludn
-      CALL GBYTE(MSGA,kclass,41*8,8)
+c     CALL GBYTE(MSGA,kclass,41*8,8)
+      CALL GBYTEC(MSGA,kclass,41*8,8)
 c      print *,'kclass= ',kclass
-      CALL GBYTE(MSGA,ktype,42*8,8)
+c     CALL GBYTE(MSGA,ktype,42*8,8)
+      CALL GBYTEC(MSGA,ktype,42*8,8)
 c      print *,'ktype= ',ktype
-      CALL GBYTE(MSGA,kstream,43*8,16)
+c     CALL GBYTE(MSGA,kstream,43*8,16)
+      CALL GBYTEC(MSGA,kstream,43*8,16)
 c      print *,'kstream= ',kstream
 c      CALL GBYTE(MSGA,kver,45*8,32)
       do ii=1,4
         cver(ii) = msga(ii+45)
       enddo
 c      print '(17a,3x,4a1)','Version Number = ',cver
-      CALL GBYTE(MSGA,kfnum,49*8,8)
+c     CALL GBYTE(MSGA,kfnum,49*8,8)
+      CALL GBYTEC(MSGA,kfnum,49*8,8)
 c      print *,'kfnum= ',kfnum
-      CALL GBYTE(MSGA,ktot,50*8,8)
+c     CALL GBYTE(MSGA,ktot,50*8,8)
+      CALL GBYTEC(MSGA,ktot,50*8,8)
 c      print *,'ktot= ',ktot
-      CALL GBYTE(MSGA,junk,51*8,8)
+c     CALL GBYTE(MSGA,junk,51*8,8)
+      CALL GBYTEC(MSGA,junk,51*8,8)
 c      print *,'Byte 52= ',junk
 c
 c    &             ,' str=',kstream,' ver=',kver,' mem=',kfnum

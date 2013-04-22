@@ -1,28 +1,30 @@
-#BSUB -J jwsr_ecmwfens_00
-#BSUB -o LOCALPREFIXPTMP/com/output/dev/today/ecmwfens_00.o.%J
-#BSUB -e LOCALPREFIXPTMP/com/output/dev/today/ecmwfens_00.o.%J
-#BSUB -q "dev"
-#BSUB -W "01:00"
 ######BSUB -R "affinity[core(1)]"
-#BSUB -R "rusage[mem=500]"
-#BSUB -L /bin/ksh
 ####BSUB -q "hpc_ibm"
 ######BSUB -x
 # @ job_name = jwsr_ecmwfens_00
+#BSUB -J jwsr_ecmwfens_00
 ##@ output = /com/output/prod/today/ecmwfens_00.o$(jobid)
 # @ output = LOCALPREFIXPTMP/com/output/dev/today/ecmwfens_00.o$(jobid)
+#BSUB -o LOCALPREFIXPTMP/com/output/dev/today/ecmwfens_00.o.%J
 ##@ error = /com/output/prod/today/ecmwfens_00.o$(jobid)
 # @ error = LOCALPREFIXPTMP/com/output/dev/today/ecmwfens_00.o$(jobid)
+#BSUB -e LOCALPREFIXPTMP/com/output/dev/today/ecmwfens_00.o.%J
 # @ shell = /bin/sh
+#BSUB -L /bin/ksh
 # @ job_type = serial
 ##@ class = prodser
 # @ class = dev
+#BSUB -q "dev"
 # @ wall_clock_limit = 01:30:00
+#BSUB -W "01:30"
 ##@ initialdir = /tmpnwprd
 # @ initialdir = LOCALPREFIXPTMP/tmpnwprd
+#BSUB -cwd LOCALPREFIXPTMP/tmpnwprd
 # @ notification = never
 ##@ resources = ConsumableCpus(1) ConsumableMemory(500 MB)
 # @ resources = ConsumableMemory(500 MB)
+#bSUB -R "rusage[mem=500]"
+#BSUB -R "rusage[mem=1000]"
 # @ task_affinity = core(1)
 ##@ account_no = GEN-OPS
 # @ account_no = GEN-T2O
@@ -35,28 +37,36 @@ machl=`echo $mach|cut -c1`
 case $machl in
   (c)
     echo `date` job starting on cirrus
-    cluster=ccs
+    export wsrmachine=ccs
   ;;
   (s)
     echo `date` job starting on stratus
-    cluster=ccs
+    export wsrmachine=ccs
   ;;
   (t)
     echo `date` job starting on tide
-    #export MP_TASK_AFFINITY=core
-    cluster=wcoss
+    export wsrmachine=wcoss
   ;;
   (g)
     echo `date` job starting on gyre
-    cluster=wcoss
+    export wsrmachine=wcoss
   ;;
   (*)
-     echo UNKNOWN MACHINE $mach
+    echo UNKNOWN MACHINE $mach
+    export wsrmachine=unknown
   ;;
 esac
-  if [[ $cluster = ccs ]]; then
+  if [[ $wsrmachine = ccs ]]; then
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=MCM
+  else
+#export MP_TASK_AFFINITY=core
+pwd
+export PATH="$PATH:."
+shellname=`basename $SHELL`
+. /usrx/local/Modules/3.2.9/init/$shellname
+module list
+echo pathlist=$pathlist
   fi
 
 set -x
@@ -111,7 +121,17 @@ echo `date` $job j-job after
 chainsubmit=LOCALCHAINOPTION
 echo chainsubmit=$chainsubmit
 if [[ $chainsubmit = yes ]]; then
-  llsubmit LOCALPREFIXPTMP/control/wsr_prep.job
+  case $wsrmachine in
+    (ccs)
+      llsubmit LOCALPREFIXPTMP/control/wsr_prep.job
+    ;;
+    (wcoss)
+      bsub <LOCALPREFIXPTMP/control/wsr_prep.job
+    ;;
+    (*)
+      echo UNKNOWN CLUSTER $wsrmachine
+    ;;
+  esac
 fi
 
 echo `date` $job job end

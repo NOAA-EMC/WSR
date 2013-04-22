@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/ksh
+##!/bin/sh
 
 # right now outputs three files, targdata.d is created in GESdir to be read by 
 # main targeting script.   (current date)targdata.d is a copy of targdata.d, but

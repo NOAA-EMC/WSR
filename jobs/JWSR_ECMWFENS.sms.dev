@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ksh
 
 $SMSBIN/smsinit $LOADL_STEP_ID 
 
@@ -29,8 +29,8 @@ export prev_cycle=t${prev_cyc}z
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=mrf
-export RUN=wsr
+export NET=gens
+export RUN=ecme
  
 ####################################
 # File To Log Msgs
@@ -112,7 +112,7 @@ export COM=/com/${NET}/${envir}
   if [[ $envir = dev ]]; then
 export COMOUT=$localprefixptmp/com/${NET}/${envir}/${RUN}.${PDYm1}
 export COM=$localprefixptmp/com/${NET}/${envir}
-export ecedir=$localprefixptmp/com/${NET}/${envir}/wsr.$PDY
+export ecedir=$localprefixptmp/com/${NET}/${envir}/${RUN}.$PDYm1
   fi
 
 # make sure ECMWF COMOUT directory exists

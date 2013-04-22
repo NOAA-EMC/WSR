@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/ksh
+##!/bin/sh
 ####################################################################################  UNIX Script Documentation Block
 #                      .                                             .
 # Script name:         wsr_createcmc.sh

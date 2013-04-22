@@ -8,30 +8,31 @@ machl=`echo $mach|cut -c1`
 case $machl in
   (c)
     echo `date` job starting on cirrus
-    cluster=ccs
+    wsrmachine=ccs
   ;;
   (s)
     echo `date` job starting on stratus
-    cluster=ccs
+    wsrmachine=ccs
   ;;
   (t)
     echo `date` job starting on tide
     #export MP_TASK_AFFINITY=core
-    cluster=wcoss
+    wsrmachine=wcoss
   ;;
   (g)
     echo `date` job starting on gyre
-    cluster=wcoss
+    wsrmachine=wcoss
   ;;
   (*)
-     echo UNKNOWN MACHINE $mach
-     cluster=null
+    echo UNKNOWN MACHINE $mach
+    wsrmachine=unknown
   ;;
 esac
 
 if (( $# >= 1 )); then
   job=$1
   args=good
+  chainsubmit=no
   case $job in
     (ecmwfens)
       jobcardslist=wsr_ecmwfens.job
@@ -49,13 +50,25 @@ if (( $# >= 1 )); then
       jobcardslist=wsr_main.job
       chainsubmit=no
     ;;
-    (pm)
-      jobcardslist="wsr_prep.job wsr_main.job"
-      chainsubmit=yes
+    (e)
+      jobcardslist="wsr_ecmwfens.job"
+      chainsubmit=no
     ;;
     (epm)
       jobcardslist="wsr_ecmwfens.job wsr_prep.job wsr_main.job"
       chainsubmit=yes
+    ;;
+    (p)
+      jobcardslist="wsr_prep.job"
+      chainsubmit=no
+    ;;
+    (pm)
+      jobcardslist="wsr_prep.job wsr_main.job"
+      chainsubmit=yes
+    ;;
+    (m)
+      jobcardslist="wsr_main.job"
+      chainsubmit=no
     ;;
     (*)
       args=bad
@@ -63,10 +76,18 @@ if (( $# >= 1 )); then
   esac
   echo jobcardslist=$jobcardslist
   submit=no
+  submit=yes
   renameold=yes
+  renameold=no
   if (( $# >= 2 )); then
     flags=$2
     case $flags in
+      (nos)
+	submit=no
+      ;;
+      (nosubmit)
+	submit=no
+      ;;
       (submit)
 	submit=yes
       ;;
@@ -160,15 +181,15 @@ if (( $# >= 1 )); then
 	    if [[ $submit = yes ]]; then
 	      if [[ $chainfirst = yes ]]; then
 		echo `date` $0 $* submit before
-                case $cluster in
+                case $wsrmachine in
 		  (ccs)
 		    llsubmit control/$jobcards
 		  ;; 
 		  (wcoss)
-		    bsub <control/$jobcards
+		    bsub < control/$jobcards
 		  ;; 
 		  (*)
-                    echo CANNOT SUBMIT TO UNKNOWN CLUSTER $cluster
+                    echo CANNOT SUBMIT TO UNKNOWN CLUSTER $wsrmachine
 		  ;; 
                 esac
 		echo `date` $0 $* submit after
