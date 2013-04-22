@@ -98,9 +98,7 @@ case ${cmodel} in
         achar="e"                                              ;
         [ $CYL -eq 12 ] && PDY=$PDYm1                          ;
 #        COM=${COM:-/com/mrf/${envir}/wsr.$PDY}                 ;
-#        COM=/com/mrf/${envir}/wsr.$PDY                         ;
-        COM=${COM:-/com/gens/${envir}/ecme.$PDY}                         ;
-	COM=$COM/ecme.${PDY}
+        COM=/com/mrf/${envir}/wsr.$PDY                         ;
         ymdh=${PDY}${CYL}                                      ;
         SENDDBN=NO                                             ;
         SENDTRACKER=NO                                        ;;
