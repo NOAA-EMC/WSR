@@ -108,7 +108,7 @@ export envir=${envir:-test}
 export SENDCOM=${SENDCOM:-NO}
 export PARAFLAG=${PARAFLAG:-NO}
 export TRKDATA=${TRKDATA:-$DATA}
-export ATCFdir=${ATCFdir:-/com/tpc/prod/atcf}
+export ATCFdir=${ATCFdir:-/com/nhc/prod/atcf}
 
 export DATA=${DATA:-/ptmp/wx20tm/trakout}
 if [ ! -d $DATA ]
@@ -334,7 +334,7 @@ case ${cmodel} in
        atcfout="emx"                                    ;
        modtyp='global'                                  ;
        SENDTRACKER=NO                                   ;
-       SENDDBN=NO                                       ;
+       SENDDBN=YES                                       ;
        model=4                                         ;;
 
   ngm) set +x                                       ;
@@ -463,7 +463,7 @@ case ${cmodel} in
        atcfout="a${pert_posneg}${pert_num}"             ;
        modtyp='global'                                  ;
        SENDTRACKER=NO                                   ;
-       SENDDBN=NO                                       ;
+       SENDDBN=YES                                       ;
        model=10                                        ;;
 
   ece) set +x                                           ;
@@ -484,10 +484,10 @@ case ${cmodel} in
        ecegfile=                                        ;
        eceifile=                                        ;
        #COM=/com/mrf/${envir}/wsr.${PDY}                 ;
-       #COM=${COM:-/com/mrf/${envir}}                 ;
-       COM=${COM:-/com/gens/${envir}}                 ;
-       #COM=$COM/wsr.${PDY}
-       COM=$COM/ecme.${PDY}
+       #COM=${COM:-/com/mrf/${envir}}                    ;
+       COM=${COM:-/com/gens/${envir}}                   ;
+       #COM=$COM/wsr.${PDY}                              ;
+       COM=$COM/ecme.${PDY}                             ;
        fcstlen=240                                      ;
        fcsthrs=' 00 12 24 36 48 60 72 84 96 108 120 132 144   
                  156 168 180 192 204 216 228 240 99 99 99 99  
@@ -540,7 +540,7 @@ case ${cmodel} in
        echo " "; echo " ++ operational Canadian global model chosen"   ;
        echo " "                                         ;
        set -x                                           ;
-       cmcdir=/dcom_canned/us007003/${PDY}/wgrbbul/cmc         ;
+       cmcdir=/dcom/us007003/${PDY}/wgrbbul/cmc         ;
        cmcgfile=cmc_${PDY}${CYL}f                       ;
        cmcifile=nonexistant                             ;
        COM=/com/gens/prod/cmce.${PDY}/${CYL}/track      ;
@@ -584,7 +584,7 @@ case ${cmodel} in
        atcfout="c${pert_posneg}${pert_num}"             ;
        modtyp='global'                                  ;
        SENDTRACKER=NO                                   ;
-       SENDDBN=NO                                       ;
+       SENDDBN=YES                                       ;
        model=16                                        ;;
 
   hwrf) set +x                                            ;
@@ -694,7 +694,7 @@ case ${cmodel} in
        fi
        modtyp='global'                                  ;
        SENDTRACKER=NO                                   ;
-       SENDDBN=NO                                       ;
+       SENDDBN=YES                                       ;
        model=20                                        ;;
 
   *) set +x; echo " "; echo " !!! Model selected is not recognized."             ;
@@ -2498,16 +2498,16 @@ if [ ${gettrk_rcc} -eq 0 ]; then
   then
 
     gltrakarch=${gltrakarch:-${gltrkdir}/tracks.${syy}}
-    tmtrakarch=${tmtrakarch:-/nfsuser/g01/wx20tm/trak/prod/tracks.all.${syy}}
+  #  tmtrakarch=${tmtrakarch:-/nfsuser/g01/wx20tm/trak/prod/tracks.all.${syy}}
 
     glatcfarch=${glatcfarch:-${gltrkdir}/tracks.atcf.${syy}}
-    tmatcfarch=${tmatcfarch:-/nfsuser/g01/wx20tm/trak/prod/tracks.atcf.${syy}}
+  #  tmatcfarch=${tmatcfarch:-/nfsuser/g01/wx20tm/trak/prod/tracks.atcf.${syy}}
 
     glatuxarch=${glatuxarch:-${gltrkdir}/tracks.atcfunix.${syy}}
-    tmatuxarch=${tmatuxarch:-/nfsuser/g01/wx20tm/trak/prod/tracks.atcfunix.${syy}}
+  #  tmatuxarch=${tmatuxarch:-/nfsuser/g01/wx20tm/trak/prod/tracks.atcfunix.${syy}}
 
     glradarch=${glradarch:-${gltrkdir}/tracks.radii.${syy}}
-    tmradarch=${tmradarch:-/nfsuser/g01/wx20tm/trak/prod/tracks.radii.${syy}}
+  #  tmradarch=${tmradarch:-/nfsuser/g01/wx20tm/trak/prod/tracks.radii.${syy}}
 
     cat ${DATA}/trak.${atcfout}.all.${PDY}${CYL}   >>${gltrakarch}
     #cat ${DATA}/trak.${atcfout}.all.${PDY}${CYL}   >>${tmtrakarch}
@@ -2539,7 +2539,7 @@ if [ ${gettrk_rcc} -eq 0 ]; then
 
       #tmscrdir=/nfsuser/g01/wx20tm/trak/prod
 
-      #tmtrakstat=${tmsclrdir}/tracker.prod.status
+      #tmtrakstat=${tmscrdir}/tracker.prod.status
       #echo "${atcfout} tracker completed okay for ${PDY}${CYL}" >>${tmtrakstat}
 
       export SENDDBN=${SENDDBN:-YES}

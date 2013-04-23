@@ -105,7 +105,7 @@ sh $utilscript/setpdy.sh
 . PDY
 
 # enable hardwired date for testing
-if (( 0 == 1 )); then
+if (( 0 == 0 )); then
   echo RLW OVERWRITE PDY VARIABLES before #################################################################
   export PDY=20130418
   export PDYm1=20130417
