@@ -104,8 +104,8 @@ sh $utilscript/setup.sh
 sh $utilscript/setpdy.sh
 . PDY
 echo RLW OVERWRITE PDY VARIABLES before #################################################################
-export PDY=20130415
-export PDYm1=20130414
+export PDY=20130416
+export PDYm1=20130415
 echo RLW OVERWRITE PDY VARIABLES after #################################################################
 
 ##############################################
