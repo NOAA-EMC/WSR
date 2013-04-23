@@ -103,10 +103,14 @@ sh $utilscript/setup.sh
 
 sh $utilscript/setpdy.sh
 . PDY
-echo RLW OVERWRITE PDY VARIABLES before #################################################################
-export PDY=20130416
-export PDYm1=20130415
-echo RLW OVERWRITE PDY VARIABLES after #################################################################
+
+# enable hardwired date for testing
+if (( 0 == 1 )); then
+  echo RLW OVERWRITE PDY VARIABLES before #################################################################
+  export PDY=20130418
+  export PDYm1=20130417
+  echo RLW OVERWRITE PDY VARIABLES after #################################################################
+fi
 
 ##############################################
 # Define COM directories
