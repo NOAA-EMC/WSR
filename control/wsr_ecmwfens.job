@@ -23,7 +23,7 @@
 # @ notification = never
 ##@ resources = ConsumableCpus(1) ConsumableMemory(500 MB)
 # @ resources = ConsumableMemory(500 MB)
-#bSUB -R "rusage[mem=500]"
+##BSUB -R "rusage[mem=500]"
 #BSUB -R "rusage[mem=1000]"
 # @ task_affinity = core(1)
 ##@ account_no = GEN-OPS
