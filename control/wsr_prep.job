@@ -27,6 +27,7 @@
 # @ task_affinity = cpu(1)
 # @ total_tasks = 16
 #BSUB -n 16
+#BSUB -R span[ptile=16]
 # @ node = 1
 # @ notification = never
 ##@ account_no = GEN-OPS
