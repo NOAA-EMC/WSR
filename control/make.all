@@ -18,7 +18,7 @@ if (( rc == 0 )); then
   if [[ $nodirs = yes ]]; then
     dirbase=`pwd`
     gribdir=grib_api-1.9.16
-    gribdirw=${gribdir}_working
+    gribdirw=${gribdir}-working
     cp -pr $gribdir $gribdirw
     rc=$?
     if (( rc == 0 )); then
