@@ -158,7 +158,8 @@ if [[ $icopygb -eq 1 ]]; then
            (( itask = itask + 1 ))
 
           done
-          poe -cmdfile poescript -stdoutmode ordered -ilevel 3
+          #poe -cmdfile poescript -stdoutmode ordered -ilevel 3
+          mpirun.lsf -cmdfile poescript -stdoutmode ordered -ilevel 3
 fi
 
        (( itask = 0 ))
@@ -206,7 +207,8 @@ EOF
            (( itask = itask + 1 ))
           done
                   
-           poe  -cmdfile ncmd.file  -stdoutmode ordered -ilevel 2
+           #poe  -cmdfile ncmd.file  -stdoutmode ordered -ilevel 2
+           mpirun.lsf  -cmdfile ncmd.file  -stdoutmode ordered -ilevel 2
            /bin/rm gens*.t${eh}z.pgrbaf$lta
    done
    i=$(expr $i + 1)
@@ -259,7 +261,8 @@ done
            ((itask+=1))
          done
            
-   /usr/bin/poe -cmdfile reform.file -stdoutmode ordered -ilevel 3
+   #/usr/bin/poe -cmdfile reform.file -stdoutmode ordered -ilevel 3
+   mpirun.lsf -cmdfile reform.file -stdoutmode ordered -ilevel 3
     /bin/rm reform.*
 
 exit

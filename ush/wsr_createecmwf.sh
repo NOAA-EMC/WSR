@@ -184,7 +184,8 @@ do
            [[ $nm -le 15 ]] && hex=0${hex}
            
            cat << EOF >> $cmdfile
-          /usr/bin/egrep -i "${var[varid]}.*${hex}3300*" ecens.inv |cut -f1-2 -d :|$WGRIB -i -grib $ensfile_lt -o ${WORK}/pgb.${fnum}
+          #/usr/bin/egrep -i "${var[varid]}.*${hex}3300*" ecens.inv |cut -f1-2 -d :|$WGRIB -i -grib $ensfile_lt -o ${WORK}/pgb.${fnum}
+          /bin/egrep -i "${var[varid]}.*${hex}3300*" ecens.inv |cut -f1-2 -d :|$WGRIB -i -grib $ensfile_lt -o ${WORK}/pgb.${fnum}
            if [[ $icopygb -eq 1 ]]; then
             $COPYGB -g2 -i1 -x pgb.${fnum} pgb_use.${fnum} 
             rm pgb.${fnum}
@@ -221,7 +222,8 @@ EOF
            (( itask = itask + 1 ))
           done
 
-         /usr/bin/poe -cmdfile ecmd.file -stdoutmode ordered -ilevel 3
+         #/usr/bin/poe -cmdfile ecmd.file -stdoutmode ordered -ilevel 3
+         mpirun.lsf -cmdfile ecmd.file -stdoutmode ordered -ilevel 3
          /bin/rm ecens_DCE*
     fi
 
@@ -272,6 +274,7 @@ done
            ((itask+=1))
          done
   
-   /usr/bin/poe -cmdfile reform.file -stdoutmode ordered -ilevel 3
+   #/usr/bin/poe -cmdfile reform.file -stdoutmode ordered -ilevel 3
+   mpirun.lsf -cmdfile reform.file -stdoutmode ordered -ilevel 3
    /bin/rm reform.*
 exit

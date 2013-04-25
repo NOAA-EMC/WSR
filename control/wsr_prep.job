@@ -49,11 +49,12 @@ case $machl in
   ;;
   (t)
     echo `date` job starting on tide
-    #export MP_TASK_AFFINITY=core
+    export MP_TASK_AFFINITY=core
     export wsrmachine=wcoss
   ;;
   (g)
     echo `date` job starting on gyre
+    export MP_TASK_AFFINITY=core
     export wsrmachine=wcoss
   ;;
   (*)
