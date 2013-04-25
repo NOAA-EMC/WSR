@@ -1,10 +1,11 @@
 SHELL	=/bin/bash
 SELF_DIR := ${CURDIR}
-#INCMOD	= -I /global/save/wx20ys/tobs/grib_api_dir/include
+INCMOD	= -I /global/save/wx20ys/tobs/grib_api_dir/include
 INCMOD  = -I /ensemble/save/Richard.Wobus/s/grib_api_jpeg/include
 INCMOD  = -I $(SELF_DIR)/../../../../grib_api_jpeg/include
 INCMOD  = -I $(SELF_DIR)/../../grib_api_jpeg/include
 INCMOD  = -I $(SELF_DIR)/../../include
+INCMOD  = -I $(SELF_DIR)/../../ecmwf_grib_api-1.9.16/include
 INCM	=
 SRCS	= dtsset.f90
 SRCM	=
@@ -19,22 +20,23 @@ FFLAGS	=                           -list -traceback -nofpscomp
 FFLAGS                                                =
 FFLAGS	= -list -traceback
 LDFLAGS	=   
-#LIBS    =  -L/global/save/wx20ys/tobs/grib_api_dir/lib -lgrib_api_f90 -lgrib_api
+LIBS    =  -L/global/save/wx20ys/tobs/grib_api_dir/lib -lgrib_api_f90 -lgrib_api
 LIBS    =  -L/ensemble/save/Richard.Wobus/s/grib_api_jpeg/lib -lgrib_api_f90 -lgrib_api -L/nwprod/lib -ljasper
 LIBS    =  -L$(SELF_DIR)/../../../../grib_api_jpeg/lib -lgrib_api_f90 -lgrib_api -L/nwprod/lib -ljasper
 LIBS    =  -L$(SELF_DIR)/../../grib_api_jpeg/lib -lgrib_api_f90 -lgrib_api -L/nwprod/lib -ljasper
 LIBS    =  -L$(SELF_DIR)/../../lib -lgrib_api_f90 -lgrib_api -L/nwprod/lib -ljasper
+LIBS    =  -L$(SELF_DIR)/../../ecmwf_grib_api-1.9.16/lib -lgrib_api_f90 -lgrib_api -L/nwprod/lib -ljasper
 CMD	=wsr_dtsset
 
 all:	$(CMD)
 
-$(CMD):	$(OBJS) $(SRCS) makefile
+$(CMD):	$(OBJS) $(SRCS) makefile.wcoss
 	$(FC) $(FFLAGS) $(LDFLAGS) $(OBJS) $(LIBS) -o $(CMD)
 
 $(OBJS):	$(SRCS)
 	$(FC) $(INCMOD) $(FFLAGS) -c $(SRCS)
 
-$(OBJS):	makefile
+$(OBJS):	makefile.wcoss
 
 allclean:       clean all
 
@@ -42,4 +44,5 @@ clean:
 	-rm -f $(OBJS) $(MODS)
 
 clobber:        clean
-	-rm -f $(CMD)
+	
+	rm -f $(CMD)
