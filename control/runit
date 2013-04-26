@@ -140,7 +140,7 @@ if (( $# >= 1 )); then
 	    if [[ $chainfirst = yes ]] ; then
 	      dtg=`date +%Y%m%d%H%M%S`
 	      echo dtg=$dtg
-	      for dir in com tmpnwprd control
+	      for dir in com tmpnwprd control nwges
 	      do
 		echo $dir rename before
 		ls -ald ${dir}*

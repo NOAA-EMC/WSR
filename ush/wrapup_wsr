@@ -3,10 +3,49 @@
 
 # set -x
 
+####################################
+# Identify and set up test mode
+####################################
+
+dfile=$0
+dfb=`basename $dfile`
+dfd=`dirname $dfile`
+if [[ "$dfd" = '.' ]]; then
+  dfd=`pwd`
+fi
+#dfd=/nwprod/ush
+dfdd=`dirname $dfd`
+dfddd=`dirname $dfdd`
+dfdddb=`basename $dfddd`
+expid=$dfdddb
+if [[ "$expid" = "/" ]]; then
+  test=no
+else
+  test=yes
+  echo dfile=$dfile dfd=$dfd dfb=$dfb
+  echo dfdddb=$dfdddb
+  echo test=$test expid=$expid
+fi
+
+####################################
+# Set Working Directories
+####################################
+
+if [[ $test = yes ]]; then
+  GESdir=/ptmp/$LOGNAME/o/$expid/nwges/wsr
+fi
+
+GESdir=${GESdir:-/nwges/wsr}
+
+echo GESdir=$GESdir
+
+if [[ $test = yes ]]; then
+  ls -al $GESdir
+fi
+
 ###################################################################
 # READ IN DATA FROM targdata.d
 ###################################################################
-GESdir=${GESdir:-/nwges/wsr}
 
 #### Read in targdata.d header (first 9 lines) ####
 PDY=`head -1 $GESdir/targdata.d`
@@ -712,6 +751,8 @@ echo "-------------------------------------------------------------------"
 echo "| The Winter Storm Reconnaissance decision file has been created. |"
 echo "-------------------------------------------------------------------"
 
+if [[ $test = no ]]; then
+
 ###ping -c1 emc1 > /dev/null 2>&1
 ###pingerr=$?
 ###if test $pingerr -eq 0
@@ -736,21 +777,34 @@ echo "-------------------------------------------------------------------"
 ftpEOF
 ###fi
 
+fi
+
 echo ""
 echo "Do you want to send an email out to CARCAH? (y/n)"
 echo ""
 read emailans
 
+
 if test "$emailans" = 'y' || test "$emailans" = 'Y'
 then
+  if [[ $test = no ]]; then
    cat $GESdir/${PDY}carcah_decision.txt | mail -s WINTER_STORM_RECON_REQUEST ncep.tpc.carcah@noaa.gov
    cat $GESdir/${PDY}decision.txt | mail -s WINTER_STORM_RECON_REQUEST sdm@noaa.gov
    cat $GESdir/${PDY}decision.txt | mail -s WINTER_STORM_RECON_REQUEST stephen.Renwick@keesler.af.mil
    cat $GESdir/${PDY}decision.txt | mail -s WINTER_STORM_RECON_REQUEST steverenwick@cableone.net 
    echo "Email Sent to ncep.tpc.carcah@noaa.gov and sdm@noaa.gov"
    echo "Contact Info: John Pavone (305)229-4474"
+  else
+   echo "Email NOT Sent to ncep.tpc.carcah@noaa.gov and sdm@noaa.gov"
+   echo "Contact Info: John Pavone (305)229-4474"
+  fi
 else
+  if [[ $test = no ]]; then
    cat $GESdir/${PDY}decision.txt | mail -s WINTER_STORM_RECON_REQUEST sdm@noaa.gov
    echo "Email Sent to sdm@noaa.gov"
+  else
+   echo "Email NOT Sent to sdm@noaa.gov"
+  fi
 fi
+
 exit
