@@ -84,6 +84,13 @@ if (( $# >= 1 )); then
       else
 	mkdir -p $localprefixptmp
       fi
+      yyyymmdd=`date +%Y%m%d`
+      echo yyyymmdd=$yyyymmdd
+      if [[ -d $localprefixptmp/com/output/dev/$yyyymmdd ]]; then
+	cleanall=yes
+      else
+	cleanall=no
+      fi
       if [[ -d $localprefixptmp ]]; then
 	cd $localprefixptmp
 	rc=$?
@@ -91,9 +98,14 @@ if (( $# >= 1 )); then
 	  pwd
 	  if [[ $renameold = yes ]]; then
 	    if [[ $chainfirst = yes ]] ; then
+	      if [[ $cleanall = yes ]]; then
+		cleanlist="tmpnwprd com/logs com/output/dev/$yyyymmdd com/mrf/dev/wsr.$yyyymmdd com/wsr/dev control nwges"
+	      else
+		cleanlist="tmpnwprd com/logs"
+	      fi
 	      dtg=`date +%Y%m%d%H%M%S`
 	      echo dtg=$dtg
-	      for dir in com tmpnwprd control
+	      for dir in $cleanlist
 	      do
 		echo $dir rename before
 		ls -ald ${dir}*
@@ -125,6 +137,7 @@ if (( $# >= 1 )); then
 	  if [[ $gooddirs = yes ]]; then
 	    echo `date` $0 $* jobcards before
 	    sed -e"s#EXPID#$expid#" \
+		-e"s#OUTDAY#$outday#" \
 		-e"s#LOCALPREFIXPTMP#$localprefixptmp#" \
 		-e"s#LOCALPREFIXSAVE#$localprefixsave#" \
 		-e"s#LOCALCHAINOPTION#$chainsubmit#" \
