@@ -1,5 +1,4 @@
-#!/bin/ksh
-##!/bin/sh
+#!/bin/sh
 
 # right now outputs three files, targdata.d is created in GESdir to be read by 
 # main targeting script.   (current date)targdata.d is a copy of targdata.d, but
@@ -19,44 +18,10 @@ curhh=`date -u +%H`
 PDY=${curyy}${curmm}${curdd}
 
 ####################################
-# Identify and set up test mode
-####################################
-
-dfile=$0
-dfb=`basename $dfile`
-dfd=`dirname $dfile`
-if [[ "$dfd" = '.' ]]; then
-  dfd=`pwd`
-fi
-#dfd=/nwprod/ush
-dfdd=`dirname $dfd`
-dfddd=`dirname $dfdd`
-dfdddb=`basename $dfddd`
-expid=$dfdddb
-if [[ "$expid" = "/" ]]; then
-  test=no
-else
-  test=yes
-  echo dfile=$dfile dfd=$dfd dfb=$dfb
-  echo dfdddb=$dfdddb
-  echo test=$test expid=$expid
-fi
-
-####################################
 # Set Working Directories
 ####################################
 
-if [[ $test = yes ]]; then
-  GESdir=/ptmp/$LOGNAME/o/$expid/nwges/wsr
-fi
-
 GESdir=${GESdir:-/nwges/wsr}
-
-echo GESdir=$GESdir
-
-if [[ $test = yes ]]; then
-  ls -al $GESdir
-fi
 
 text=${GESdir}/targdata.txt.$curhh
 rm -rf $text 2> /dev/null
@@ -644,13 +609,9 @@ done
 chmod 777 ${GESdir}/targdata_tmp.d
 mv ${GESdir}/targdata_tmp.d ${GESdir}/targdata.d
 
-if [[ $test = no ]]; then
-
 ssh -l wx12sd ncorzdm "mkdir -p /home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY"
 scp ${GESdir}/targdata.d wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY
 scp ${GESdir}/targdata.txt.$curhh wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY/targdata.txt
-
-fi
 
 exit
 
