@@ -1,54 +1,11 @@
-#!/bin/ksh
-##!/bin/sh
+#!/bin/sh
 
 # set -x
-
-####################################
-# Identify and set up test mode
-####################################
-
-dfile=$0
-dfb=`basename $dfile`
-dfd=`dirname $dfile`
-if [[ "$dfd" = '.' ]]; then
-  dfd=`pwd`
-fi
-#dfd=/nwprod/ush
-dfdd=`dirname $dfd`
-dfddd=`dirname $dfdd`
-dfdddb=`basename $dfddd`
-expid=$dfdddb
-if [[ "$expid" = "/" ]]; then
-  test=no
-else
-  test=yes
-  echo dfile=$dfile dfd=$dfd dfb=$dfb
-  echo dfdddb=$dfdddb
-  echo test=$test expid=$expid
-fi
-
-####################################
-# Set Working Directories
-####################################
-
-if [[ $test = yes ]]; then
-  GESdir=/ptmp/$LOGNAME/o/$expid/nwges/wsr
-fi
-
-GESdir=${GESdir:-/nwges/wsr}
-
-echo GESdir=$GESdir
-
-if [[ $test = yes ]]; then
-  ls -al $GESdir
-fi
-
-echo test=$test
-exit
 
 ###################################################################
 # READ IN DATA FROM targdata.d
 ###################################################################
+GESdir=${GESdir:-/nwges/wsr}
 
 #### Read in targdata.d header (first 9 lines) ####
 PDY=`head -1 $GESdir/targdata.d`
@@ -107,8 +64,14 @@ trackinfo=${GESdir}/veriftracks${curyy}.d
 rm -rf $text
 rm -rf $carcahtext
 
-flydate[1]=`/nwprod/util/exec/ndate +48 ${PDY}00`
-flydate[2]=`/nwprod/util/exec/ndate +72 ${PDY}00`
+# Two phases of the program, with separate leading time
+# 
+flydate1=`/nwprod/util/exec/ndate +48 ${PDY}00`
+flydate2=`/nwprod/util/exec/ndate +72 ${PDY}00`
+flydate[1]=`echo ${flydate1}|cut -c1-8`
+flydate[2]=`echo ${flydate2}|cut -c1-8`
+flytime[1]=`/nwprod/util/exec/ndate +48 ${PDY}00`
+flytime[2]=`/nwprod/util/exec/ndate +72 ${PDY}00`
 
 
 echo "Decision issued from NCEP at ${curhh}Z on ${curmm}/${curdd}/${curyy}" >> $text
@@ -173,9 +136,9 @@ then
             read tracknum[$ct]
             echo  
 
-            if [[ ${tracknum[$ct]} -gt 56 || ${tracknum[$ct]} -lt 1 ]]
+            if [[ ${tracknum[$ct]} -gt 100 || ${tracknum[$ct]} -lt 1 ]]
 	    then
-                echo "Invalid track number; valid tracks are 1 to 26, 31 to 49 and 51 to 53"
+                echo "Invalid track number; valid tracks are 1 to 26, 31 to 49 and 51 to 100"
                 echo
                 mk0=0
             fi
@@ -183,7 +146,7 @@ then
 
             if [[ ${tracknum[$ct]} -eq 50 || ${tracknum[$ct]} -eq 30 ]]
 	    then
-   		echo "Invalid track number; valid tracks are 1 to 26, 31 to 49 and 51 to 53"
+   		echo "Invalid track number; valid tracks are 1 to 26, 31 to 49 and 51 to 100"
 		echo
  		mk0=0 
 	    fi
@@ -191,26 +154,26 @@ then
         done
 
         mk20=1
-        controldate[$ct]=`echo ${flydate[1]}|cut -c7-8`
+        controldate[$ct]=`echo ${flytime[1]}|cut -c7-8`
+        controlhour[$ct]=`echo ${flytime[1]}|cut -c9-10`
         while test ${mk20} -eq 1 
         do
-            echo "<ENTER> TO ACCEPT WSR DEFAULT CONTROL TIME (${controldate[$ct]}/00Z),"
+            echo "<ENTER> TO ACCEPT WSR DEFAULT CONTROL TIME (${controldate[$ct]}/${controlhour[$ct]}Z)," 
             echo "        OR PRESS c TO CHANGE THE CONTROL TIME"
             read ans
             echo 
             if test "$ans" = "" 
             then
-               hr=`echo ${flydate[1]}|cut -c9-10`
-               controltime[$ct]=${hr}
+               controltime[$ct]=${flytime[1]}
 	       mk20=2
             else
-               echo "ENTER THE TWO DIGIT DATE OF THE CONTROL TIME"
-	       read controldate[$ct]
                echo
                echo "ENTER THE TWO DIGIT HOUR OF THE CONTROL TIME"
-               read controltime[$ct]
+               read controlhour[$ct]
+               controltime[$ct]=${flydate[1]}${controlhour[$ct]}
+
                echo
-               echo "THE CONTROL TIME FOR TRACK ${tracknum[$ct]} IS ${controldate[$ct]}/${controltime[$ct]}Z"
+               echo "THE CONTROL TIME FOR TRACK ${tracknum[$ct]} IS ${controldate[$ct]}/${controlhour[$ct]}Z"
                echo "DO YOU WISH TO MAKE ANY CHANGES TO THIS DATA? (y/n)"
                read controlans
 	       echo
@@ -307,9 +270,9 @@ then
                 fi
 
                 casenumber=${casenum[$index]}
-                if [[ ${obsdate[$casenumber]} -ne ${flydate[1]} && ${mk1} -eq 1 ]]
+                if [[ ${obsdate[$casenumber]} -ne ${controltime[$ct]} && ${mk1} -eq 1 ]]
 		then
-                    echo "  You must select a case with ${flydate[1]} as the observation time"
+                    echo "  You must select a case with ${controltime[$ct]} as the observation time"
                     echo "  Please try again"
                     echo 
                     mk1=0 
@@ -353,7 +316,7 @@ then
         echo "---------------------------------------------------------------"
         echo "PLEASE VERIFY THE FOLLOWING INFORMATION"
         echo "---------------------------------------------------------------"
-        echo "OBSERVING AT TIME: ${flydate[1]}"
+        echo "OBSERVING AT TIME: ${controltime[$ct]}"
 
         ct=1
         option=1
@@ -396,7 +359,7 @@ then
         if test "$response" = 'n' || test "$response" = 'N'
         then
             ct=1
-            echo ${flydate[1]} >> $trackinfo
+            echo ${controltime[$ct]} >> $trackinfo
             while test ${ct} -le ${numflights}
             do
                 if [[ ${tracknum[$ct]} -ge 1 && ${tracknum[$ct]} -le 29 ]]
@@ -407,11 +370,19 @@ then
 		then
   		    city=Honolulu
                 fi
+                if [[ ${tracknum[$ct]} -ge 61  && ${tracknum[$ct]} -le 66 ]]
+		then
+  		    city=Gulf 
+                fi
+                if [[ ${tracknum[$ct]} -ge 68  && ${tracknum[$ct]} -le 90 ]]
+		then
+  		    city=Yokota
+                fi
                 echo "  A flight is requested from ${city} along track ${tracknum[$ct]}" >> $text
-                echo "      with a control time of ${controldate[$ct]}/${controltime[$ct]}Z" >> $text
+                echo "      with a control time of ${controldate[$ct]}/${controlhour[$ct]}Z" >> $text
                 echo >> $text 
                 echo "  A flight is requested from ${city} along track ${tracknum[$ct]}" >> $carcahtext
-                echo "      with a control time of ${controldate[$ct]}/${controltime[$ct]}Z" >> $carcahtext
+                echo "      with a control time of ${controldate[$ct]}/${controlhour[$ct]}Z" >> $carcahtext
                 echo >> $carcahtext
                 echo "  Verification information is as follows:" >> $text
                 echo >> $text
@@ -428,7 +399,7 @@ then
                     echo "      Comments:  ${comments[$casenumber]}" >> $text
                     echo >> $text
                     echo ${veridate[$casenumber]} >> $verinfo
-                    echo ${flydate[1]} >> $verinfo
+                    echo ${controltime[$ct]} >> $verinfo
                     echo ${vrlon[$casenumber]} >> $verinfo
                     echo ${vrlat[$casenumber]} >> $verinfo
                     echo ${radvr} >> $verinfo
@@ -459,16 +430,16 @@ then
                     read tracknum[$index]
                     echo
 
-                    if [[ ${tracknum[$index]} -gt 56 || ${tracknum[$index]} -lt 1 ]]
+                    if [[ ${tracknum[$index]} -gt 100  || ${tracknum[$index]} -lt 1 ]]
 		    then
-                        echo "Invalid track number; valid tracks are 1 to 29, 31 to 49 and 51 to 56"
+                        echo "Invalid track number; valid tracks are 1 to 29, 31 to 49 and 51 to 100 "
                         echo
                         mk0=0
                     fi
  
                     if [[ ${tracknum[$index]} -eq 50 || ${tracknum[$index]} -eq 30 ]]
 		    then
-			echo "Invalid track number; valid tracks are 1 to 29, 31 to 49 and 51 to 56"
+			echo "Invalid track number; valid tracks are 1 to 29, 31 to 49 and 51 to 100"
 			echo
 			mk0=0
 		    fi
@@ -558,9 +529,9 @@ then
 		    fi
 
                     casenumber=${casenum[$index]}
-                    if [[ ${obsdate[$casenumber]} -ne ${flydate[1]} && ${mk1} -eq 1 ]]
+                    if [[ ${obsdate[$casenumber]} -ne ${controltime[$ct]} && ${mk1} -eq 1 ]]
 		    then
-                        echo "You must select a case with ${flydate[1]} as the observation time"
+                        echo "You must select a case with ${controltime[$ct]} as the observation time"
                         echo "Please try again"
                         echo
                         mk1=0
@@ -606,7 +577,7 @@ then
     echo >> $text
     echo "  Additional comments:  ${additcomments}" >> $text
     echo >> $text
-    echo "FLIGHT REQUEST FOR ${flydate[1]}" >> $carcahtext
+    echo "FLIGHT REQUEST FOR ${controltime[$ct]}" >> $carcahtext
     echo >> $carcahtext
     echo "  No flight is requested" >> $carcahtext
     echo >> $carcahtext
@@ -661,16 +632,16 @@ clear
             read tracknum[$ct]
             echo
  
-            if [[ ${tracknum[$ct]} -gt 56 || ${tracknum[$ct]} -lt 1 ]]
+            if [[ ${tracknum[$ct]} -gt 100 || ${tracknum[$ct]} -lt 1 ]]
 	    then
-                echo "Invalid track number; valid tracks are 1 to 29, 31 to 49 and 51 to 56"
+                echo "Invalid track number; valid tracks are 1 to 29, 31 to 49 and 51 to 100"
                 echo
                 mk3=0
             fi
  
 	    if [[ ${tracknum[$ct]} -eq 50 || ${tracknum[$ct]} -eq 30 ]]
 	    then
-		echo "Invalid track number; valid tracks are 1 to 29, 31 to 49 and 51 to 56"
+		echo "Invalid track number; valid tracks are 1 to 29, 31 to 49 and 51 to 100"
 		echo
 		mk3=0
      	    fi
@@ -701,6 +672,15 @@ clear
             if [[ ${tracknum[$ct]} -ge 31 && ${tracknum[$ct]} -le 56 ]]
 	    then
                 city=Honolulu
+            fi
+
+            if [[ ${tracknum[$ct]} -ge 61 && ${tracknum[$ct]} -le 66 ]]
+	    then
+                city=Gulf
+            fi
+            if [[ ${tracknum[$ct]} -ge 68 && ${tracknum[$ct]} -le 90 ]]
+	    then
+                city=Yokota
             fi
 
             echo "  A flight from ${city} along track ${tracknum[$ct]} is possible" >> $text
@@ -754,8 +734,6 @@ echo "-------------------------------------------------------------------"
 echo "| The Winter Storm Reconnaissance decision file has been created. |"
 echo "-------------------------------------------------------------------"
 
-if [[ $test = no ]]; then
-
 ###ping -c1 emc1 > /dev/null 2>&1
 ###pingerr=$?
 ###if test $pingerr -eq 0
@@ -769,45 +747,53 @@ if [[ $test = no ]]; then
 #   put ${PDY}decision.txt decision.txt
 #   bye
 #ftpEOF
-   ftp ncorzdm << ftpEOF > /dev/null 2>&1
-   cd /home/people/nco/www/htdocs/pmb/sdm_wsr
-   mkdir $PDY
-   cd $PDY
-   lcd $GESdir
-   put ${PDY}carcah_decision.txt carcah_decision.txt
-   put ${PDY}decision.txt decision.txt
-   bye
-ftpEOF
-###fi
+#  ftp rzdm << ftpEOF > /dev/null 2>&1
+#  cd /home/people/nco/www/htdocs/pmb/sdm_wsr
+#  mkdir $PDY
+#  cd $PDY
+#  lcd $GESdir
+#  put ${PDY}carcah_decision.txt carcah_decision.txt
+#  put ${PDY}decision.txt decision.txt
+#  bye
+#ftpEOF
 
-fi
+ssh -l wx12sd ncorzdm "mkdir -p /home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY"
+scp ${GESdir}/${PDY}carcah_decision.txt wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY/carcah_decision.txt
+scp ${GESdir}/${PDY}decision.txt wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY/decision.txt
+
+###fi
 
 echo ""
 echo "Do you want to send an email out to CARCAH? (y/n)"
 echo ""
 read emailans
 
-
 if test "$emailans" = 'y' || test "$emailans" = 'Y'
 then
-  if [[ $test = no ]]; then
-   cat $GESdir/${PDY}carcah_decision.txt | mail -s WINTER_STORM_RECON_REQUEST ncep.tpc.carcah@noaa.gov
+   cat $GESdir/${PDY}carcah_decision.txt | mail -s WINTER_STORM_RECON_REQUEST ncep.nhc.carcah@noaa.gov
    cat $GESdir/${PDY}decision.txt | mail -s WINTER_STORM_RECON_REQUEST sdm@noaa.gov
-   cat $GESdir/${PDY}decision.txt | mail -s WINTER_STORM_RECON_REQUEST stephen.Renwick@keesler.af.mil
-   cat $GESdir/${PDY}decision.txt | mail -s WINTER_STORM_RECON_REQUEST steverenwick@cableone.net 
-   echo "Email Sent to ncep.tpc.carcah@noaa.gov and sdm@noaa.gov"
+   cat $GESdir/${PDY}decision.txt | mail -s WINTER_STORM_RECON_REQUEST wr-roc@noaa.gov
+   cat $GESdir/${PDY}decision.txt | mail -s WINTER_STORM_RECON_REQUEST Jack.R.Parrish@noaa.gov
+   cat $GESdir/${PDY}decision.txt | mail -s WINTER_STORM_RECON_REQUEST Paul.Flaherty@noaa.gov
+   cat $GESdir/${PDY}decision.txt | mail -s WINTER_STORM_RECON_REQUEST Warren.Blier@noaa.gov
+#  cat $GESdir/${PDY}decision.txt | mail -s WINTER_STORM_RECON_REQUEST stephen.Renwick@keesler.af.mil
+#  cat $GESdir/${PDY}decision.txt | mail -s WINTER_STORM_RECON_REQUEST steverenwick@cableone.net 
+#  cat $GESdir/${PDY}decision.txt | mail -s WINTER_STORM_RECON_REQUEST Donald.Brinson@keesler.af.mil
+   echo "Email Sent to:"
+   echo " "
+   echo "ncep.nhc.carcah@noaa.gov" 
+   echo "sdm@noaa.gov" 
+   echo "wr-roc@noaa.gov" 
+#  echo "stephen.Renwick@keesler.af.mil" 
+#  echo "steverenwick@cableone.net"
+#  echo "Donald.Brinson@keesler.af.mil"
+   echo "Jack.R.Parrish@noaa.gov"
+   echo "Paul.Flaherty@noaa.gov"
+   echo "Warren.Blier@noaa.gov"
+   echo " "
    echo "Contact Info: John Pavone (305)229-4474"
-  else
-   echo "Email NOT Sent to ncep.tpc.carcah@noaa.gov and sdm@noaa.gov"
-   echo "Contact Info: John Pavone (305)229-4474"
-  fi
 else
-  if [[ $test = no ]]; then
    cat $GESdir/${PDY}decision.txt | mail -s WINTER_STORM_RECON_REQUEST sdm@noaa.gov
    echo "Email Sent to sdm@noaa.gov"
-  else
-   echo "Email NOT Sent to sdm@noaa.gov"
-  fi
 fi
-
 exit

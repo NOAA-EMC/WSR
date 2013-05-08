@@ -50,9 +50,6 @@ if [[ $test = yes ]]; then
   GESdir=/ptmp/$LOGNAME/o/$expid/nwges/wsr
 fi
 
-echo test=$test
-exit
-
 GESdir=${GESdir:-/nwges/wsr}
 
 echo GESdir=$GESdir
@@ -68,7 +65,9 @@ cd $GESdir
 rm targdata.d
 rm -rf targdata.d 2> /dev/null
 
+if [[ $test = no ]]; then
 clear
+fi
 
 echo $PDY >> $GESdir/targdata.d
 
@@ -553,7 +552,9 @@ do
         fi
         echo
     done
+    if [[ $test = no ]]; then
     clear
+    fi
 done
 
 echo "------------------------------------------------------------------"

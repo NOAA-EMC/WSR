@@ -19,7 +19,15 @@ if (( $# >= 1 )); then
       jobcardslist=wsr_prep.job
       chainsubmit=no
     ;;
+    (p)
+      jobcardslist=wsr_prep.job
+      chainsubmit=no
+    ;;
     (main)
+      jobcardslist=wsr_main.job
+      chainsubmit=no
+    ;;
+    (m)
       jobcardslist=wsr_main.job
       chainsubmit=no
     ;;
@@ -37,7 +45,9 @@ if (( $# >= 1 )); then
   esac
   echo jobcardslist=$jobcardslist
   submit=no
+  submit=yes
   renameold=yes
+  renameold=no
   if (( $# >= 2 )); then
     flags=$2
     case $flags in
