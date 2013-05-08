@@ -5,6 +5,9 @@ CMD =   wsr_flights_allnorms
 #FC =    ncepxlf  -qmaxmem=-1
 FC =    ifort -mkl=sequential
 FFLAGS= -list -traceback
+FFLAGS= -list -convert big_endian -assume byterecl
+FFLAGS= -list -convert big_endian -assume byterecl -traceback
+
 SRCS=	flights_allnorms.f interp.f subroutines.f eigen.f
 OBJS=   $(SRCS:.f=.o)
 #LIBS= /usr/lib/libblas.a

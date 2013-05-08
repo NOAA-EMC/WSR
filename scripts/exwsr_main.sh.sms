@@ -449,6 +449,7 @@ do
        echo "$idim $jdim $jdim $mem $nv $ne9 $start $nd_sondes $nd_satobs200 $nd_satobs500 $nd_satobs850 $nvtot $ndtot" > params
     
        export XLFUNIT_93="perts_${ymmdd}_${lt1}.d"
+       export     FORT93="perts_${ymmdd}_${lt1}.d"
 
       startmsg
        $EXECwsr/wsr_tcoeffuvt < params >> $pgmout 2> errfile
@@ -494,6 +495,7 @@ let ne1=idim*jdim*12
 echo "$idim $jdim $mem $ne1 $jdim $i" > params
 
 export XLFUNIT_99="perts_${ymmdd}_${lt2}.d"
+export     FORT99="perts_${ymmdd}_${lt2}.d"
 
 startmsg
 $EXECwsr/wsr_xvvest_allnorms < params >> $pgmout 2> errfile
@@ -513,12 +515,15 @@ let ne9=idim*jdim*nv
 echo "$idim $jdim $jdim $mem $lon1 $lon2 $lat2 $lat1 $vrlon $vrlat ${radvr[$i]} $nd $nd9 $nd12 $georad $ne1 $n2 $nvr $nvr12 $nv $ne9 $ltcode $i $ivnorm" > params
 
 export XLFUNIT_10="targ_${ymmdd}_${lt1}_${lt2}_${mem}.d"
+export     FORT10="targ_${ymmdd}_${lt1}_${lt2}_${mem}.d"
 export XLFUNIT_301="sigvartrack.d"
+export     FORT301="sigvartrack.d"
 
 
 startmsg
 export MP_PROCS=$nlon
-poe $EXECwsr/wsr_summ_allnorms < params >> $pgmout 2> errfile
+#poe $EXECwsr/wsr_summ_allnorms < params >> $pgmout 2> errfile
+$wsrmpexec $EXECwsr/wsr_summ_allnorms < params >> $pgmout 2> errfile
 
 export err=$?;err_chk
 
@@ -532,6 +537,7 @@ if [[ ${SENDDTS} = YES ]];then
   echo "$nlon $nlat $lon1 $lon2 $lat1 $lat2 $reso ${obsdate[$i]} ${vrlatu[$i]} ${vrlonl[$i]} ${vrlatl[$i]} ${vrlonu[$i]} ${leadtime[$i]} ${opttime[$i]} ${mem}" > params
   export XLFRTEOPTS="unit_vars=yes"
   export XLFUNIT_121="targ_${ymmdd}_${lt1}_${lt2}_${mem}.d"
+  export     FORT121="targ_${ymmdd}_${lt1}_${lt2}_${mem}.d"
 
   rm out.grib1 
 
@@ -570,9 +576,13 @@ let ne9=idim*jdim*nv
 echo "$idim $jdim $jdim $mem $vrlon $vrlat ${radvr[$i]} $nd $nd9 $nd12 $nrawin $georad $ne1 $n2 $nvr $nvr12 $nv $ne9 $ltcode $i $ivnorm" > params
 
 export XLFUNIT_10="station_table"
+export     FORT10="station_table"
 export XLFUNIT_1020="rawin_${ymmdd}_${lt1}_${lt2}_${mem}.d"
+export     FORT1020="rawin_${ymmdd}_${lt1}_${lt2}_${mem}.d"
 export XLFUNIT_1023="station_${ymmdd}_${lt1}_${lt2}_${mem}.d"
+export     FORT1023="station_${ymmdd}_${lt1}_${lt2}_${mem}.d"
 export XLFUNIT_1050="station_${ymmdd}_${lt1}_${lt2}_${mem}.summary"
+export     FORT1050="station_${ymmdd}_${lt1}_${lt2}_${mem}.summary"
 
 startmsg
 $EXECwsr/wsr_rawin_allnorms < params >> $pgmout 2> errfile
@@ -607,6 +617,7 @@ let ne9=idim*jdim*nv
 echo "$idim $jdim $jdim $mem $vrlon $vrlat ${radvr[$i]} $nd $nd9 $nd12 $nflights $georad $ne1 $n2 $nvr $nvr12 $nv $ne9 $ltcode $i $ivnorm $phase" > params
 
 export XLFUNIT_1010="fli_${ymmdd}_${lt1}_${lt2}_${mem}.d"
+export     FORT1010="fli_${ymmdd}_${lt1}_${lt2}_${mem}.d"
 
 startmsg
 $EXECwsr/wsr_flights_allnorms < params >> $pgmout 2> errfile
@@ -790,6 +801,7 @@ export pgm=wsr_sigvar_allnorms
 . prep_step
 
 export XLFUNIT_1100="perts_${ymmdd}_${lt1}.d"
+export     FORT1100="perts_${ymmdd}_${lt1}.d"
 
 ctr=1
 while [ ${ctr} -le ${ltdiffsteps} ]
@@ -797,6 +809,7 @@ do
      namenum=`expr ${ctr} \* 12 + ${lt1}`
      filenum=`expr ${ctr} + 1100`
      export XLFUNIT_${filenum}="perts_${ymmdd}_${namenum}.d"
+     export     FORT${filenum}="perts_${ymmdd}_${namenum}.d"
      ctr=`expr ${ctr} + 1`
 done
 
@@ -834,7 +847,9 @@ do
 
     rm -f sig${ctraddone}.d.gr
     export XLFUNIT_211="sig${ctraddone}.d"
+    export     FORT211="sig${ctraddone}.d"
     export XLFUNIT_251="sig${ctraddone}.d.gr"
+    export     FORT251="sig${ctraddone}.d.gr"
     startmsg
     $EXECwsr/wsr_sig_pac < params >> $pgmout 2> errfile
     export err=$?;err_chk
@@ -949,6 +964,7 @@ echo "$nlon $nlat" > params
 
 rm -f targ1.d.gr
 export XLFUNIT_121="targ1.d.gr"
+export     FORT121="targ1.d.gr"
 
  startmsg
 $EXECwsr/wsr_tgr_special < params >> $pgmout 2> errfile
@@ -1202,6 +1218,7 @@ do
 #SMS#   . prep_step
 
    export XLFUNIT_1100="perts_${ymmdd}_${lt1}.d"
+   export     FORT1100="perts_${ymmdd}_${lt1}.d"
 
    ctr=1
    while [ ${ctr} -le ${ltdiffsteps} ]
@@ -1209,6 +1226,7 @@ do
 	namenum=`expr ${ctr} \* 12 + ${lt1}`
         filenum=`expr ${ctr} + 1100`
         export XLFUNIT_${filenum}="perts_${ymmdd}_${namenum}.d"
+        export     FORT${filenum}="perts_${ymmdd}_${namenum}.d"
         ctr=`expr ${ctr} + 1`
    done
 
@@ -1338,7 +1356,9 @@ do
 
        rm -f sig${ctraddone}.d.gr 
        export XLFUNIT_211="sig${ctraddone}_fl${ifl}.d"
+       export     FORT211="sig${ctraddone}_fl${ifl}.d"
        export XLFUNIT_251="sig${ctraddone}.d.gr"
+       export     FORT251="sig${ctraddone}.d.gr"
 #SMS#       startmsg 
        $EXECwsr/wsr_sig_pac < params >> $pgmout 2> errfile
 #SMS#       export err=$?;err_chk

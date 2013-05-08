@@ -48,6 +48,7 @@ export SENDCOM=YES
 export SENDSMS=YES
 export SENDDTS=NOS
   else
+export SENDCOM=YES
 export SENDSMS=NO
 export SENDDTS=NO
 export PRINTSDM=NO
@@ -96,7 +97,7 @@ export GASCRP=/usrx/local/grads/gslib
   if [[ $envir != dev ]]; then
 export GESdir=/nwges/wsr
   else
-export GESdir=$prefixlocalptmp/nwges/wsr
+export GESdir=$localprefixptmp/nwges/wsr
   fi
 ##############################
 # Run setpdy and initialize PDY variables
@@ -113,8 +114,8 @@ export PDY=`head -1 $GESdir/targdata.d`
 export COMENS=/nwges/wsr
 export COMOUT=/com/${NET}/${envir}/${RUN}.${PDY}
   else
-export COMENS=$prefixlocalptmp/nwges/wsr
-export COMOUT=$prefixlocalptmp/com/${NET}/${envir}/${RUN}.${PDY}
+export COMENS=$localprefixptmp/nwges/wsr
+export COMOUT=$localprefixptmp/com/${NET}/${envir}/${RUN}.${PDY}
   fi
 mkdir -p $COMOUT
 

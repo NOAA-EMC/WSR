@@ -20,7 +20,10 @@ NDATE=/nwprod/util/exec/ndate
 WGRIB=/nwprod/util/exec/wgrib
 COPYGB=/nwprod/util/exec/copygb
 curdate=`date '+%Y%m%d'`00
-ensdate=${curdate}
+#ensdate=${curdate}
+# allow date offset for retrospective runs
+DateOffset=${DateOffset:-00}
+ensdate=$($NDATE $DateOffset $curdate)
 WORK_ETKF=${WORK_ETKF:-$COMENS}
 mkdir -p ${WORK_ETKF}
 WORK_ENS=$DATA/work_cmc/${ensdate}

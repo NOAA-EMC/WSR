@@ -5,6 +5,9 @@ CMD =  wsr_xvvest_allnorms
 #FC =    ncepxlf
 FC =    ifort
 FFLAGS= -list -traceback
+FFLAGS= -list -convert big_endian -assume byterecl
+FFLAGS= -list -convert big_endian -assume byterecl -traceback
+
 SRCS=	xvvest_allnorms.f interp.f
 OBJS=   $(SRCS:.f=.o)
 LIBS=

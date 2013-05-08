@@ -42,7 +42,15 @@ if (( $# >= 1 )); then
       jobcardslist=wsr_ecmwfens.job
       chainsubmit=no
     ;;
+    (e)
+      jobcardslist="wsr_ecmwfens.job"
+      chainsubmit=no
+    ;;
     (prep)
+      jobcardslist=wsr_prep.job
+      chainsubmit=no
+    ;;
+    (p)
       jobcardslist=wsr_prep.job
       chainsubmit=no
     ;;
@@ -50,25 +58,17 @@ if (( $# >= 1 )); then
       jobcardslist=wsr_main.job
       chainsubmit=no
     ;;
-    (e)
-      jobcardslist="wsr_ecmwfens.job"
+    (m)
+      jobcardslist=wsr_main.job
       chainsubmit=no
     ;;
     (epm)
       jobcardslist="wsr_ecmwfens.job wsr_prep.job wsr_main.job"
       chainsubmit=yes
     ;;
-    (p)
-      jobcardslist="wsr_prep.job"
-      chainsubmit=no
-    ;;
     (pm)
       jobcardslist="wsr_prep.job wsr_main.job"
       chainsubmit=yes
-    ;;
-    (m)
-      jobcardslist="wsr_main.job"
-      chainsubmit=no
     ;;
     (*)
       args=bad

@@ -5,6 +5,9 @@ CMD =  wsr_sig_pac
 #FC =    ncepxlf
 FC =    ifort
 FFLAGS= -list -traceback
+FFLAGS= -list -convert big_endian -assume byterecl
+FFLAGS= -list -convert big_endian -assume byterecl -traceback
+
 SRCS=	sig_pac.f
 OBJS=   $(SRCS:.f=.o)
 LIBS= 

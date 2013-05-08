@@ -4,8 +4,8 @@
 # @ output = LOCALPREFIXPTMP/com/output/dev/today/wsr_main_00.o$(jobid)
 #BSUB -o LOCALPREFIXPTMP/com/output/dev/today/wsr_main_00.o.%J
 ##@ error = /com/output/prod/today/wsr_main_00.o$(jobid)
-# @ error = LOCALPREFIXTMP/com/output/dev/today/wsr_main_00.o$(jobid)
-#BSUB -e LOCALPREFIXTMP/com/output/dev/today/wsr_main_00.o.%J
+# @ error = LOCALPREFIXPTMP/com/output/dev/today/wsr_main_00.o$(jobid)
+#BSUB -e LOCALPREFIXPTMP/com/output/dev/today/wsr_main_00.o.%J
 # @ shell = /bin/sh
 #BSUB -L /bin/ksh
 # @ job_type = parallel
@@ -49,12 +49,10 @@ case $machl in
   ;;
   (t)
     echo `date` job starting on tide
-    export MP_TASK_AFFINITY=core
     export wsrmachine=wcoss
   ;;
   (g)
     echo `date` job starting on gyre
-    export MP_TASK_AFFINITY=core
     export wsrmachine=wcoss
   ;;
   (*)
@@ -62,17 +60,33 @@ case $machl in
     export wsrmachine=unknown
   ;;
 esac
-  if [[ $wsrmachine = ccs ]]; then
-export MP_SHARED_MEMORY=yes
-export MEMORY_AFFINITY=MCM
-  elif [[ $wsrmachine = wcoss ]]; then
 pwd
-export MP_EUIDEVICE=sn_all
-export MP_EUILIB=us
-export MP_INSTANCES=48
-export PATH="$PATH:."
-module list
-  fi
+if [[ $wsrmachine = ccs ]]; then
+  export wsrmpexec=poe
+  export MP_SHARED_MEMORY=yes
+  export MEMORY_AFFINITY=MCM
+elif [[ $wsrmachine = wcoss ]]; then
+  echo find module before
+  env | grep -i module
+  echo find module
+  export MODULE_VERSION=3.2.9
+  module() { 
+    eval `/usrx/local/Modules/$MODULE_VERSION/bin/modulecmd bash $* ` 
+  }
+  export -f module
+  module list
+  echo after list modules
+
+  export wsrmpexec=mpirun.lsf
+  export MP_SHARED_MEMORY=yes
+  export MP_TASK_AFFINITY=core
+  export MP_EUIDEVICE=sn_all
+  export MP_EUILIB=us
+#  export MP_INSTANCES=48
+#  export MP_INSTANCES=32
+  export PATH="$PATH:."
+fi
+echo wsrmpexec=$wsrmpexec
 
 set -x
 export envir=prod

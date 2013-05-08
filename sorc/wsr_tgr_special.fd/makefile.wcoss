@@ -5,6 +5,9 @@ CMD =  wsr_tgr_special
 #FC =    ncepxlf
 FC =    ifort
 FFLAGS= -list -traceback
+FFLAGS= -list -convert big_endian -assume byterecl
+FFLAGS= -list -convert big_endian -assume byterecl -traceback
+
 SRCS=	tgr_special.f
 OBJS=   $(SRCS:.f=.o)
 LIBS=

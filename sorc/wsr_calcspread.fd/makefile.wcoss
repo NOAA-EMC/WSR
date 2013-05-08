@@ -6,6 +6,9 @@ CMD =   wsr_calcspread
 #FC =    xlf 
 FC =    ifort -O3
 FFLAGS= -list -traceback
+FFLAGS= -list -convert big_endian -assume byterecl
+FFLAGS= -list -convert big_endian -assume byterecl -traceback
+
 SRCS=	calcspread.f
 OBJS=   $(SRCS:.f=.o)
 LIBS=   

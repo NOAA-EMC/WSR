@@ -104,6 +104,15 @@ sh $utilscript/setup.sh
 
 sh $utilscript/setpdy.sh
 . PDY
+
+##############################
+# apply offset for testing
+##############################
+export DateOffset=-48
+export DateOffset=00
+
+NDATE=/nwprod/util/exec/ndate
+PDY=`$NDATE $DateOffset ${PDY}00|cut -c1-8`
 #
 #if test "$prev_cyc" = "00"
 #then

@@ -69,7 +69,7 @@ export MEMORY_AFFINITY=MCM
 pwd
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
-export MP_INSTANCES=16
+#export MP_INSTANCES=16
 export PATH="$PATH:."
 module list
   fi
