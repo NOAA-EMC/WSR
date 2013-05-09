@@ -87,9 +87,9 @@ export utilscript=/nwprod/util/ush
 export HOMEutil=/nwprod/util
 export EXECutil=$HOMEutil/exec
 
-export HOMEwsr=/nwprod
+export HOMEwsr=/nwprod/${NET}.${model_ver}
   if [[ $envir = dev ]]; then
-export HOMEwsr=$localprefixsave/nw$envir
+export HOMEwsr=$localprefixsave/nw$envir/${NET}.${model_ver}
   fi
 export EXECwsr=$HOMEwsr/exec
 export USHwsr=$HOMEwsr/ush
@@ -135,16 +135,16 @@ env
 ########################################################
 # Execute the script.
 if [ $GET_IOPROFILE = YES ]; then
-    /usrx/local/mio/tools/bin/miostats -X0 /nw${envir}/scripts/exwsr_prep.sh.sms
+    /usrx/local/mio/tools/bin/miostats -X0 /nw${envir}/${NET}.${model_ver}/scripts/exwsr_prep.sh.sms
 else
       if [[ $envir != dev ]]; then 
-    /nw${envir}/scripts/exwsr_prep.sh.sms
+    /nw${envir}/${NET}.${model_ver}/scripts/exwsr_prep.sh.sms
       else
     echo environment listing before
     env | sort
     echo environment listing after
     echo script before
-    $localprefixsave/nw${envir}/scripts/exwsr_prep.sh.sms
+    $localprefixsave/nw${envir}/${NET}.${model_ver}/scripts/exwsr_prep.sh.sms
     echo script after
       fi
 fi

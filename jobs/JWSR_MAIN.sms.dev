@@ -71,9 +71,9 @@ export HOMEutil=/nw${envir}/util
 export EXECutil=$HOMEutil/exec
 
   if [[ $envir != dev ]]; then
-export HOMEwsr=${HOMEwsr:-/nw${envir}}
+export HOMEwsr=${HOMEwsr:-/nw${envir}/${NET}.${model_ver}}
   else
-export HOMEwsr=$localprefixsave/${HOMEwsr:-/nw${envir}}
+export HOMEwsr=$localprefixsave/${HOMEwsr:-/nw${envir}/${NET}.${model_ver}}
   fi
 export EXECwsr=$HOMEwsr/exec
 export FIXwsr=$HOMEwsr/fix
@@ -152,13 +152,13 @@ env
 ########################################################
 # Execute the script.
   if [[ $envir != dev ]]; then
-/nw${envir}/scripts/exwsr_main.sh.sms
+/nw${envir}/${NET}.${model_ver}/scripts/exwsr_main.sh.sms
   else
 echo environment listing before
 env | sort
 echo environment listing after
 echo `date` script before
-$localprefixsave/nw${envir}/scripts/exwsr_main.sh.sms
+$localprefixsave/nw${envir}/${NET}.${model_ver}/scripts/exwsr_main.sh.sms
 echo `date`script after
   fi
 ########################################################

@@ -16,7 +16,7 @@
 #BSUB -R span[ptile=16]
 ##@ class = prod
 # @ class = dev
-#BSUB -q "dev"
+#BSUB -q "dev_high"
 # @ node_usage = not_shared
 #BSUB -x
 # @ wall_clock_limit = 00:45:00
@@ -103,6 +103,8 @@ SMS_PROG=%SMS_PROG% export SMS_PROG
 
 SMSBIN=/nwprod/sms/bin export SMSBIN
 
+. /nwprod/versions/wsr.ver
+
   else
 
 echo `date` $job job begin
@@ -113,13 +115,15 @@ export expid=EXPID
 export localprefixptmp=LOCALPREFIXPTMP
 export localprefixsave=LOCALPREFIXSAVE
 export SMSBIN=$localprefixsave/nwdev/control
+
+. $localprefixsave/nw$envir/*/versions/wsr.ver
 echo variables needed for dev runs end
 
   fi
 
   if [[ $envir != dev ]]; then
 
-/nw$envir/jobs/JWSR_MAIN.sms.$envir
+/nw$envir/wsr.${model_ver}/jobs/JWSR_MAIN.sms.$envir
 
   else
 
@@ -127,7 +131,7 @@ echo `date` $job environment before
 env|sort
 
 echo `date` $job j-job before
-$localprefixsave/nw$envir/jobs/JWSR_MAIN.sms.$envir
+$localprefixsave/nw$envir/wsr.${model_ver}/jobs/JWSR_MAIN.sms.$envir
 echo `date` $job j-job after
 
 chainsubmit=LOCALCHAINOPTION

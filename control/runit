@@ -124,6 +124,13 @@ if (( $# >= 1 )); then
       echo expid=$expid
       localprefixsave=$basedird
       echo localprefixsave=$localprefixsave
+      # these sesttings for vertical directory structure
+      basedirdd=`dirname $basedird`
+      basedirddb=`basename $basedirdd`
+      expid=$basedirddb
+      echo expid=$expid
+      localprefixsave=$basedirdd
+      echo localprefixsave=$localprefixsave
       localprefixptmp=/ptmp/$LOGNAME/o/$expid
       echo localprefixptmp=$localprefixptmp
       if [[ -d $localprefixptmp ]]; then
