@@ -5,8 +5,8 @@ CMD =   wsr_reformat
 #FC =    xlf -qmaxmem=-1 
 FC =    ifort
 FFLAGS= -list -traceback
-FFLAGS= -list -convert big_endian -assume byterecl
 FFLAGS= -list -convert big_endian -assume byterecl -traceback
+FFLAGS= -list -convert big_endian -assume byterecl
 
 SRCS=	readin.f
 OBJS=   $(SRCS:.f=.o)

@@ -5,8 +5,8 @@ CMD = wsr_sigvar_allnorms
 #FC =    ncepxlf -qmaxmem=-1
 FC =    ifort -mkl=sequential
 FFLAGS= -list -traceback
-FFLAGS= -list -convert big_endian -assume byterecl
 FFLAGS= -list -convert big_endian -assume byterecl -traceback
+FFLAGS= -list -convert big_endian -assume byterecl
 
 SRCS=	sigvar_allnorms.f subroutines.f interp.f eigen.f
 OBJS=   $(SRCS:.f=.o)

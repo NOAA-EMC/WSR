@@ -5,8 +5,8 @@ CMD =   wsr_tcoeffuvt
 #FC =    ncepxlf
 FC =    ifort -mkl=sequential
 FFLAGS= -list -traceback
-FFLAGS= -list -convert big_endian -assume byterecl
 FFLAGS= -list -convert big_endian -assume byterecl -traceback
+FFLAGS= -list -convert big_endian -assume byterecl
 
 SRCS=	tcoeffuvt.f subroutines.f eigen.f interp.f
 OBJS=   $(SRCS:.f=.o)

@@ -5,8 +5,8 @@ CMD =   wsr_circlevr
 #FC =    ncepxlf
 FC =    ifort
 FFLAGS= -list -traceback
-FFLAGS= -list -convert big_endian -assume byterecl
 FFLAGS= -list -convert big_endian -assume byterecl -traceback
+FFLAGS= -list -convert big_endian -assume byterecl
 
 SRCS=	circlevr.f
 OBJS=   $(SRCS:.f=.o)

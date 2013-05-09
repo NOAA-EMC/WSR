@@ -7,8 +7,8 @@ CMD = wsr_summ_allnorms
 #FC =    ifort
 FC=     mpfort -mpi -mkl=sequential
 FFLAGS= -list -traceback
-FFLAGS= -list -convert big_endian -assume byterecl
 FFLAGS= -list -convert big_endian -assume byterecl -traceback
+FFLAGS= -list -convert big_endian -assume byterecl
 
 SRCS=	summ_allnorms.f subroutines.f eigen.f
 OBJS=   $(SRCS:.f=.o)
