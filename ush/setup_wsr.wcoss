@@ -38,8 +38,6 @@ if [[ $testmode = yes ]]; then
 
   # these testmode settings are only used when testmode=yes
 
-  PTMP=/gpfs/dell3/ptmp
-
   case $LOGNAME in
     (SDM)
       # these are the production locations, edit them to use test locations
@@ -110,12 +108,8 @@ if [[ $testmode = yes ]]; then
 
     echo expid=$expid
 
-    #GESdir=/ptmpd2/$LOGNAME/o/$expid/nwges/dev/wsr
-    GESdir=$PTMP/$LOGNAME/o/$expid/nwges/dev/wsr
-    COMdir=$PTMP/$LOGNAME/o/$expid/com/wsr/dev
-
+    GESdir=/ptmpd2/$LOGNAME/o/$expid/nwges/dev/wsr
     echo GESdir=$GESdir
-    echo COMdir=$COMdir
 
   fi
 
@@ -139,8 +133,7 @@ PDY=${PDY:-${curyy}${curmm}${curdd}}
 # Set Working Directories
 ####################################
 
-#GESdir=${GESdir:-/nwges/wsr}
-GESdir=${GESdir:-$GESROOT/$envir/wsr}
+GESdir=${GESdir:-/nwges/wsr}
 
 echo GESdir=$GESdir
 
@@ -157,29 +150,15 @@ if [[ $testmode = no ]]; then
   rm -rf targdata.d 2> /dev/null
 else
   if [[ -f targdata.d ]]; then
-    dtg=`date -r targdata.d +%Y%m%d%H%M%S`
+    dtg=`date -r targdata.d +%Y%m$d$H$M%S`
     echo dtg=$dtgo
     ls -l $targdata.d
-    for file in targdata.d targdata.txt targdata.txt? targdata.txt?? targdata.txt??? targdata.txt????
+    for file in targdata.txt targdata.txt? targdata.txt?? targdata.txt??? targdata.txt????
     do
-      if [[ -f $file ]]; then
+      if [[ -f $file ]]]; then
         ls -l $file
-	mv $file $file.$dtg
-	ls -l $file.$dtg
       fi
     done
-  fi
-  if [[ -d $COMdir ]]; then
-    cd $COMdir
-    for dir in wsr.$PDY
-    do
-      if [[ -d $dir ]]; then
-	ls -ld $dir
-	mv $dir $dir.$dtg
-	ls -ld $dir.$dtg
-      fi
-    done
-    cd $GESdir
   fi
 fi
 
@@ -457,8 +436,7 @@ do
 		mk3=0
             fi
 
-            #latestobstime=`/nwprod/util/exec/ndate +204 ${PDY}00`
-            latestobstime=`$NDATE +204 ${PDY}00`
+            latestobstime=`/nwprod/util/exec/ndate +204 ${PDY}00`
             if [ ${obsdate} -gt ${latestobstime} ]; then
                 echo "Observation time must be within 204 hours of ${PDY}00"
                 mk3=0
@@ -498,12 +476,6 @@ do
                    mk4=0
                 fi
  
-		latestveritime=`$NDATE +216 ${PDY}00`
-		if [ ${veridate} -gt ${latestveritime} ]; then
-		    echo "Verification time must be within 216 hours of ${PDY}00"
-		    mk4=0
-		fi
-
                 if [ ${mk4} -eq 0 ]; then
 		    echo "Please try again"
 		    echo 
@@ -633,8 +605,7 @@ do
                           mk3=0
                       fi
 
-                      #latestobstime=`/nwprod/util/exec/ndate +204 ${PDY}00`
-                      latestobstime=`$NDATE +204 ${PDY}00`
+                      latestobstime=`/nwprod/util/exec/ndate +204 ${PDY}00`
                       if [ ${obsdate} -gt ${latestobstime} ]; then
                           echo "Observation time must be within 204 hours of ${PDY}00"
                           mk3=0
@@ -675,12 +646,6 @@ do
                           mk4=0
                       fi
  
-		      latestveritime=`$NDATE +216 ${PDY}00`
-		      if [ $veridate} -gt ${latestveritime} ]; then
-			  echo "Verification time must be within 216 hours of ${PDY}00"
-			  mk4=0
-		      fi
-
                       if [ ${mk4} -eq 0 ]; then
                           echo "Please try again"
                           echo
@@ -788,8 +753,7 @@ done
 #curdd=`date -u +%d`
 #curhh=`date -u +%H`
 #PDY=${curyy}${curmm}${curdd}
-#latestobstime=`/nwprod/util/exec/ndate +204 ${PDY}00`
-latestobstime=`$NDATE +204 ${PDY}00`
+latestobstime=`/nwprod/util/exec/ndate +204 ${PDY}00`
 
 i=1
 CURCASES=0
@@ -799,8 +763,7 @@ do
    OBSDATE_TMP=${OBSDATE[i]}
    while [[ $OBSDATE_TMP -le ${VERIDATE[i]} && $OBSDATE_TMP -le $latestobstime ]] 
    do
-      #OBSDATE_TMP=`/nwprod/util/exec/ndate +12 $OBSDATE_TMP`
-      OBSDATE_TMP=`$NDATE +12 $OBSDATE_TMP`
+      OBSDATE_TMP=`/nwprod/util/exec/ndate +12 $OBSDATE_TMP`
       CURCASES=`expr $CURCASES + 1` 
    done
 i=`expr ${i} + 1`
@@ -827,8 +790,7 @@ do
       echo ${VRLAT[i]} >> $GESdir/targdata_tmp.d
       echo ${PRIORITY[i]} >> $GESdir/targdata_tmp.d
       echo ${COMMENTS[i]} >> $GESdir/targdata_tmp.d
-      #OBSDATE_TMP=`/nwprod/util/exec/ndate +12 $OBSDATE_TMP`
-      OBSDATE_TMP=`$NDATE +12 $OBSDATE_TMP`
+      OBSDATE_TMP=`/nwprod/util/exec/ndate +12 $OBSDATE_TMP`
   done
   i=`expr ${i} + 1`
 done

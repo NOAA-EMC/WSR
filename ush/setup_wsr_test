@@ -38,6 +38,8 @@ if [[ $testmode = yes ]]; then
 
   # these testmode settings are only used when testmode=yes
 
+  PTMP=/gpfs/dell3/ptmp
+
   case $LOGNAME in
     (SDM)
       # these are the production locations, edit them to use test locations
@@ -108,8 +110,9 @@ if [[ $testmode = yes ]]; then
 
     echo expid=$expid
 
-    GESdir=/ptmpd2/$LOGNAME/o/$expid/nwges/dev/wsr
-    COMdir=/ptmpd2/$LOGNAME/o/$expid/com/wsr/dev
+    #GESdir=/ptmpd2/$LOGNAME/o/$expid/nwges/dev/wsr
+    GESdir=$PTMP/$LOGNAME/o/$expid/nwges/dev/wsr
+    COMdir=$PTMP/$LOGNAME/o/$expid/com/wsr/dev
 
     echo GESdir=$GESdir
     echo COMdir=$COMdir
@@ -136,7 +139,8 @@ PDY=${PDY:-${curyy}${curmm}${curdd}}
 # Set Working Directories
 ####################################
 
-GESdir=${GESdir:-/nwges/wsr}
+#GESdir=${GESdir:-/nwges/wsr}
+GESdir=${GESdir:-$GESROOT/$envir/wsr}
 
 echo GESdir=$GESdir
 
@@ -170,14 +174,13 @@ else
     for dir in wsr.$PDY
     do
       if [[ -d $dir ]]; then
-        ls -ld $dir
-        mv $dir $dir.$dtg
-        ls -ld $dir.$dtg
+	ls -ld $dir
+	mv $dir $dir.$dtg
+	ls -ld $dir.$dtg
       fi
     done
     cd $GESdir
   fi
-
 fi
 
 if [[ $testmode = no ]]; then
@@ -454,7 +457,8 @@ do
 		mk3=0
             fi
 
-            latestobstime=`/nwprod/util/exec/ndate +204 ${PDY}00`
+            #latestobstime=`/nwprod/util/exec/ndate +204 ${PDY}00`
+            latestobstime=`$NDATE +204 ${PDY}00`
             if [ ${obsdate} -gt ${latestobstime} ]; then
                 echo "Observation time must be within 204 hours of ${PDY}00"
                 mk3=0
@@ -494,9 +498,9 @@ do
                    mk4=0
                 fi
  
-		latestveritime=`/nwprod/util/exec/ndate +240 ${PDY}00`
+		latestveritime=`$NDATE +216 ${PDY}00`
 		if [ ${veridate} -gt ${latestveritime} ]; then
-		    echo "Verification time must be within 240 hours of ${PDY}00"
+		    echo "Verification time must be within 216 hours of ${PDY}00"
 		    mk4=0
 		fi
 
@@ -629,7 +633,8 @@ do
                           mk3=0
                       fi
 
-                      latestobstime=`/nwprod/util/exec/ndate +204 ${PDY}00`
+                      #latestobstime=`/nwprod/util/exec/ndate +204 ${PDY}00`
+                      latestobstime=`$NDATE +204 ${PDY}00`
                       if [ ${obsdate} -gt ${latestobstime} ]; then
                           echo "Observation time must be within 204 hours of ${PDY}00"
                           mk3=0
@@ -670,9 +675,9 @@ do
                           mk4=0
                       fi
  
-		      latestveritime=`/nwprod/util/exec/ndate +240 ${PDY}00`
-		      if [ ${veridate} -gt ${latestveritime} ]; then
-			  echo "Verification time must be within 240 hours of ${PDY}00"
+		      latestveritime=`$NDATE +216 ${PDY}00`
+		      if [ $veridate} -gt ${latestveritime} ]; then
+			  echo "Verification time must be within 216 hours of ${PDY}00"
 			  mk4=0
 		      fi
 
@@ -783,7 +788,8 @@ done
 #curdd=`date -u +%d`
 #curhh=`date -u +%H`
 #PDY=${curyy}${curmm}${curdd}
-latestobstime=`/nwprod/util/exec/ndate +204 ${PDY}00`
+#latestobstime=`/nwprod/util/exec/ndate +204 ${PDY}00`
+latestobstime=`$NDATE +204 ${PDY}00`
 
 i=1
 CURCASES=0
@@ -793,7 +799,8 @@ do
    OBSDATE_TMP=${OBSDATE[i]}
    while [[ $OBSDATE_TMP -le ${VERIDATE[i]} && $OBSDATE_TMP -le $latestobstime ]] 
    do
-      OBSDATE_TMP=`/nwprod/util/exec/ndate +12 $OBSDATE_TMP`
+      #OBSDATE_TMP=`/nwprod/util/exec/ndate +12 $OBSDATE_TMP`
+      OBSDATE_TMP=`$NDATE +12 $OBSDATE_TMP`
       CURCASES=`expr $CURCASES + 1` 
    done
 i=`expr ${i} + 1`
@@ -820,7 +827,8 @@ do
       echo ${VRLAT[i]} >> $GESdir/targdata_tmp.d
       echo ${PRIORITY[i]} >> $GESdir/targdata_tmp.d
       echo ${COMMENTS[i]} >> $GESdir/targdata_tmp.d
-      OBSDATE_TMP=`/nwprod/util/exec/ndate +12 $OBSDATE_TMP`
+      #OBSDATE_TMP=`/nwprod/util/exec/ndate +12 $OBSDATE_TMP`
+      OBSDATE_TMP=`$NDATE +12 $OBSDATE_TMP`
   done
   i=`expr ${i} + 1`
 done

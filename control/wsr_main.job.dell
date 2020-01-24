@@ -1,0 +1,202 @@
+# @ job_name = jwsr_main_00
+#BSUB -J wsr_main_00
+##@ output = /com/output/prod/today/wsr_main_00.o$(jobid)
+# @ output = LOCALPREFIXPTMP/com/output/dev/today/wsr_main_00.o$(jobid)
+#BSUB -o LOCALPREFIXPTMP/com/output/dev/today/wsr_main_00.o.%J
+##@ error = /com/output/prod/today/wsr_main_00.o$(jobid)
+# @ error = LOCALPREFIXPTMP/com/output/dev/today/wsr_main_00.o$(jobid)
+#BSUB -e LOCALPREFIXPTMP/com/output/dev/today/wsr_main_00.o.%J
+# @ shell = /bin/sh
+#BSUB -L /bin/ksh
+# @ job_type = parallel
+###BSUB -a poe
+# @ node = 2
+# @ total_tasks = 48
+#BSUB -n 48
+#BSUB -R span[ptile=16]
+##@ class = prod
+# @ class = dev
+###BSUB -q "dev_high"
+#BSUB -q "dev"
+# @ node_usage = not_shared
+#BSUB -x
+# @ wall_clock_limit = 00:45:00
+#BSUB -W "01:00"
+##@ initialdir = /tmpnwprd
+# @ initialdir = LOCALPREFIXPTMP/tmpnwprd
+#BSUB -cwd LOCALPREFIXPTMP/tmpnwprd
+# @ notification = never
+### @ resources = ConsumableCpus(1) ConsumableMemory(500 MB)
+# @ resources = ConsumableMemory(500 MB)
+#BSUB -R "rusage[mem=500]"
+# @ task_affinity = core(1)
+##@ account_no = GEN-OPS
+# @ account_no = GEN-T2O
+# BSUB -P GEN-T2O
+##@ group = nwprod
+## @ group = devonprod
+# @ group = dev
+# @ queue
+
+
+mach=`uname -n`
+machl=`echo $mach|cut -c1`
+case $machl in
+  (c)
+    echo `date` job starting on cirrus
+    export wsrmachine=ccs
+  ;;
+  (s)
+    echo `date` job starting on stratus
+    export wsrmachine=ccs
+  ;;
+  (t)
+    echo `date` job starting on tide
+    export wsrmachine=wcoss
+  ;;
+  (g)
+    echo `date` job starting on gyre
+    export wsrmachine=wcoss
+  ;;
+  (m)
+    echo `date` job starting on mars
+    export wsrmachine=dell
+  ;;
+  (v)
+    echo `date` job starting on venus
+    export wsrmachine=dell
+  ;;
+  (*)
+    echo UNKNOWN MACHINE $mach
+    export wsrmachine=unknown
+  ;;
+esac
+pwd
+if [[ $wsrmachine = ccs ]]; then
+  export wsrmpexec=poe
+  export MP_SHARED_MEMORY=yes
+  export MEMORY_AFFINITY=MCM
+elif [[ $wsrmachine = wcoss ]]; then
+  echo find module before
+  env | grep -i module
+  echo find module
+  export MODULE_VERSION=3.2.9
+  module() { 
+    eval `/usrx/local/Modules/$MODULE_VERSION/bin/modulecmd bash $* ` 
+  }
+  export -f module
+  module list
+  echo after list modules
+
+  export wsrmpexec=mpirun.lsf
+  export MP_SHARED_MEMORY=yes
+  export MP_TASK_AFFINITY=core
+  export MP_EUIDEVICE=sn_all
+  export MP_EUILIB=us
+#  export MP_INSTANCES=48
+#  export MP_INSTANCES=32
+  export PATH="$PATH:."
+elif [[ $wsrmachine = dell ]]; then
+    if (( 0 == 1 )); then
+  echo find module before
+  env | grep -i module
+  echo find module
+  export MODULE_VERSION=3.2.9
+  module() { 
+    eval `/usrx/local/Modules/$MODULE_VERSION/bin/modulecmd bash $* ` 
+  }
+  export -f module
+  module list
+  echo after list modules
+    fi
+
+  export wsrmpexec=mpirun
+  export MP_SHARED_MEMORY=yes
+  export MP_TASK_AFFINITY=core
+  export MP_EUIDEVICE=sn_all
+  export MP_EUILIB=us
+#  export MP_INSTANCES=48
+#  export MP_INSTANCES=32
+  export PATH="$PATH:."
+fi
+echo wsrmpexec=$wsrmpexec
+
+
+echo debug check
+echo MODULEPATH=$MODULEPATH
+
+export MP_CSS_INTERRUPT=yes
+
+set -x
+export envir=prod
+export envir=dev
+export cyc=00
+export job=wsr_main_00
+
+  if [[ $envir != dev ]]; then
+
+SMSNAME=%SMSNAME% export SMSNAME
+SMSNODE=%SMSNODE% export SMSNODE
+SMSPASS=%SMSPASS% export SMSPASS
+SMS_PROG=%SMS_PROG% export SMS_PROG
+
+SMSBIN=/nwprod/sms/bin export SMSBIN
+
+. /nwprod/versions/wsr.ver
+
+  else
+
+echo `date` $job job begin
+
+echo `date` before sorted environment
+env|sort
+echo `date` after sorted environment
+
+echo veriables needed for dev runs begin
+export DCOMROOT=/gpfs/dell1/nco/ops/dcom
+export expid=EXPID
+export localprefixptmp=LOCALPREFIXPTMP
+export localprefixsave=LOCALPREFIXSAVE
+export SMSBIN=$localprefixsave/nwdev/control
+
+. $localprefixsave/nw$envir/*/versions/wsr.ver
+echo variables needed for dev runs end
+
+  fi
+
+echo envir=$envir
+
+if [[ $envir = dev ]]; then
+. $localprefixsave/nw$envir/*/control/head.h
+. $localprefixsave/nw$envir/*/control/envir-p3.h
+fi
+
+export MP_PGMMODEL=mpmd
+
+module load impi/18.0.1
+module load CFP/2.0.2
+
+module load grib_util/${grib_util_ver:?}
+
+  if [[ $envir != dev ]]; then
+
+/nw$envir/wsr.${model_ver}/jobs/JWSR_MAIN
+
+  else
+
+  export HOMEwsr=$localprefixsave/nw$envir/*
+
+echo `date` $job environment before
+env|sort
+
+echo `date` $job j-job before
+$localprefixsave/nw$envir/wsr.${model_ver}/jobs/JWSR_MAIN
+echo `date` $job j-job after
+
+chainsubmit=LOCALCHAINOPTION
+echo chainsubmit=$chainsubmit
+
+echo `date` $job job end
+
+  fi
+
