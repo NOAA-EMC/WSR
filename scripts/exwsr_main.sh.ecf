@@ -171,14 +171,14 @@ do
         dloop=`/nwprod/util/exec/ndate +${lt2[$i]} ${ensdate}`
     done
 
-    if [[ ${lt1[$i]} -gt 240 ]]; then
-      echo lt1[$i]=${lt1[$i]} limited to 240 hours
-      lt1[$i]=240
+    if [[ ${lt1[$i]} -gt 216 ]]; then
+      echo lt1[$i]=${lt1[$i]} limited to 216 hours
+      lt1[$i]=216
     fi
 
-    if [[ ${lt2[$i]} -gt 240 ]]; then
-      echo lt2[$i]=${lt2[$i]} limited to 240 hours
-      lt2[$i]=240
+    if [[ ${lt2[$i]} -gt 216 ]]; then
+      echo lt2[$i]=${lt2[$i]} limited to 216 hours
+      lt2[$i]=216
     fi
      
     i=`expr $i + 1`

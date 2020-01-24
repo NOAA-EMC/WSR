@@ -494,9 +494,9 @@ do
                    mk4=0
                 fi
  
-		latestveritime=`/nwprod/util/exec/ndate +240 ${PDY}00`
+		latestveritime=`/nwprod/util/exec/ndate +204 ${PDY}00`
 		if [ ${veridate} -gt ${latestveritime} ]; then
-		    echo "Verification time must be within 240 hours of ${PDY}00"
+		    echo "Verification time must be within 204 hours of ${PDY}00"
 		    mk4=0
 		fi
 
@@ -670,9 +670,9 @@ do
                           mk4=0
                       fi
  
-		      latestveritime=`/nwprod/util/exec/ndate +240 ${PDY}00`
+		      latestveritime=`/nwprod/util/exec/ndate +204 ${PDY}00`
 		      if [ ${veridate} -gt ${latestveritime} ]; then
-			  echo "Verification time must be within 240 hours of ${PDY}00"
+			  echo "Verification time must be within 204 hours of ${PDY}00"
 			  mk4=0
 		      fi
 
