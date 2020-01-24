@@ -1,0 +1,10 @@
+FILES = ( /com/wsr/prod/wsr._PDY_/ 
+          /com/wsr/prod/wsr._PDYm1_/
+          /com/mrf/prod/wsr._PDY_/
+          /com/mrf/prod/wsr._PDYm1_/ )
+
+com:
+${FILES} -> ${HOSTS}
+        except_pat ( jlogfile ) ;
+        install;
+

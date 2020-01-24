@@ -1,0 +1,4 @@
+export wsr_ver=v3.0.5
+export grib_util_ver=v1.0.3
+
+export model_ver=$wsr_ver

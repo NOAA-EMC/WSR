@@ -1,0 +1,119 @@
+#!/bin/sh
+
+###############################################################
+# Runs WSR Main program
+# Usage:JWSR_MAIN.sms.prod
+# Change history log:
+# 2006-12-12 Yucheng Song Modified for WSR 2007
+##############################################################
+
+date
+export PS4=' $SECONDS + '
+set -x
+
+export DATA=${DATA:-${DATAROOT:?}/${jobid:?}}
+mkdir -p $DATA
+cd $DATA
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${jobid:?}}
+
+####################################
+# Determine Job Output Name on System
+####################################
+export pgmout="OUTPUT.$$"
+
+export cycle=t${cyc}z 
+
+export SENDCOM=${SENDCOM:-YES}
+export SENDECF=${SENDECF:-YES}
+export SENDDTS=NOS
+export RAWINSONDES=NO
+export PRINTSDM=YES
+export XLFRTEOPTS="unit_vars=yes"
+
+export NET=wsr
+export RUN=wsr
+
+export HOMEwsr=${HOMEwsr:-${NWROOT:?}/wsr.${wsr_ver:?}}
+export EXECwsr=$HOMEwsr/exec
+export FIXwsr=$HOMEwsr/fix
+
+##############################
+# Define for graphics
+##############################
+export PATH=$PATH:/usrx/local/grads/bin
+export GADDIR=/usrx/local/grads/dat
+export GASCRP=/usrx/local/grads/gslib
+
+##############################
+# Define GES Directories
+##############################
+if [ "$envir" = "prod" ]; then
+    #NOTE: This should be moved to nwges/prod/${RUN} in the next release!
+    export GESdir=${GESROOT:?}/${RUN}
+else
+    export GESdir=${GESROOT:?}/${envir}/${RUN}
+fi
+
+# JY- the following can be removed later after test
+export COMENS=$GESdir
+
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+export PDY=$(head -1 $GESdir/targdata.d)
+setpdy.sh
+. PDY
+
+export COMOUT=${COMROOT:?}/${NET}/${envir}/${RUN}.${PDY}
+mkdir -p $COMOUT
+
+#######################################################
+# Special WSR VARS                                    #
+# hhdiff: the ensemble date difference in hours       #
+#      between EC and NCEP                            #
+#      nvar is the total vars we have                 #
+#      nv is the total vars we used for norm          #
+#      nvr is the total number of points in VR region # 
+#      Previously set to be 100 since 1000KM radius   # 
+#      nd: no. of grid point drops if obs are taken   #
+#######################################################
+export idim=144
+export jdim=37
+export nd=25
+export nvr=500
+export hhdiff=00
+export memec=51
+export memnc=84
+export memcm=42
+export nv=9
+export nvar=20
+export nflights=90
+export nrawin=34
+export phase=1
+if [[ $PDY -ge 20110226 ]]; then
+  export phase=2
+fi
+
+env|sort
+
+########################################################
+# Execute the script.
+$HOMEwsr/scripts/exwsr_main.sh.ecf
+export err=$?; err_chk
+########################################################
+
+if [ -s $pgmout ]; then
+  cat $pgmout
+fi
+
+if [ "${KEEPDATA^^}" != "YES" ]; then
+  rm -rf $DATA
+fi
+
+date
+

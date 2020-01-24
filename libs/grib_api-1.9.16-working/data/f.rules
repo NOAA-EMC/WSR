@@ -1,0 +1,1 @@
+write "/nwprod/wsr.v3.0.0/libs/grib_api-1.9.16-working/data/split/[centre]_[date]_[dataType]_[gridType]_[levelType]_[level]_[short_name]_[packingType].grib[editionNumber]";

@@ -1,0 +1,35 @@
+SHELL=	/bin/bash
+#
+CMD =   wsr_rawin_allnorms
+#
+#FC =    ncepxlf  -qmaxmem=-1
+FC =    ifort -mkl=sequential
+FFLAGS= -list -traceback
+FFLAGS= -list -convert big_endian -assume byterecl -traceback
+FFLAGS= -list -convert big_endian -assume byterecl
+
+SRCS=	rawin_allnorms.f interp.f subroutines.f eigen.f
+OBJS=   $(SRCS:.f=.o)
+#LIBS= /usr/lib/libblas.a
+LIBS=
+
+# Lines from here on down should not need to be changed.  They are the
+# actual rules which make uses to build a.out.
+#
+all:	$(CMD)
+
+$(CMD):	$(OBJS)
+	$(FC) -o $(@) $(OBJS) $(LIBS)
+
+$(OBJS):        $(SRCS)
+	$(FC) $(FFLAGS) -c $(SRCS)
+
+$(OBJS):        makefile.wcoss
+
+allclean:       clean all
+
+clean:
+	-rm -f $(OBJS)
+
+clobber:        clean
+	-rm -f $(CMD)

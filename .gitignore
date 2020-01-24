@@ -1,0 +1,27 @@
+*.hold*
+*.prev*
+*.ops
+*.backup
+**/*.hold*
+**/*.prev*
+**/*.ops
+**/*.backup
+**/*.f.v10ibm
+**/*.f.v11dell
+**/*.f.v11ibm
+
+# Ignore build log files
+*.log
+*.log.20*
+
+# Ignore compiler products
+sorc/*/*.o
+sorc/*/*.lst
+sorc/*/xref.db
+sorc/*/a.out
+
+Ignore executables and build products
+exec
+libs/ecmwf_grib_api-1.9.16
+libs grib_api-1.9.16-working
+
