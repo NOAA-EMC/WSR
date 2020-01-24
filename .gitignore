@@ -1,14 +1,9 @@
 *.hold*
 *.prev*
-*.ops
 *.backup
 **/*.hold*
 **/*.prev*
-**/*.ops
 **/*.backup
-**/*.f.v10ibm
-**/*.f.v11dell
-**/*.f.v11ibm
 
 # Ignore build log files
 *.log
@@ -24,4 +19,5 @@ Ignore executables and build products
 exec
 libs/ecmwf_grib_api-1.9.16
 libs grib_api-1.9.16-working
+control/printout
 
