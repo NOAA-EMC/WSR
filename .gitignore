@@ -16,8 +16,8 @@ sorc/*/xref.db
 sorc/*/a.out
 
 Ignore executables and build products
-exec
+exec/*
 libs/ecmwf_grib_api-1.9.16
-libs grib_api-1.9.16-working
+libs/grib_api-1.9.16-working
 control/printout
 
