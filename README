@@ -1,0 +1,23 @@
+
+WSR V3.1 BUild instructions
+
+
+in libs:
+
+run build.sh
+
+If successful, follow these instructions that will be printed at
+the end of the buildh:
+
+cd grib_api-1.9.16-working
+make
+make check
+make install
+
+
+in sorc:
+
+run build.sh
+run install.sh
+
+

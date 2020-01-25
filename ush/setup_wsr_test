@@ -498,9 +498,9 @@ do
                    mk4=0
                 fi
  
-		latestveritime=`$NDATE +216 ${PDY}00`
+		latestveritime=`$NDATE +204 ${PDY}00`
 		if [ ${veridate} -gt ${latestveritime} ]; then
-		    echo "Verification time must be within 216 hours of ${PDY}00"
+		    echo "Verification time must be within 204 hours of ${PDY}00"
 		    mk4=0
 		fi
 
@@ -675,9 +675,9 @@ do
                           mk4=0
                       fi
  
-		      latestveritime=`$NDATE +216 ${PDY}00`
+		      latestveritime=`$NDATE +204 ${PDY}00`
 		      if [ $veridate} -gt ${latestveritime} ]; then
-			  echo "Verification time must be within 216 hours of ${PDY}00"
+			  echo "Verification time must be within 204 hours of ${PDY}00"
 			  mk4=0
 		      fi
 
