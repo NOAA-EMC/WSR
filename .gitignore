@@ -6,8 +6,8 @@
 **/*.backup
 
 # Ignore build log files
-*.log
-*.log.20*
+*build*log
+*build*log.20*
 
 # Ignore compiler products
 sorc/*/*.o
