@@ -88,5 +88,6 @@ c           print*, "vble(35,60,2,1)=",vble(35,60,2,1)
       write(112) vble 
       close(112)
 
-      return
+c     return
+      stop
       end

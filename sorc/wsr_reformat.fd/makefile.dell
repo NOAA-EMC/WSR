@@ -11,23 +11,30 @@ FFLAGS= -list -convert big_endian -assume byterecl -traceback
 SRCS=	readin.f
 OBJS=   $(SRCS:.f=.o)
 
+SRCM=   machine.f
+OBJM=   $(SRCM:.f=.o)
+MODM=   $(SRCM:.f=.mod)
+
 # Lines from here on down should not need to be changed.  They are the
 # actual rules which make uses to build a.out.
 #
 all:	$(CMD)
 
-$(CMD):	$(OBJS)
-	$(FC) -o $(@) $(OBJS) 
+$(CMD):	$(OBJM) $(OBJS)
+	$(FC) -o $(@) $(OBJS)
 
 $(OBJS):        $(SRCS)
 	$(FC) $(FFLAGS) -c $(SRCS)
 
 $(OBJS):        makefile.dell
 
+$(OBJM):      $(SRCM)
+	$(FC) $(FFLAGS) -c $(SRCM)
+
 allclean:       clean all
 
 clean:
-	-rm -f $(OBJS)
+	-rm -f $(OBJS) $(OBJM) $(MODM)
 
 clobber:        clean
 	-rm -f $(CMD)

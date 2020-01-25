@@ -169,5 +169,6 @@ c     ****************************************
 
 133   continue
 
-      return
+c     return
+      stop
       end

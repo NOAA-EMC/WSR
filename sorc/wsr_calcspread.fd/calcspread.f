@@ -77,5 +77,6 @@ c        *** Spread of surface variables ***
 
 666   format(2i5,f8.3)
 
-      return
+c     return
+      stop
       end
