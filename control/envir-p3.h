@@ -12,9 +12,9 @@ export RUN_ENVIR=emc
   fi
 
   if (( 0 == 1 )); then
-module load prod_envir/1.0.2 prod_util/1.1.0 ecflow/4.7.1
+module load prod_envir/1.0.3 prod_util/1.1.3 ecflow/4.7.1
   else
-module load prod_envir/1.0.2 prod_util/1.1.0
+module load prod_envir/1.0.3 prod_util/1.1.3
   fi
 
 echo in head_p3.h envir=$envir

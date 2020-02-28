@@ -1,5 +1,5 @@
 #BSUB -J %E%wsr_main_%CYC%
-#BSUB -o /com/output/%ENVIR%/today/wsr_main_%CYC%.o%J
+#BSUB -o /$COM%/output/%ENVIR%/today/wsr_main_%CYC%.o%J
 #BSUB -L /bin/sh
 #BSUB -q %QUEUE%
 #BSUB -n 48
@@ -11,7 +11,7 @@
 #BSUB -a poe
 
 %include <head.h>
-%include <envir-p1.h>
+%include <envir-p3.h>
 
 export cyc=%CYC%
 

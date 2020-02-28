@@ -28,6 +28,8 @@ esac
 
 if [[ $testmode = yes ]]; then
 
+  PTMP=/gpfs/dell3/ptmp
+
   # these test settings are only used when testmode=yes
 
   case $LOGNAME in
@@ -38,6 +40,16 @@ if [[ $testmode = yes ]]; then
       testrzdm=ncorzdm
       testdirectory=/home/people/nco/www/htdocs/pmb/sdm_wsr
       useexpid=no
+      envir=${envir:-para}
+    ;;
+    (nwprod)
+      # these are the production locations, edit them to use test locations
+      testemail=ncep.list.SPA-Helpdesk@noaa.gov
+      testuser=nwprod
+      testrzdm=ncorzdm
+      testdirectory=/home/people/nco/www/htdocs/pmb/nwprod_wsr
+      useexpid=no
+      envir=${envir:-para}
     ;;
     (Richard.Wobus)
       testemail=richard.wobus@noaa.gov
@@ -99,7 +111,8 @@ if [[ $testmode = yes ]]; then
 
     echo expid=$expid
 
-    GESdir=/ptmpd2/$LOGNAME/o/$expid/nwges/dev/wsr
+    #GESdir=/ptmpd2/$LOGNAME/o/$expid/nwges/dev/wsr
+    GESdir=$PTMP/$LOGNAME/o/$expid/nwges/dev/wsr
 
   fi
 
@@ -115,8 +128,15 @@ fi
 ###################################################################
 # READ IN DATA FROM targdata.d
 ###################################################################
+GESROOT=${GESROOT:-/gpfs/dell1/nco/ops/nwges}
+envir=${envir:-prod}
+. /usrx/local/prod/modules/default/init/sh
 
-GESdir=${GESdir:-/nwges/wsr}
+module load ips/18.0.1.163  prod_util/1.1.3
+module list
+
+#GESdir=${GESdir:-/nwges/wsr}
+GESdir=${GESdir:-$GESROOT/$envir/wsr}
 
 #### Read in targdata.d header (first 9 lines) ####
 PDY=`head -1 $GESdir/targdata.d`
@@ -177,12 +197,12 @@ rm -rf $carcahtext
 
 # Two phases of the program, with separate leading time
 # 
-flydate1=`/nwprod/util/exec/ndate +48 ${PDY}00`
-flydate2=`/nwprod/util/exec/ndate +72 ${PDY}00`
+flydate1=`$NDATE +48 ${PDY}00`
+flydate2=`$NDATE +72 ${PDY}00`
 flydate[1]=`echo ${flydate1}|cut -c1-8`
 flydate[2]=`echo ${flydate2}|cut -c1-8`
-flytime[1]=`/nwprod/util/exec/ndate +48 ${PDY}00`
-flytime[2]=`/nwprod/util/exec/ndate +72 ${PDY}00`
+flytime[1]=`$NDATE +48 ${PDY}00`
+flytime[2]=`$NDATE +72 ${PDY}00`
 
 
 echo "Decision issued from NCEP at ${curhh}Z on ${curmm}/${curdd}/${curyy}" >> $text

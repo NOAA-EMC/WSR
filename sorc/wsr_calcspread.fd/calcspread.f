@@ -77,6 +77,7 @@ c        *** Spread of surface variables ***
 
 666   format(2i5,f8.3)
 
-c     return
+c 20121011 rlw return ==> stop for ifort
+c      return
       stop
       end

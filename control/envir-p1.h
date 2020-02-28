@@ -40,8 +40,6 @@ case $envir in
     ;;
   dev)
     export jlogfile=${jlogfile:-$localprefixptmp/com/logs/${envir}/jlogfile}
-    mkdir -p $localprefixptmp/com/logs/${envir}
-    touch $jlogfile
     export DATAROOT=${DATAROOT:-$localprefixptmp/tmpnwprd}
     export DBNROOT=${UTILROOT}/fakedbn
     ;;

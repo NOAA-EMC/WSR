@@ -38,7 +38,7 @@ fl2=subwrd(args,18)
 fl3=subwrd(args,19)
 case=subwrd(args,20)
 
-'enable print ec.out'
+*'enable print ec.out'
 'set vpage 0 11 0 8.5'
 *'set parea 1 5 1.5 7.5'
 
@@ -211,7 +211,9 @@ title4='Flight track number'
 'draw string 5.5 0.8 'title4
 'set string 2'
 
-'print'
-'disable print'
-'printim gifimage.out gif  x850 y540 white'
+*'print'
+*'disable print'
+'gxprint ec.ps -e 0.5'
+*'printim gifimage.out gif  x850 y540 white'
+'gxprint gifimage.png  x850 y540 white'
 'quit'

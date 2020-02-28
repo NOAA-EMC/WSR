@@ -111,8 +111,10 @@ while [[ $i -le $cases ]]
 do
     radvr[i]=$radvr
     inittime[i]=$ensdate
-    opttime[i]=`/nwprod/util/exec/nhour ${obsdate[$i]} ${inittime[$i]}`  
-    leadtime[i]=`/nwprod/util/exec/nhour ${veridate[$i]} ${obsdate[$i]}` 
+    #opttime[i]=`/nwprod/util/exec/nhour ${obsdate[$i]} ${inittime[$i]}`  
+    opttime[i]=`$NHOUR ${obsdate[$i]} ${inittime[$i]}`  
+    #leadtime[i]=`/nwprod/util/exec/nhour ${veridate[$i]} ${obsdate[$i]}` 
+    leadtime[i]=`$NHOUR ${veridate[$i]} ${obsdate[$i]}` 
     vrlatu[i]=`echo ${vrlat[$i]} + ${radvr[$i]} \/ 111.199|bc`
     vrlatl[i]=`echo ${vrlat[$i]} - ${radvr[$i]} \/ 111.199|bc`
     vrlonl[i]=`echo ${vrlon[$i]} - ${radvr[$i]} \/ 111.199|bc`
@@ -161,26 +163,28 @@ do
     while [[ ${dloop} -lt ${obsdate[$i]} ]]
     do
         lt1[$i]=`expr ${lt1[$i]} + 12`
-        dloop=`/nwprod/util/exec/ndate +${lt1[$i]} ${ensdate}`
+        #dloop=`/nwprod/util/exec/ndate +${lt1[$i]} ${ensdate}`
+        dloop=`$NDATE +${lt1[$i]} ${ensdate}`
     done
 
     lt2[$i]=${lt1[$i]}
     while [[ ${dloop} -lt ${veridate[$i]} ]]
     do
         lt2[$i]=`expr ${lt2[$i]} + 12`
-        dloop=`/nwprod/util/exec/ndate +${lt2[$i]} ${ensdate}`
+        #dloop=`/nwprod/util/exec/ndate +${lt2[$i]} ${ensdate}`
+        dloop=`$NDATE +${lt2[$i]} ${ensdate}`
     done
-
-    if [[ ${lt1[$i]} -gt 240 ]]; then
-      echo lt1[$i]=${lt1[$i]} limited to 240 hours
-      lt1[$i]=240
-    fi
-
-    if [[ ${lt2[$i]} -gt 240 ]]; then
-      echo lt2[$i]=${lt2[$i]} limited to 240 hours
-      lt2[$i]=240
-    fi
      
+    if [[ ${lt1[$i]} -gt 216 ]]; then
+      echo lt1[$i]=${lt1[$i]} limited to 216 hours
+      lt1[$i]=216
+    fi
+
+    if [[ ${lt2[$i]} -gt 216 ]]; then
+      echo lt2[$i]=${lt2[$i]} limited to 216 hours
+      lt2[$i]=216
+    fi
+
     i=`expr $i + 1`
 done
 
@@ -229,7 +233,8 @@ fi
 ##########################################################################
 #  CALCULATE ENSEMBLE PERTURBATIONS
 ##########################################################################
-ensdate2=`/nwprod/util/exec/ndate -${hhdiff} ${ensdate}`
+#ensdate2=`/nwprod/util/exec/ndate -${hhdiff} ${ensdate}`
+ensdate2=`$NDATE -${hhdiff} ${ensdate}`
 
 sigtime=`expr ${maxlt1} + 84`
 if [[ ${sigtime} -gt ${maxlt2} && ${sigtime} -le 240 ]]
@@ -245,8 +250,10 @@ else
 fi
     mintint=`expr ${minlt1} / 12`
 
-ensdateold=`/nwprod/util/exec/ndate -24 ${ensdate}`
-ensdate2old=`/nwprod/util/exec/ndate -24 ${ensdate2}`
+#ensdateold=`/nwprod/util/exec/ndate -24 ${ensdate}`
+ensdateold=`$NDATE -24 ${ensdate}`
+#ensdate2old=`/nwprod/util/exec/ndate -24 ${ensdate2}`
+ensdate2old=`$NDATE -24 ${ensdate2}`
 prevdate=`echo $ensdateold|cut -c1-8`
 prev2date=`echo $ensdate2old|cut -c1-8`
 
@@ -532,7 +539,7 @@ export     FORT301="sigvartrack.d"
 startmsg
 export MP_PROCS=$nlon
 #poe $EXECwsr/wsr_summ_allnorms < params >> $pgmout 2> errfile
-mpirun.lsf $EXECwsr/wsr_summ_allnorms < params >> $pgmout 2> errfile
+$wsrmpexec $EXECwsr/wsr_summ_allnorms < params >> $pgmout 2> errfile
 
 export err=$?;err_chk
 

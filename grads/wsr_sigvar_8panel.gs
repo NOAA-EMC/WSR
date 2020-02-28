@@ -15,7 +15,7 @@ vtime3=subwrd(args,13)
 vtime4=subwrd(args,14)
 vnormgr=subwrd(args,15)
 
-'enable print ec.out'
+*'enable print ec.out'
 'clear'
 'set map 1 1 4'
 
@@ -97,7 +97,9 @@ title='Signal Variance for 'vnormgr'. Flight 'fli'. Observation time 'obsdate'. 
 'set strsiz 'hsiz' 'vsiz
 'draw string 'xstart' 'ystart' '%title
 
-'print'
-'disable print'
-'printim gifimage.out gif x800 y1000 white'
+*'print'
+*'disable print'
+'gxprint ec.ps -e 0.5'
+*'printim gifimage.out gif x800 y1000 white'
+'gxprint gifimage.png x800 y1000 white'
 'quit'

@@ -37,7 +37,7 @@ mem=subwrd(args,15)
 vnormgr=subwrd(args,16)
 case=subwrd(args,17)
 
-'enable print ec.out'
+*'enable print ec.out'
 'set vpage 0 11 0 8.5'
 *'set parea 1 5 1.5 7.5'
 
@@ -193,7 +193,9 @@ title3='NCEP/UM ETKF based on 'mem'-member 'ensdate' 'ensemble' ensemble.'
 *'draw string 5.5 0.8 'title3
 *'set string 2'
 
-'print'
-'disable print'
-'printim gifimage.out gif  x850 y540 white'
+*'print'
+*'disable print'
+'gxprint ec.ps -e 0.5'
+*'printim gifimage.out gif  x850 y540 white'
+'gxprint gifimage.png  x850 y540 white'
 'quit'

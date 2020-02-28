@@ -1,6 +1,0 @@
-FILES = ( /nwges/wsr/ )
-
-com:
-${FILES} -> ${HOSTS}
-        except_pat ( jlogfile bb/ingest bb/dbnet_xfer_errors ) ;
-        install;

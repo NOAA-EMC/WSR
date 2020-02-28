@@ -14,7 +14,7 @@ radvr=subwrd(args,12)
 vnormgr=subwrd(args,13)
 case=subwrd(args,14)
 
-'enable print ec.out'
+*'enable print ec.out'
 
 *** PLOT GRAPH ***
 
@@ -111,7 +111,9 @@ title3='NCEP/UMIAMI ETKF based on 'mem'-member 'yymmddhh' 'ensemble' ensemble.'
 'set strsiz 'hsiz' 'vsiz
 'draw string 'xstart' 'ystart' '%title3
 
-'print'
-'disable print'
-'printim gifimage.out gif x700 y540 white'
+*'print'
+*'disable print'
+'gxprint ec.ps -e 0.5'
+*'printim gifimage.out gif x700 y540 white'
+'gxprint gifimage.png x700 y540 white'
 'quit'

@@ -6,7 +6,7 @@ vnormgr=subwrd(args,4)
 i=subwrd(args,5)
 
 
-'enable print ec.out'
+*'enable print ec.out'
 'clear'
 'set map 1 1 4'
 
@@ -41,7 +41,9 @@ title='Signal Variance for 'vnormgr'.  Observation time 'obsdate'. 'yymmddhh' en
 'set strsiz 'hsiz' 'vsiz
 'draw string 'xstart' 'ystart' '%title
 
-'print'
-'disable print'
-'printim gifimage.out gif x700 y900 white'
+*'print'
+*'disable print'
+'gxprint ec.ps -e 0.5'
+*'printim gifimage.out gif x700 y900 white'
+'gxprint gifimage.png x700 y900 white'
 'quit'

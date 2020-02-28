@@ -35,7 +35,7 @@ export icopygb=1
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${jobid:?}}
+export jlogfile=${jlogfile:-$DATA/jlogfile.${jobid:?}}
 
 ####################################
 # Determine Job Output Name on System
@@ -76,16 +76,15 @@ export COMINcmce=${COMINcmce:-$(compath.py naefs/prod)}
 ##############################
 # Define output GESdir Directory 
 ##############################
-if [ "$envir" = "prod" ]; then
-    #NOTE: This should be moved to nwges/prod/${RUN} in the next release!
-    export GESdir=${GESROOT:?}/${RUN}/${PDY}
-else
-    export GESdir=${GESROOT:?}/${envir}/${RUN}/${PDY}
-fi
+export GESdir=${GESROOT:?}/${envir}/${RUN}/${PDY}
 mkdir -p $GESdir
 
 # JY- the following can be removed later after test
 export COMENS=$GESdir
+
+export wsrmpexec=mpirun
+echo wsrmpexec=$wsrmpexec
+
 env
 
 ########################################################
@@ -103,4 +102,3 @@ if [ "${KEEPDATA^^}" != "YES" ]; then
 fi
 
 date
-

@@ -6,7 +6,6 @@ msg="JOB $job HAS BEGUN"
 postmsg "$jlogfile" "$msg"
 
 cd $DATA
-
 export pgm=wsr_creategfs.sh
 $USHwsr/wsr_creategfs.sh
 export err=$?; # err_chk

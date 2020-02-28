@@ -20,7 +20,7 @@ radvr=subwrd(args,18)
 vnormgr=subwrd(args,19)
 case=subwrd(args,20)
 
-'enable print ec.out'
+*'enable print ec.out'
 
 *** PLOT GRAPH ***
 
@@ -227,7 +227,9 @@ title3='NCEP/UM ETKF based on 'mem'-member 'yymmddhh' 'ensemble' ensemble. Best 
 *'draw string 8.9 'ystart' 'fl3
 'draw string 10.4 'ystart' 'fl3
 
-'print'
-'disable print'
-'printim gifimage.out gif x700 y540 white'
+*'print'
+*'disable print'
+'gxprint ec.ps -e 0.5'
+*'printim gifimage.out gif x700 y540 white'
+'gxprint gifimage.png x700 y540 white'
 'quit'

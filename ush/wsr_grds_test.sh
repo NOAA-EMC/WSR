@@ -1,22 +1,21 @@
 #!/bin/ksh
 
-# @ job_name = jwsr_grads
-# @ output = /stmp/wsr_grads.o$(jobid)
-# @ error = /stmp/wsr_grads.o$(jobid)
-# @ shell = /bin/sh
-# @ job_type = serial
-# @ class = 1
-# @ min_processors = 1
-# @ max_processors = 1
-# @ wall_clock_limit = 00:30:00
-# @ notification = never
-# @ queue
+## @ job_name = jwsr_grads
+## @ output = /stmpp1/wsr_grads.o$(jobid)
+## @ error = /stmpp1/wsr_grads.o$(jobid)
+## @ shell = /bin/sh
+## @ job_type = serial
+## @ class = 1
+## @ min_processors = 1
+## @ max_processors = 1
+## @ wall_clock_limit = 00:30:00
+## @ notification = never
+## @ queue
 
 set -x 
 ### USER SETUP
-export envir=para
 
-. ${NWROOT:-/nw${envir:-prod}}/versions/wsr.ver
+#. ${NWROOT:-/gpfs/dell1/nco/ops/nw${envir:-prod}}/versions/wsr.ver
 
 # for production, name this script wsr_grds.sh
 # for testing, name this script wsr_grds_test.sh
@@ -47,11 +46,22 @@ if [[ $testmode = yes ]]; then
   case $LOGNAME in
     (SDM)
       # these are the production locations, edit them to use test locations
-      testenvir=prod
+      testenvir=para
       testemail=sdm@noaa.gov
       testuser=wx12sd
       testrzdm=ncorzdm
       testdirectory=/home/people/nco/www/htdocs/pmb/sdm_wsr
+      export PRINTSDM=NO
+      export sdmprinter=hp26_sdm
+      useexpid=no
+    ;;
+    (nwprod)
+      # these are the production locations, edit them to use test locations
+      testenvir=para
+      testemail=ncep.list.spa-helpdesk@noaa.gov
+      testuser=nwprod
+      testrzdm=ncorzdm
+      testdirectory=/home/people/nco/www/htdocs/pmb/nwprod_wsr
       export PRINTSDM=NO
       export sdmprinter=hp26_sdm
       useexpid=no
@@ -65,7 +75,7 @@ if [[ $testmode = yes ]]; then
       export PRINTSDM=NO
       export sdmprinter=
       useexpid=yes
-      testtmpdir=/ptmpd2/$LOGNAME/o
+      testtmpdir=/gpfs/dell3/ptmp/$LOGNAME/o
     ;;
     (*)
       echo Please add test settings to $0 for LOGNAME=$LOGNAME
@@ -89,7 +99,7 @@ if [[ $testmode = yes ]]; then
 
   if [[ $useexpid = yes ]]; then
 
-    #export wsr_ver=v3.0.0
+    export wsr_ver=v3.1.0.1
 
     dfile=$0
     dfb=`basename $dfile`
@@ -131,18 +141,22 @@ if [[ $testmode = yes ]]; then
 
     echo expid=$expid
 
-    export GESdir=${GESdir:-/ptmpd2/$LOGNAME/o/$expid/nwges/$envir/wsr}
-    export COMIN=${COMIN:-/ptmpd2/$LOGNAME/o/$expid/com/$envir/wsr}
-    export ETKFOUT=${ETKFOUT:-/ptmpd2/$LOGNAME/o/$expid}
+    export GESdir=${GESdir:-/gpfs/dell3/ptmp/$LOGNAME/o/$expid/nwges/$envir/wsr}
+    export COMIN=${COMIN:-/gpfs/dell3/ptmp/$LOGNAME/o/$expid/com/wsr/$envir}
+    export ETKFOUT=${ETKFOUT:-/gpfs/dell3/ptmp/$LOGNAME/o/$expid}
 
     #testbase=/ensemble/save/$LOGNAME/nw$envir
-    testbase=/ensemble/save/$LOGNAME/s/$expid/nw$envir
+    #testbase=/ensemble/save/$LOGNAME/s/$expid/nw$envir
+    testbase=/gpfs/dell2/emc/modeling/noscrub/$LOGNAME/s/$expid/nw$envir
     . $testbase/wsr*/versions/wsr.ver
     export HOMEwsr=$testbase/wsr.${wsr_ver}/ush
+    export HOMEwsr=$testbase/wsr.${wsr_ver}
     export FIXwsr=$testbase/wsr.${wsr_ver}/fix
 
     testtmpdir=$testtmpdir/$expid
-    export DATA=$testtmpdir/wsr/tmp/${job}.${pid}
+    export pid=$$
+    dtg=`date +%Y%m%d%H%M%S`
+    export DATA=$testtmpdir/wsr/tmp/wsr.${pid}.$dtg
 
     echo GESdir=$GESdir
     echo COMIN=$COMIN
@@ -166,23 +180,40 @@ fi
 # end set up test mode
 ####################################
 
-shellname=ksh
-. /usrx/local/Modules/3.2.9/init/$shellname
+#. ${NWROOT:-/gpfs/dell1/nco/ops/nw${envir:-prod}}/versions/wsr.ver
+if [[ $useexpid = no ]]; then
+. /gpfs/dell1/nco/ops/nw${envir:-prod}/versions/wsr.ver
+fi
 
-module load GrADS
+#shellname=ksh
+# . /usrx/local/Modules/3.2.9/init/$shellname
+. /usrx/local/prod/modules/default/init/sh
+
+module use /usrx/local/dev/modulefiles
+module load  GrADS/2.2.0
+module list 
 
 export job=wsr_main
 
 export envir=${envir:-prod}
-export GESdir=${GESdir:-/nwges/wsr}
-export COMIN=${COMIN:-/com/wsr/$envir}
+export GESdir=${GESdir:-/gpfs/dell1/nco/ops/nwges/$envir/wsr}
+export COMIN=${COMIN:-/gpfs/dell1/nco/ops/com/wsr/$envir}
 # ETKFOUT is the home dir where ET KF results
-export ETKFOUT=${ETKFOUT:-}
+export ETKFOUT=${ETKFOUT:-/gpfs/dell1/nco/ops}
 export RAWINSONDES=${RAWINSONDES:-"YES"}
-export PRINTSDM=${PRINTSDM:-NO}
-export HOMEwsr=${HOMEwsr:-/nw$envir/wsr.${wsr_ver:?}}
+if [[ $testmode = no ]]; then
+  export PRINTSDM=${PRINTSDM:-YES}
+else
+  export PRINTSDM=${PRINTSDM:-NO}
+fi
+export HOMEwsr=${HOMEwsr:-/gpfs/dell1/nco/ops/nw$envir/wsr.${wsr_ver:?}}
 export FIXwsr=${FIXwsr:-$HOMEwsr/fix}
 export sdmprinter=${sdmprinter:-hp26_sdm}
+#######################################################
+# use gxps at $HOMEwsr/grads/gxps
+# replaced by gxprint in grads and mv here/
+######################################################
+#export PATH=.:$PATH:$HOMEwsr/grads
 
 echo GESdir=$GESdir
 echo COMIN=$COMIN
@@ -196,7 +227,7 @@ echo sdmprinter=$sdmprinter
 ### END USER SETUP #########
 
 export pid=$$
-export DATA=${DATA:-/ptmpd2/$LOGNAME/wsr/tmp/${job}.${pid}}
+export DATA=${DATA:-/gpfs/dell1/ptmp/$LOGNAME/wsr/tmp/${job}.${pid}}
 
 #echo stop here for testing
 #echo before sorted environment
@@ -213,11 +244,11 @@ cases=`head -2 $GESdir/targdata.d | tail -1`
 . $ETKFOUT/com/wsr/${envir}/wsr.$PDY/case1.env
 
 #cp $HOMEwsr/fix/wsr_track.* .
-if [[ $testmode = no ]]; then
-  cp /nw${envir}/fix/wsr_track.* .
-else
+# JY if [[ $testmode = no ]]; then
+# JY   cp /nw${envir}/fix/wsr_track.* .
+# JY else
   cp $FIXwsr/wsr_track.* .
-fi
+# JY fi
 cp $HOMEwsr/grads/*.gs $DATA/.
 
 i=1
@@ -273,18 +304,22 @@ do
        else 
        grads -blc "wsr_targ_special4.gs ${hr1} ${hr2} ${ensdategr} ${lon1} ${lon2} ${lat1} ${lat2} ${ensemble} ${mem} ${ndrops1} ${ndrops2} ${ndrops3} ${fl1} ${fl2} ${fl3} ${vrlonewest} ${vrlat} ${radvr} ${vnormgr} ${i}"
        fi
+									  
 
    else
       grads -blc "wsr_targ_notracks.2.gs ${hr1} ${hr2} ${ensdategr} ${lon1} ${lon2} ${lat1} ${lat2} ${ensemble} ${mem} ${vrlonewest} ${vrlat} ${radvr} ${vnormgr} ${i}"
    fi
 
-   gxps -ic ec.out -o Plot${case_id}_${vrlat}N${vrlonewest}_summary_${lt1}_${lt2}.ps
+   #gxps -ic ec.out -o Plot${case_id}_${vrlat}N${vrlonewest}_summary_${lt1}_${lt2}.ps
+   mv        ec.px     Plot${case_id}_${vrlat}N${vrlonewest}_summary_${lt1}_${lt2}.ps
    if test "$PRINTSDM" = "YES"
    then
     lpr -h -"$sdmprinter" Plot${case_id}_${vrlat}N${vrlonewest}_summary_${lt1}_${lt2}.ps
    fi
 
-   mv gifimage.out Plot${case_id}_${vrlat}N${vrlonewest}_summary_${lt1}_${lt2}.gif
+   mv gifimage.png Plot${case_id}_${vrlat}N${vrlonewest}_summary_${lt1}_${lt2}.png
+                                                                          #echo test exit after first grads call
+                                                                          #exit
 
    if [ ${searchareacode} -eq 1 ]
    then
@@ -299,12 +334,13 @@ do
        then
        cat $COMIN/case${i}.rawinhist.d | sed 's/NaNQ/.000/' > rawinhist.d
        grads -blc "wsr_rawhist.gs ${ensemble} ${xmin2} ${xmax2} ${ymin2} ${ymax2} ${xlow} ${xint} ${yint} ${ensdategr} ${obsdate} ${veridate} ${vrlonewest} ${vrlat} ${radvr} ${mem} ${vnormgr} ${i}"
-       mv gifimage.out VR_${vrlat}N${vrlonewest}_rawinsondes_${lt1}_${lt2}.gif
+       mv gifimage.png VR_${vrlat}N${vrlonewest}_rawinsondes_${lt1}_${lt2}.png
        fi
 
        grads -blc "wsr_flihist.1.gs ${ensemble} ${xmin} ${xmax} ${ymin1} ${ymax1} ${xlow} ${xint} ${yint} ${ensdategr} ${obsdate} ${veridate} ${vrlonewest} ${vrlat} ${radvr} ${mem} ${vnormgr} ${fl1} ${fl2} ${fl3} ${i}"
 
-       gxps -ci ec.out -o VR_${vrlat}N${vrlonewest}_flights_${lt1}_${lt2}.ps
+       #gxps -ci ec.out -o VR_${vrlat}N${vrlonewest}_flights_${lt1}_${lt2}.ps
+       mv        ec.ps     VR_${vrlat}N${vrlonewest}_flights_${lt1}_${lt2}.ps
        if test "$PRINTSDM" = "YES"
        then
           if [ $lt1 -eq 48 || $lt1 -eq 24 ] 
@@ -313,7 +349,7 @@ do
           fi
        fi
 
-       mv gifimage.out VR_${vrlat}N${vrlonewest}_flights_${lt1}_${lt2}.gif
+       mv gifimage.png VR_${vrlat}N${vrlonewest}_flights_${lt1}_${lt2}.png
 
    fi
 
@@ -350,25 +386,27 @@ do
 
     grads -bpc "wsr_sigvar_notwsr_8panel.gs ${ensdate} ${obsdate} ${ltdiff} 9 ${vnormgr} ${i}"
 
-    gxps -ic ec.out -o sigvar_case${case_id}.ps
+    #gxps -ic ec.out -o sigvar_case${case_id}.ps
+    mv        ec.ps     sigvar_case${case_id}.ps
     if test $PRINTSDM = "YES"
     then
         lpr -h -P"$sdmprinter" sigvar_case{$case_id}.ps
     fi
 
-    mv gifimage.out sigvar_case${case_id}.gif
+    mv gifimage.png sigvar_case${case_id}.png
 
     if [ ${ltdiff} -gt 84 ]
     then
          grads -bpc "wsr_sigvar_notwsr_8panel_more.gs ${ensdate} ${obsdate} ${ltdiff} ${vnormgr} ${i}"
  
-         gxps -ic ec.out -o sigvar_case${case_id}_more.ps
+         #gxps -ic ec.out -o sigvar_case${case_id}_more.ps
+         mv        ec.ps     sigvar_case${case_id}_more.ps
          if test $PRINTSDM = "YES"
          then
              lpr -h -P"$sdmprinter" sigvar_case${case_id}_more.ps
          fi
 
-         mv gifimage.out sigvar_case${case_id}_more.gif
+         mv gifimage.png sigvar_case${case_id}_more.png
     fi
     
     i=`expr ${i} + 1`
@@ -457,7 +495,8 @@ then
 
       grads -bpc "wsr_sigvar_8panel.gs ${ensdate} ${obsdate} ${ifl} ${ndrops} ${ensemble} ${mem} ${vercase[1]} ${vercase[2]} ${vercase[3]} ${vercase[4]} ${vtime[1]} ${vtime[2]} ${vtime[3]} ${vtime[4]} ${vnormgr}"
 
-      gxps -ic ec.out -o sigvar_${lt1}_flight${ifl}.ps
+      #gxps -ic ec.out -o sigvar_${lt1}_flight${ifl}.ps
+      mv        ec.ps     sigvar_${lt1}_flight${ifl}.ps
       if test $PRINTSDM = "YES"
       then
          if [[ $lt1 -eq 24 || $lt1 -eq 48 || $lt1 -eq 72 ]] 
@@ -466,14 +505,15 @@ then
          fi
       fi
 
-      mv gifimage.out sigvar_${lt1}_flight${ifl}.gif
+      mv gifimage.png sigvar_${lt1}_flight${ifl}.png
  
       if [ ${ltdiff} -gt 84 ]
       then
 
            grads -bpc "wsr_sigvar_8panel_more.gs ${ensdate} ${obsdate} ${ifl} ${ltdiff} ${ensemble} ${mem} ${vercase[1]} ${vercase[2]} ${vercase[3]} ${vercase[4]} ${vtime[1]} ${vtime[2]} ${vtime[3]} ${vtime[4]} ${vnormgr}"
 
-           gxps -ic ec.out -o sigvar_${lt1}_flight${ifl}_more.ps
+           #gxps -ic ec.out -o sigvar_${lt1}_flight${ifl}_more.ps
+           mv        ec.ps     sigvar_${lt1}_flight${ifl}_more.ps
            if test $PRINTSDM = "YES"
            then
                if [[ $lt1 -eq 24 || $lt1 -eq 48 || $lt1 -eq 72 ]]
@@ -482,7 +522,7 @@ then
                fi 
            fi
 
-           mv gifimage.out sigvar_${lt1}_flight${ifl}_more.gif
+           mv gifimage.png sigvar_${lt1}_flight${ifl}_more.png
       fi
 
       k=`expr ${k} + 1`
@@ -507,7 +547,7 @@ fi
 #cd $PDY
 #bin
 #prompt
-#mput *.gif
+#mput *.png
 #bye
 #ftpEOF
 
@@ -515,20 +555,25 @@ if [[ $testmode = no ]]; then
 
   ssh -l wx12sd ncorzdm "rm -rf  /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}"
   ssh -l wx12sd ncorzdm "mkdir -p /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}"
-  scp *.gif wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}
+# uncomment these if needed
+# ssh -l wx12sd ncorzdm "cp /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/allow.cfg /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}"
+# ssh -l wx12sd ncorzdm "cp /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/index.php /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}"
+  scp $HOMEwsr/grads/allow.cfg wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}
+  scp $HOMEwsr/grads/index.php wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}
+  scp *.png wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}
 
 else
 
   ssh -l $testuser $testrzdm "rm -rf  $testdirectory/test$expid/graphics/${PDY}"
   ssh -l $testuser $testrzdm "mkdir -p $testdirectory/test$expid/graphics/${PDY}"
-  scp *.gif $testuser@$testrzdm:$testdirectory/test$expid/graphics/${PDY}
+  scp *.png $testuser@$testrzdm:$testdirectory/test$expid/graphics/${PDY}
 
 fi
 
 #fi
 
 #ssh -l ysong rzdm "mkdir -p /home/people/emc/www/htdocs/gmb/tparc/special/trop1_${PDY}_${ensemble}"
-#scp *.gif ysong@rzdm:/home/people/emc/www/htdocs/gmb/tparc/special/trop1_${PDY}_${ensemble}
+#scp *.png ysong@rzdm:/home/people/emc/www/htdocs/gmb/tparc/special/trop1_${PDY}_${ensemble}
 
 #cp /nfsuser/g01/wx20ys/tobs/wsr/tmp/*.gr /nfsuser/g01/wx20ys/tobs/wsr/${PDY}/.
 #cp /nfsuser/g01/wx20ys/tobs/wsr/tmp/*.d /nfsuser/g01/wx20ys/tobs/wsr/${PDY}/.

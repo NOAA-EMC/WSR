@@ -48,6 +48,16 @@ if [[ $testmode = yes ]]; then
       testrzdm=ncorzdm
       testdirectory=/home/people/nco/www/htdocs/pmb/sdm_wsr
       useexpid=no
+      envir=${envir:-para}
+    ;;
+    (nwprod)
+      # these are the production locations, edit them to use test locations
+      testemail=ncep.list.spa-helpdesk@noaa.gov
+      testuser=nwprod
+      testrzdm=ncorzdm
+      testdirectory=/home/people/nco/www/htdocs/pmb/nwprod_wsr
+      useexpid=no
+      envir=${envir:-para}
     ;;
     (Richard.Wobus)
       testemail=richard.wobus@noaa.gov
@@ -138,9 +148,12 @@ PDY=${PDY:-${curyy}${curmm}${curdd}}
 ####################################
 # Set Working Directories
 ####################################
+GESROOT=${GESROOT:-/gpfs/dell1/nco/ops/nwges}
+envir=${envir:-prod}
 
 #GESdir=${GESdir:-/nwges/wsr}
 GESdir=${GESdir:-$GESROOT/$envir/wsr}
+if [ ! -s $GESdir ]; then mkdir $GESdir; fi
 
 echo GESdir=$GESdir
 
@@ -158,8 +171,8 @@ if [[ $testmode = no ]]; then
 else
   if [[ -f targdata.d ]]; then
     dtg=`date -r targdata.d +%Y%m%d%H%M%S`
-    echo dtg=$dtgo
-    ls -l $targdata.d
+    echo dtg=$dtg
+    ls -l targdata.d
     for file in targdata.d targdata.txt targdata.txt? targdata.txt?? targdata.txt??? targdata.txt????
     do
       if [[ -f $file ]]; then

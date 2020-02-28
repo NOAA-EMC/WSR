@@ -88,7 +88,9 @@ c   Yucheng Song added two lines to prevent the NaNQ
        totlat(i)=90.-psip(i)*(180.0/pi)
 c      write(6,*) thc(i),xc(i),psip(i),totlon(i),totlat(i)
 c      if (totlon(i) .ge. 180.0) totlon(i)=totlon(i)-360.0
-      write(6,*) totlon(i),totlat(i)
+c     write(6,*) totlon(i),totlat(i)
+c RLW 20130507 modify format to match CCS output
+      write(6,'(F12.7,F12.8)') totlon(i),totlat(i)
 c       write(63,*) vrlons,rellon,sign,totlon(i),totlat(i)
       end do
       npoint=idim+1

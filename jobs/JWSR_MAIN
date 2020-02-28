@@ -18,7 +18,7 @@ cd $DATA
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${jobid:?}}
+export jlogfile=${jlogfile:-$DATA/jlogfile.${jobid:?}}
 
 ####################################
 # Determine Job Output Name on System
@@ -29,9 +29,9 @@ export cycle=t${cyc}z
 
 export SENDCOM=${SENDCOM:-YES}
 export SENDECF=${SENDECF:-YES}
-export SENDDTS=NOS
-export RAWINSONDES=NO
-export PRINTSDM=YES
+export SENDDTS=${SENDDTS:-NO}
+export RAWINSONDES=${RAWINSONDES:-NO}
+export PRINTSDM=${PRINTSDM:-YES}
 export XLFRTEOPTS="unit_vars=yes"
 
 export NET=wsr
@@ -44,30 +44,24 @@ export FIXwsr=$HOMEwsr/fix
 ##############################
 # Define for graphics
 ##############################
-export PATH=$PATH:/usrx/local/grads/bin
-export GADDIR=/usrx/local/grads/dat
-export GASCRP=/usrx/local/grads/gslib
+#export PATH=$PATH:/usrx/local/grads/bin
+#export GADDIR=/usrx/local/grads/dat
+#export GASCRP=/usrx/local/grads/gslib
 
 ##############################
 # Define GES Directories
 ##############################
-if [ "$envir" = "prod" ]; then
-    #NOTE: This should be moved to nwges/prod/${RUN} in the next release!
-    export GESdir=${GESROOT:?}/${RUN}
-else
-    export GESdir=${GESROOT:?}/${envir}/${RUN}
-fi
+export GESdir=${GESROOT:?}/${envir}/${RUN}
 
 # JY- the following can be removed later after test
 export COMENS=$GESdir
-
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
 export PDY=$(head -1 $GESdir/targdata.d)
 setpdy.sh
-. PDY
+. ./PDY
 
 export COMOUT=${COMROOT:?}/${NET}/${envir}/${RUN}.${PDY}
 mkdir -p $COMOUT
@@ -98,6 +92,9 @@ export phase=1
 if [[ $PDY -ge 20110226 ]]; then
   export phase=2
 fi
+
+export wsrmpexec=mpirun
+echo wsrmpexec=$wsrmpexec
 
 env|sort
 
