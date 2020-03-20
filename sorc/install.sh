@@ -66,7 +66,11 @@ do
 done
 echo install succeeded for $ns codes
 echo install failed for $nf codes $failstring
-echo
+echo install executable to HOMEgefs/exec
+cd $dirpwd/../exec
+cp -p * $dirpwd/../../../exec
+cd $dirpwd
+echo wsr install succeeded
 
 exit
 done

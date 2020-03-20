@@ -11,14 +11,15 @@ date
 export PS4=' $SECONDS + '
 set -x
 
-export DATA=${DATA:-${DATAROOT:?}/${jobid:?}}
+export pid=$$
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
 
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-$DATA/jlogfile.${jobid:?}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -34,10 +35,10 @@ export RAWINSONDES=${RAWINSONDES:-NO}
 export PRINTSDM=${PRINTSDM:-YES}
 export XLFRTEOPTS="unit_vars=yes"
 
-export NET=wsr
-export RUN=wsr
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
 
-export HOMEwsr=${HOMEwsr:-${NWROOT:?}/wsr.${wsr_ver:?}}
+export HOMEwsr=${HOMEgefs}/sorc/gefs_wsr.fd
 export EXECwsr=$HOMEwsr/exec
 export FIXwsr=$HOMEwsr/fix
 
