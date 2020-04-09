@@ -8,9 +8,7 @@ date
 export PS4=' $SECONDS + '
 set -x
 
-#### export DATA=${DATA:-${DATAROOT:?}/${jobid:?}}
-export pid=$$
-export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+export DATA=${DATA:-${DATAROOT:?}/${jobid:?}}
 mkdir -p $DATA
 cd $DATA
 
@@ -37,8 +35,7 @@ export icopygb=1
 ####################################
 # File To Log Msgs
 ####################################
-#### export jlogfile=${jlogfile:-$DATA/jlogfile.${jobid:?}}
-export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-$DATA/jlogfile.${jobid:?}}
 
 ####################################
 # Determine Job Output Name on System
@@ -57,10 +54,10 @@ fi
 export SENDCOM=${SENDCOM:-YES}
 export SENDECF=${SENDECF:-YES}
 
-export NET=${NET:-gens}
-export RUN=${RUN:-gefs}
+export NET=wsr
+export RUN=wsr
 
-export HOMEwsr=${HOMEgefs}/sorc/gefs_wsr.fd
+export HOMEwsr=${HOMEwsr:-${NWROOT:?}/wsr.${wsr_ver:?}}
 export EXECwsr=$HOMEwsr/exec
 export USHwsr=$HOMEwsr/ush
 
@@ -73,7 +70,7 @@ setpdy.sh
 ##############################
 # Define input COM Directory
 ##############################
-export COMINgens=$COMROOT/${NET}/${envir}
+export COMINgens=${COMINgens:-$(compath.py gens/prod)}
 export COMINcmce=${COMINcmce:-$(compath.py naefs/prod)}
 
 ##############################
