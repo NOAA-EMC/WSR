@@ -100,10 +100,10 @@ eh2=`echo $date2 | cut -c9-10`
 eh3=`echo $date3 | cut -c9-10`
 eh4=`echo $date4 | cut -c9-10`
 
-ncdir1=${COMINgens}/gefs.${PDY1}/${eh1}/pgrb2a
-ncdir2=${COMINgens}/gefs.${PDY2}/${eh2}/pgrb2a
-ncdir3=${COMINgens}/gefs.${PDY3}/${eh3}/pgrb2a
-ncdir4=${COMINgens}/gefs.${PDY4}/${eh4}/pgrb2a
+ncdir1=${DATA}/gefs.${PDY1}/${eh1}/pgrb2a1p0
+ncdir2=${DATA}/gefs.${PDY2}/${eh2}/pgrb2a1p0
+ncdir3=${DATA}/gefs.${PDY3}/${eh3}/pgrb2a1p0
+ncdir4=${DATA}/gefs.${PDY4}/${eh4}/pgrb2a1p0
 
 i=1
 while [[ $i -le $ntimes ]]
@@ -120,8 +120,12 @@ do
           [[ $eh -eq $eh1 ]] && fnum_lt=10000 
           [[ $eh -eq $eh2 ]] && fnum_lt=20000  
           [[ $eh -eq $eh3 ]] && fnum_lt=30000  
-          [[ $eh -eq $eh4 ]] && fnum_lt=40000  
+          [[ $eh -eq $eh4 ]] && fnum_lt=40000
           [[ $lta -le 9 ]] && lta=0$lta
+
+          lta_3=$lta    # three digit fcst hours
+          [[ $lta_3 -le 99 ]] && lta_3=0$lta_3
+          lta=$lta_3
 ###################################
 # Copygb to convert - default     #
 ###################################
@@ -133,8 +137,8 @@ if [[ $icopygb -eq 1 ]]; then
          while [[ $nm -le $memrf_eh ]]
          do
            [[ $nm -le 9 ]] && nm=0$nm
-           ensfile_lt2=${ncdir}/gep${nm}.t${eh}z.pgrb2af$lta
-           [[ $nm -eq 00 ]] && ensfile_lt2=${ncdir}/gec00.t${eh}z.pgrb2af$lta
+           ensfile_lt2=${ncdir}/gep${nm}.t${eh}z.pgrb2a.1p00.f$lta
+           [[ $nm -eq 00 ]] && ensfile_lt2=${ncdir}/gec00.t${eh}z.pgrb2a.1p00.f$lta
 
            ensfile_lt=ge${nm}.t${eh}z.pgrbaf$lta
            echo "${CNVGRIB:?} -g21 $ensfile_lt2 $ensfile_lt" >>ncopy.$itask
