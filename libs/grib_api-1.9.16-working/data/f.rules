@@ -1,0 +1,1 @@
+write "/gpfs/dell1/nco/ops/nwpara/wsr.v3.1.0.1/libs/grib_api-1.9.16-working/data/split/[centre]_[date]_[dataType]_[gridType]_[levelType]_[level]_[short_name]_[packingType].grib[editionNumber]";
