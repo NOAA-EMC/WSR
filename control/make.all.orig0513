@@ -1,0 +1,128 @@
+#!/bin/ksh
+#
+# make all executables
+#
+echo `date` $0 $* begin
+cd ..
+rc=$?
+if (( rc == 0 )); then
+  nodirs=yes
+  for dir in exec ecmwf_grib_api-1.9.16 grib_api-1.9.16_working
+  do
+  if [[ -d $dir ]]; then
+    echo $dir subdirectory already exists
+    ls -al $dir
+    nodirs=no
+  fi
+  done
+  if [[ $nodirs = yes ]]; then
+    dirbase=`pwd`
+    gribdir=grib_api-1.9.16
+    gribdirw=${gribdir}-working
+    cp -pr $gribdir $gribdirw
+    rc=$?
+    if (( rc == 0 )); then
+      dirlib=ecmwf_$gribdir
+      mkdir -p $dirlib
+      cd $gribdirw
+      rc=$?
+      if (( rc == 0 )); then
+	echo
+	echo `date` configure --prefix=$dirbase/$dirlib before
+	configure --prefix=$dirbase/$dirlib
+	rc=$?
+	echo `date` configure --prefix=$dirbase/$dirlib after
+	if (( rc == 0 )); then
+	  echo
+	  echo `date` make before
+	  make
+	  rc=$?
+	  echo `date` make after
+	  if (( rc == 0 )); then
+	    echo
+	    echo `date` make check before
+	    make check
+	    rc=$?
+	    echo `date` make check after
+	    if (( rc == 0 )); then
+	      echo
+	      echo `date` make install before
+	      make install
+	      rc=$?
+	      echo `date` make install after
+	      if (( rc == 0 )); then
+		cd $dirbase
+		mkdir -p exec
+		rc=$?
+		if (( rc == 0 )); then
+		  cd sorc
+		  rc=$?
+		  if (( rc == 0 )); then
+		    dirso=`pwd`
+		    for dir in *
+		    do
+		      cd $dir
+		      rc=$?
+		      if (( rc == 0 )); then
+			if [[ -f makefile.wcoss ]]; then
+			  echo
+			  echo `date` make -f makefile.wcoss before
+			  make -f makefile.wcoss
+			  rc=$?
+			  echo `date` make -f makefile.wcoss after
+			  if (( rc == 0 )); then
+			    ls -al wsr_*
+			    for file in wsr_*
+			    do
+			      if [[ -f $file ]]; then
+				ls -al $file
+				mv $file ../../exec/$file
+				ls -al ../../exec/$file
+			      else
+				echo file=$file DOES NOT EXIST
+			      fi
+			    done
+			  else
+			    echo make -f makefile.wcoss FAILED rc=$rc
+			  fi
+			else
+			  echo makefile.wcoss IS MISSING FROM `pwd`
+			fi
+		      else
+			echo cd $dir FAILED rc=$rc
+		      fi
+		      echo
+		      cd $dirso
+		    done
+		    echo
+		  else
+		    echo cd sorc FAILED rc=$rc
+		  fi
+		else
+		  echo mkdir -p exec FAILED rc=$rc
+		fi
+	      else
+		echo make install FAILED rc=$rc
+	      fi
+	    else
+	      echo make check FAILED rc=$rc
+	    fi
+	  else
+	    echo make FAILED rc=$rc
+	  fi
+	else
+	  echo configure --prefix=$dirbase/lib FAILED rc=$rc
+	fi
+      else
+	echo cd $gribdir FAILED rc=$rc
+      fi
+    else
+      echo cp -pr $gribdir $gribdirw FAILED rc=$rc
+    fi
+  else
+    echo at least one directory to be created already exists
+  fi
+else
+  echo cd .. FAILED rc=$rc
+fi
+echo `date` $0 $* end

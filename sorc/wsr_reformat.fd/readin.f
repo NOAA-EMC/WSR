@@ -10,7 +10,10 @@ c mem1 is the number of ensembles for each cycle
 c mem0 is the total number
 
       program readin
-      USE MACHINE, ONLY: kind_io4
+c 20121012 rlw substitute inline for MACHINE
+
+c     USE MACHINE, ONLY: kind_io4
+      use machine
 c     real(kind=kind_io4),allocatable::field(:,:) 
 c     real(kind=kind_io4),allocatable::field(:,:) 
       real,allocatable::field(:,:) 
@@ -88,5 +91,7 @@ c           print*, "vble(35,60,2,1)=",vble(35,60,2,1)
       write(112) vble 
       close(112)
 
-      return
+c 20121012 rlw  return ==> stop for ifort
+c     return
+      stop
       end

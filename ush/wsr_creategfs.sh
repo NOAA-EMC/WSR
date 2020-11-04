@@ -1,4 +1,4 @@
-# !/bin/sh
+#!/bin/ksh
 ################################################################################
 ####  UNIX Script Documentation Block
 #                      .                                             .
@@ -13,12 +13,14 @@
 # Script history log:
 # 2006-12-10  Yucheng Song Implemented MPMD version for WSR project
 
-NDATE=/nwprod/util/exec/ndate
-WGRIB=/nwprod/util/exec/wgrib
-COPYGB=/nwprod/util/exec/copygb
-curdate=`date '+%Y%m%d'`00
-ensdate=${curdate}
-WORK_ETKF=${WORK_ETKF:-$COMENS}
+set -x
+
+curdate=${PDY:?}00
+
+# allow date offset for retrospective runs
+DateOffset=${DateOffset:-00}
+ensdate=$(${NDATE:?} $DateOffset $curdate)
+WORK_ETKF=${WORK_ETKF:-$GESdir}
 mkdir -p ${WORK_ETKF}
 WORK_ENS=$DATA/work_gfs/${ensdate}
 
@@ -30,7 +32,7 @@ while [[ ${tint} -le ${ltloop2} ]]
 do
     fhr=$(expr ${tint} \* $fhint)
     tint=$(expr ${tint} + 1)
-    date[$i]=$($NDATE +$fhr ${ensdate})
+    date[$i]=$(${NDATE:?} +$fhr ${ensdate})
     echo ${date[$i]}
     ((i+=1))
 done
@@ -73,7 +75,7 @@ do
    while [[ ${dloop} -lt ${date[$i]} ]]
    do
       lt[$i]=`expr ${lt[$i]} + $fhint`
-      dloop=$($NDATE +${lt[$i]} ${ensdate})
+      dloop=$(${NDATE:?} +${lt[$i]} ${ensdate})
    done
    i=`expr $i + 1`
 done
@@ -84,9 +86,9 @@ if [[ $ifort -eq 1 ]]; then
 #################
 
 date1=${ensdate}
-date2=$($NDATE -6 ${ensdate})
-date3=$($NDATE -12 ${ensdate})
-date4=$($NDATE -18 ${ensdate})
+date2=$(${NDATE:?} -6 ${ensdate})
+date3=$(${NDATE:?} -12 ${ensdate})
+date4=$(${NDATE:?} -18 ${ensdate})
 
 PDY1=`echo $date1 | cut -c1-8`
 PDY2=`echo $date2 | cut -c1-8`
@@ -98,10 +100,10 @@ eh2=`echo $date2 | cut -c9-10`
 eh3=`echo $date3 | cut -c9-10`
 eh4=`echo $date4 | cut -c9-10`
 
-ncdir1=/com/gens/prod/gefs.${PDY1}/${eh1}/pgrba
-ncdir2=/com/gens/prod/gefs.${PDY2}/${eh2}/pgrba
-ncdir3=/com/gens/prod/gefs.${PDY3}/${eh3}/pgrba
-ncdir4=/com/gens/prod/gefs.${PDY4}/${eh4}/pgrba
+ncdir1=${DATA}/gefs.${PDY1}/${eh1}/pgrb2a1p0
+ncdir2=${DATA}/gefs.${PDY2}/${eh2}/pgrb2a1p0
+ncdir3=${DATA}/gefs.${PDY3}/${eh3}/pgrb2a1p0
+ncdir4=${DATA}/gefs.${PDY4}/${eh4}/pgrb2a1p0
 
 i=1
 while [[ $i -le $ntimes ]]
@@ -118,8 +120,12 @@ do
           [[ $eh -eq $eh1 ]] && fnum_lt=10000 
           [[ $eh -eq $eh2 ]] && fnum_lt=20000  
           [[ $eh -eq $eh3 ]] && fnum_lt=30000  
-          [[ $eh -eq $eh4 ]] && fnum_lt=40000  
+          [[ $eh -eq $eh4 ]] && fnum_lt=40000
           [[ $lta -le 9 ]] && lta=0$lta
+
+          lta_3=$lta    # three digit fcst hours
+          [[ $lta_3 -le 99 ]] && lta_3=0$lta_3
+          lta=$lta_3
 ###################################
 # Copygb to convert - default     #
 ###################################
@@ -131,10 +137,13 @@ if [[ $icopygb -eq 1 ]]; then
          while [[ $nm -le $memrf_eh ]]
          do
            [[ $nm -le 9 ]] && nm=0$nm
-           ensfile_lt=${ncdir}/gep${nm}.t${eh}z.pgrbaf$lta
-           [[ $nm -eq 00 ]] && ensfile_lt=${ncdir}/gec00.t${eh}z.pgrbaf$lta
+           ensfile_lt2=${ncdir}/gep${nm}.t${eh}z.pgrb2a.1p00.f$lta
+           [[ $nm -eq 00 ]] && ensfile_lt2=${ncdir}/gec00.t${eh}z.pgrb2a.1p00.f$lta
+
+           ensfile_lt=ge${nm}.t${eh}z.pgrbaf$lta
+           echo "${CNVGRIB:?} -g21 $ensfile_lt2 $ensfile_lt" >>ncopy.$itask
            usefile=gens${nm}.t${eh}z.pgrbaf$lta
-           echo "$COPYGB -g2 -i1 -x ${ensfile_lt} $usefile" >>ncopy.$itask
+           echo "${COPYGB:?} -g2 -i1 -x ${ensfile_lt} $usefile" >>ncopy.$itask
            chmod a+x ncopy.$itask
              (( itask = itask + 1 ))
           if (( itask == MP_PROCS )); then
@@ -157,7 +166,9 @@ if [[ $icopygb -eq 1 ]]; then
            (( itask = itask + 1 ))
 
           done
-          poe -cmdfile poescript -stdoutmode ordered -ilevel 3
+          #poe -cmdfile poescript -stdoutmode ordered -ilevel 3
+          #$wsrmpexec -cmdfile poescript -stdoutmode ordered -ilevel 3
+          $wsrmpexec cfp poescript
 fi
 
        (( itask = 0 ))
@@ -175,7 +186,7 @@ fi
            [[ $nm -eq 00 ]] && ensfile_lt=${ncdir}/gec00.t${eh}z.pgrbaf$lta
            usefile=gens${nm}.t${eh}z.pgrbaf$lta
            cat >>$cmdfile << EOF
-           $WGRIB -s -ncep_opn $usefile | grep "${var[varid]}" |$WGRIB -i -ncep_opn -text $usefile  -o ${WORK}/fort.${fnum}
+           ${WGRIB:?} -s -ncep_opn $usefile | grep "${var[varid]}" |${WGRIB:?} -i -ncep_opn -text $usefile  -o ${WORK}/fort.${fnum}
 EOF
            fnum=$(expr $fnum + 1)
            nm=$(expr $nm + 1)
@@ -205,7 +216,9 @@ EOF
            (( itask = itask + 1 ))
           done
                   
-           poe  -cmdfile ncmd.file  -stdoutmode ordered -ilevel 2
+           #poe  -cmdfile ncmd.file  -stdoutmode ordered -ilevel 2
+           #$wsrmpexec  -cmdfile ncmd.file  -stdoutmode ordered -ilevel 2
+           $wsrmpexec  cfp ncmd.file
            /bin/rm gens*.t${eh}z.pgrbaf$lta
    done
    i=$(expr $i + 1)
@@ -258,7 +271,9 @@ done
            ((itask+=1))
          done
            
-   /usr/bin/poe -cmdfile reform.file -stdoutmode ordered -ilevel 3
+   #/usr/bin/poe -cmdfile reform.file -stdoutmode ordered -ilevel 3
+   #$wsrmpexec -cmdfile reform.file -stdoutmode ordered -ilevel 3
+   $wsrmpexec cfp reform.file
     /bin/rm reform.*
 
 exit

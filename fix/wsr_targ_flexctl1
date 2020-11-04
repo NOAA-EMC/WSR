@@ -1,4 +1,4 @@
 DSET targ1.d.gr
-OPTIONS template yrev
+OPTIONS big_endian template yrev
 UNDEF  -99.0
 *

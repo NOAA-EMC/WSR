@@ -1,0 +1,23 @@
+*.hold*
+*.prev*
+*.backup
+**/*.hold*
+**/*.prev*
+**/*.backup
+
+# Ignore build log files
+*build*log
+*build*log.20*
+
+# Ignore compiler products
+sorc/*/*.o
+sorc/*/*.lst
+sorc/*/xref.db
+sorc/*/a.out
+
+Ignore executables and build products
+exec/*
+libs/ecmwf_grib_api-1.9.16
+libs/grib_api-1.9.16-working
+control/printout
+

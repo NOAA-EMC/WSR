@@ -1,0 +1,104 @@
+#!/bin/sh
+
+########################################
+# Runs WSR Pre-processing
+########################################
+
+date
+export PS4=' $SECONDS + '
+set -x
+
+export DATA=${DATA:-${DATAROOT:?}/${jobid:?}}
+mkdir -p $DATA
+cd $DATA
+
+export MP_LABELIO=yes
+export MP_PROCS=16
+#export MP_PROCS=22
+export MP_NODES=1
+export MP_PGMMODEL=mpmd
+export MEMORY_AFFINITY=MCM
+
+export memrf_eh=20
+export memec_eh=50
+export memcm_eh=20 
+                                                                                
+export ltime1=0
+export ltime2=240
+export fhint=12
+export idim=144
+export jdim=37
+#export ifort=0
+export ifort=1
+export icopygb=1
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-$DATA/jlogfile.${jobid:?}}
+
+####################################
+# Determine Job Output Name on System
+####################################
+export pgmout="OUTPUT.$$"
+
+export cycle=t${cyc}z 
+
+if test "$cyc" = "00"
+then
+  export prev_cyc=12
+else
+  export prev_cyc=00
+fi
+
+export SENDCOM=${SENDCOM:-YES}
+export SENDECF=${SENDECF:-YES}
+
+export NET=wsr
+export RUN=wsr
+
+export HOMEwsr=${HOMEwsr:-${NWROOT:?}/wsr.${wsr_ver:?}}
+export EXECwsr=$HOMEwsr/exec
+export USHwsr=$HOMEwsr/ush
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+##############################
+# Define input COM Directory
+##############################
+export COMINgens=${COMINgens:-$(compath.py gens/prod)}
+export COMINcmce=${COMINcmce:-$(compath.py naefs/prod)}
+
+##############################
+# Define output GESdir Directory 
+##############################
+export GESdir=${GESROOT:?}/${envir}/${RUN}/${PDY}
+mkdir -p $GESdir
+
+# JY- the following can be removed later after test
+export COMENS=$GESdir
+
+export wsrmpexec=mpirun
+echo wsrmpexec=$wsrmpexec
+
+env
+
+########################################################
+# Execute the script.
+$HOMEwsr/scripts/exwsr_prep.sh.ecf
+export err=$?; err_chk
+########################################################
+
+if [ -s $pgmout ]; then
+  cat $pgmout
+fi
+
+if [ "${KEEPDATA^^}" != "YES" ]; then
+  rm -rf $DATA
+fi
+
+date

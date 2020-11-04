@@ -43,7 +43,9 @@ c memcm=42
 
       allocate(mrf(idim,jdim,memrf,nvar))
       allocate(ecm(idim,jdim,memec,nvar))
+      if(memcm.ne.0) then
       allocate(cmc(idim,jdim,memcm,nvar))
+      endif
       allocate(mrfmean(idim,jdim,nvar))
       allocate(ecmmean(idim,jdim,nvar))
       allocate(cmcmean(idim,jdim,nvar))
@@ -80,10 +82,12 @@ c        *** read in CMC ensemble ***
          close(300+kkk)
          endif
 
+      if(memcm.ne.0) then
       do 152 iimem=1,25
       do 152 iiv=1,12
          write(28,*) cmc(3,3,iimem,iiv)
 152   continue
+      endif
 
 
 c     *** ensemble mean ***
@@ -169,5 +173,7 @@ c     ****************************************
 
 133   continue
 
-      return
+c 20121010 rlw return==>stop for ifort
+c      return
+      stop
       end

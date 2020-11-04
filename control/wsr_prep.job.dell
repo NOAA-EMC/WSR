@@ -1,0 +1,192 @@
+# @ job_name = jwsr_prep_00
+#BSUB -J jwsr_prep_00
+##@ output = /com/output/prod/today/wsr_prep_00.o$(jobid)
+# @ output = LOCALPREFIXPTMP/com/output/dev/today/wsr_prep_00.o$(jobid)
+#BSUB -o LOCALPREFIXPTMP/com/output/dev/today/wsr_prep_00.o.%J
+##@ error = /com/output/prod/today/wsr_prep_00.o$(jobid)
+# @ error = LOCALPREFIXPTMP/com/output/dev/today/wsr_prep_00.o$(jobid)
+#BSUB -e LOCALPREFIXPTMP/com/output/dev/today/wsr_prep_00.o.%J
+# @ shell = /bin/sh
+#BSUB -L /bin/ksh
+##@ class = prod
+# @ class = dev
+###BSUB -q "dev_high"
+#BSUB -q "dev"
+# @ wall_clock_limit = 01:20:00
+#BSUB -W "01:20"
+# @ job_type = parallel
+###BSUB -a poe
+##@ initialdir = /tmpnwprd
+# @ initialdir = LOCALPREFIXPTMP/tmpnwprd
+#BSUB -cwd LOCALPREFIXPTMP/tmpnwprd
+## @ node_usage = not_shared
+#BSUB -x
+## @ network.MPI = sn_all,shared,us
+### @ resources = ConsumableCpus(1) ConsumableMemory(1750 MB)
+# @ resources = ConsumableMemory(1750 MB)
+###BSUB -R "rusage[mem=1750]"
+#BSUB -R "rusage[mem=1728]"
+# @ task_affinity = cpu(1)
+# @ total_tasks = 16
+#BSUB -n 16
+#BSUB -R span[ptile=16]
+# @ node = 1
+# @ notification = never
+##@ account_no = GEN-OPS
+# @ account_no = GEN-T2O
+#BSUB -P GEN-T2O
+##@ group = nwprod
+##@ group = devonprod
+# @ group = dev
+# @ queue
+
+mach=`uname -n`
+machl=`echo $mach|cut -c1`
+case $machl in
+  (c)
+    echo `date` job starting on cirrus
+    export wsrmachine=ccs
+  ;;
+  (s)
+    echo `date` job starting on stratus
+    export wsrmachine=ccs
+  ;;
+  (t)
+    echo `date` job starting on tide
+    export MP_TASK_AFFINITY=core
+    export wsrmachine=wcoss
+  ;;
+  (g)
+    echo `date` job starting on gyre
+    export MP_TASK_AFFINITY=core
+    export wsrmachine=wcoss
+  ;;
+  (m)
+    echo `date` job starting on mars
+    export MP_TASK_AFFINITY=core
+    export wsrmachine=dell
+  ;;
+  (m)
+    echo `date` job starting on venus
+    export MP_TASK_AFFINITY=core
+    export wsrmachine=dell
+  ;;
+  (*)
+    echo UNKNOWN MACHINE $mach
+    export wsrmachine=unknown
+  ;;
+esac
+  if [[ $wsrmachine = ccs ]]; then
+export MP_SHARED_MEMORY=yes
+export MEMORY_AFFINITY=MCM
+  else
+pwd
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+#export MP_INSTANCES=16
+export PATH="$PATH:."
+  fi
+
+
+export envir=prod
+export envir=dev
+export cyc=00
+export job=wsr_prep_00
+
+  if [[ $envir != dev ]]; then
+
+SMSNAME=%SMSNAME% export SMSNAME
+SMSNODE=%SMSNODE% export SMSNODE
+SMSPASS=%SMSPASS% export SMSPASS
+SMS_PROG=%SMS_PROG% export SMS_PROG
+
+SMSBIN=/nwprod/sms/bin export SMSBIN
+
+. /nwprod/versions/wsr.ver
+
+  else
+
+echo `date` $job job begin
+
+echo `date` before sorted environment
+env|sort
+echo `date` after sorted environment
+
+echo variables needed for dev runs begin
+export DCOMROOT=/gpfs/dell1/nco/ops/dcom
+export expid=EXPID
+export localprefixptmp=LOCALPREFIXPTMP
+export localprefixsave=LOCALPREFIXSAVE
+export SMSBIN=$localprefixsave/nwdev/*.v*/control
+
+. $localprefixsave/nw$envir/*/versions/wsr.ver
+
+export wsrmpexec=mpirun
+
+echo variables needed for dev runs end
+
+  fi
+echo wsrmpexec=$wsrmpexec
+
+echo debug check
+echo MODULEPATH=$MODULEPATH
+
+if [[ $envir = dev ]]; then
+. $localprefixsave/nw$envir/*/control/head.h
+. $localprefixsave/nw$envir/*/control/envir-p3.h
+fi
+
+export MP_PGMMODEL=mpmd
+
+module load impi/18.0.1
+module load CFP/2.0.2
+
+export MP_CSS_INTERRUPT=yes
+
+module load grib_util/${grib_util_ver:?}
+
+
+set -x
+
+  if [[ $envir != dev ]]; then
+
+/nw$envir/wsr.${model_ver}/jobs/JWSR_PREP
+
+  else
+
+  export HOMEwsr=$localprefixsave/nw$envir/*
+
+echo `date` $job environment before
+env|sort
+
+echo `date` $job j-job before
+$localprefixsave/nw$envir/wsr.${model_ver}/jobs/JWSR_PREP
+echo `date` $job j-job after
+
+chainsubmit=LOCALCHAINOPTION
+echo chainsubmit=$chainsubmit
+if [[ $chainsubmit = yes ]]; then
+  case $wsrmachine in
+    (ccs)
+      llsubmit LOCALPREFIXPTMP/control/wsr_main.job
+    ;;
+    (wcoss)
+      bsub <LOCALPREFIXPTMP/control/wsr_main.job
+    ;;
+    (dell)
+      bsub <LOCALPREFIXPTMP/control/wsr_main.job
+    ;;
+    (*)
+      echo UNKNOWN CLUSTER $wsrmachine
+    ;;
+  esac
+fi
+
+if [[ $envir != dev ]]; then
+. $localprefixsave/nw$envir/*/control/tail.h
+fi
+
+echo `date` $job job end
+
+  fi
+

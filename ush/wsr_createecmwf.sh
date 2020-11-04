@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/ksh
+##!/bin/sh
 ####################################################################################  UNIX Script Documentation Block
 #                      .                                             .
 # Script name:         wsr_createecmwf.sh
@@ -17,12 +18,17 @@ sizeof() {
 ls -ld "$1" | awk '{printf("%d\n",$5)}'
 }
 
-NDATE=/nwprod/util/exec/ndate
-WGRIB=/nwprod/util/exec/wgrib
-COPYGB=/nwprod/util/exec/copygb
-curdate=`date '+%Y%m%d'`00
-ensdate=${curdate}
-WORK_ETKF=${WORK_ETKF:-$COMENS}
+#NDATE=/nwprod/util/exec/ndate
+#WGRIB=/nwprod/util/exec/wgrib
+#COPYGB=/nwprod/util/exec/copygb
+#curdate=`date '+%Y%m%d'`00
+#ensdate=${curdate}
+curdate=${PDY:?}00
+
+# allow date offset for retrospective runs
+DateOffset=${DateOffset:-00}
+ensdate=$(${NDATE:?} $DateOffset $curdate)
+WORK_ETKF=${WORK_ETKF:-$GESdir}
 mkdir -p ${WORK_ETKF}
 WORK_ENS=$DATA/work_ecm/${ensdate}
 
@@ -37,7 +43,7 @@ while [[ ${tint} -le ${ltloop2} ]]
 do
     fhr=$(expr ${tint} \* $fhint)
     tint=$(expr ${tint} + 1)
-    date[$i]=$($NDATE +$fhr ${ensdate})
+    date[$i]=$(${NDATE:?} +$fhr ${ensdate})
     echo ${date[$i]}
     ((i+=1))
 done
@@ -82,7 +88,7 @@ do
    while [[ ${dloop} -lt ${date[$i]} ]]
    do
       lt[$i]=`expr ${lt[$i]} + $fhint`
-      dloop=$($NDATE +${lt[$i]} ${ensdate})
+      dloop=$(${NDATE:?} +${lt[$i]} ${ensdate})
    done
    i=`expr $i + 1`
 done
@@ -93,9 +99,9 @@ if [[ $ifort -eq 1 ]]; then
 #################
 
 date1=${ensdate}
-date2=$($NDATE -6 ${ensdate})
-date3=$($NDATE -12 ${ensdate})
-date4=$($NDATE -18 ${ensdate})
+date2=$(${NDATE:?} -6 ${ensdate})
+date3=$(${NDATE:?} -12 ${ensdate})
+date4=$(${NDATE:?} -18 ${ensdate})
 
 PDY1=`echo $date1 | cut -c1-8`
 PDY2=`echo $date2 | cut -c1-8`
@@ -112,10 +118,10 @@ eh4=`echo $date4 | cut -c9-10`
 #ecdir2=/dcom/us007003/${PDY2}/wgrbbul/ecmwf
 #ecdir3=/dcom/us007003/${PDY3}/wgrbbul/ecmwf
 #ecdir4=/dcom/us007003/${PDY4}/wgrbbul/ecmwf
-ecdir1=${DCOMROOT}/us007003/${PDY1}/wgrbbul/ecmwf
-ecdir2=${DCOMROOT}/us007003/${PDY2}/wgrbbul/ecmwf
-ecdir3=${DCOMROOT}/us007003/${PDY3}/wgrbbul/ecmwf
-ecdir4=${DCOMROOT}/us007003/${PDY4}/wgrbbul/ecmwf
+ecdir1=${DCOMROOT}/prod/${PDY1}/wgrbbul/ecmwf
+ecdir2=${DCOMROOT}/prod/${PDY2}/wgrbbul/ecmwf
+ecdir3=${DCOMROOT}/prod/${PDY3}/wgrbbul/ecmwf
+ecdir4=${DCOMROOT}/prod/${PDY4}/wgrbbul/ecmwf
 
 i=1
 while [[ $i -le $ntimes ]]
@@ -154,7 +160,7 @@ do
 ###################################
 # Copygb to convert - default     #
 ###################################
-       ensfile_lt=${ecdir}/ecens_DCE${ECDATE1}00${ECDATE2[$i]}001
+       ensfile_lt=${ecdir}/DCE${ECDATE1}00${ECDATE2[$i]}001
 
        ls -l $ensfile_lt
        nsleep=0
@@ -166,7 +172,7 @@ do
     if [[ filesiz -ge 135000000 ]]; then 
 
        > ecens.inv 
-       $WGRIB -s -PDS $ensfile_lt  >> ecens.inv
+       ${WGRIB:?} -s -PDS $ensfile_lt  >> ecens.inv
 
        (( itask = 0 ))
        (( varid = 1 ))
@@ -183,13 +189,14 @@ do
            [[ $nm -le 15 ]] && hex=0${hex}
            
            cat << EOF >> $cmdfile
-          /usr/bin/egrep -i "${var[varid]}.*${hex}3300*" ecens.inv |cut -f1-2 -d :|$WGRIB -i -grib $ensfile_lt -o ${WORK}/pgb.${fnum}
+          #/usr/bin/egrep -i "${var[varid]}.*${hex}3300*" ecens.inv |cut -f1-2 -d :|${WGRIB:?} -i -grib $ensfile_lt -o ${WORK}/pgb.${fnum}
+          /bin/egrep -i "${var[varid]}.*${hex}3300*" ecens.inv |cut -f1-2 -d :|${WGRIB:?} -i -grib $ensfile_lt -o ${WORK}/pgb.${fnum}
            if [[ $icopygb -eq 1 ]]; then
-            $COPYGB -g2 -i1 -x pgb.${fnum} pgb_use.${fnum} 
+            ${COPYGB:?} -g2 -i1 -x pgb.${fnum} pgb_use.${fnum} 
             rm pgb.${fnum}
             mv pgb_use.${fnum} pgb.${fnum}
            fi
-           $WGRIB -s pgb.${fnum} |grep "${var[varid]}"|$WGRIB  -i -text pgb.${fnum} -o fort.${fnum}
+           ${WGRIB:?} -s pgb.${fnum} |grep "${var[varid]}"|${WGRIB:?}  -i -text pgb.${fnum} -o fort.${fnum}
            rm pgb.${fnum}
 EOF
            fnum=$(expr $fnum + 1)
@@ -220,8 +227,10 @@ EOF
            (( itask = itask + 1 ))
           done
 
-         /usr/bin/poe -cmdfile ecmd.file -stdoutmode ordered -ilevel 3
-         /bin/rm ecens_DCE*
+         #/usr/bin/poe -cmdfile ecmd.file -stdoutmode ordered -ilevel 3
+         #$wsrmpexec -cmdfile ecmd.file -stdoutmode ordered -ilevel 3
+         $wsrmpexec cfp ecmd.file
+         /bin/rm DCE*
     fi
 
    done
@@ -271,6 +280,8 @@ done
            ((itask+=1))
          done
   
-   /usr/bin/poe -cmdfile reform.file -stdoutmode ordered -ilevel 3
+   #/usr/bin/poe -cmdfile reform.file -stdoutmode ordered -ilevel 3
+   #$wsrmpexec -cmdfile reform.file -stdoutmode ordered -ilevel 3
+   $wsrmpexec cfp reform.file
    /bin/rm reform.*
 exit

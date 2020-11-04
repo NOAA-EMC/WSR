@@ -7,7 +7,9 @@
 !  2008.07.18
 
 program dtsset 
+!     testing options to include the grib_api library
   use grib_api
+!  use grib_api_f77
 ! use machine
   implicit none
   integer(kind = 4)    :: centre, date
@@ -174,7 +176,7 @@ date = val_date(1)* 10000 + val_date(2)*100 + val_date(3)
 end subroutine current_date
 !======================================
 subroutine check_settings(gribid)
-  use grib_api
+! use grib_api  ! test removal
   implicit none
   integer, intent(in) :: gribid
   

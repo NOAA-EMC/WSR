@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ksh
 ####################################################################################  UNIX Script Documentation Block
 #                      .                                             .
 # Script name:         wsr_createcmc.sh
@@ -14,13 +14,14 @@
 # 2007-12-10  Yucheng Song Added new features of MPMD
 # 2008-07-16  Yucheng Song configured this for T-PARC usage 
 
+set -x
 
-NDATE=/nwprod/util/exec/ndate
-WGRIB=/nwprod/util/exec/wgrib
-COPYGB=/nwprod/util/exec/copygb
-curdate=`date '+%Y%m%d'`00
-ensdate=${curdate}
-WORK_ETKF=${WORK_ETKF:-$COMENS}
+curdate=${PDY:?}00
+
+# allow date offset for retrospective runs
+DateOffset=${DateOffset:-00}
+ensdate=$(${NDATE:?} $DateOffset $curdate)
+WORK_ETKF=${WORK_ETKF:-$GESdir}
 mkdir -p ${WORK_ETKF}
 WORK_ENS=$DATA/work_cmc/${ensdate}
 
@@ -32,7 +33,7 @@ while [[ ${tint} -le ${ltloop2} ]]
 do
     fhr=$(expr ${tint} \* $fhint)
     tint=$(expr ${tint} + 1)
-    date[$i]=$($NDATE +$fhr ${ensdate})
+    date[$i]=$(${NDATE:?} +$fhr ${ensdate})
     echo ${date[$i]}
     ((i+=1))
 done
@@ -75,7 +76,7 @@ do
    while [[ ${dloop} -lt ${date[$i]} ]]
    do
       lt[$i]=`expr ${lt[$i]} + $fhint`
-      dloop=$($NDATE +${lt[$i]} ${ensdate})
+      dloop=$(${NDATE:?} +${lt[$i]} ${ensdate})
    done
    i=`expr $i + 1`
 done
@@ -86,9 +87,9 @@ if [[ $ifort -eq 1 ]]; then
 #################
 
 date1=${ensdate}
-date2=$($NDATE -6 ${ensdate})
-date3=$($NDATE -12 ${ensdate})
-date4=$($NDATE -18 ${ensdate})
+date2=$(${NDATE:?} -6 ${ensdate})
+date3=$(${NDATE:?} -12 ${ensdate})
+date4=$(${NDATE:?} -18 ${ensdate})
 
 PDY1=`echo $date1 | cut -c1-8`
 PDY2=`echo $date2 | cut -c1-8`
@@ -100,10 +101,10 @@ eh2=`echo $date2 | cut -c9-10`
 eh3=`echo $date3 | cut -c9-10`
 eh4=`echo $date4 | cut -c9-10`
 
-cmcdir1=/com/gens/prod/cmce.${PDY1}/${eh1}/pgrba
-cmcdir2=/com/gens/prod/cmce.${PDY2}/${eh2}/pgrba
-cmcdir3=/com/gens/prod/cmce.${PDY3}/${eh3}/pgrba
-cmcdir4=/com/gens/prod/cmce.${PDY4}/${eh4}/pgrba
+cmcdir1=${DATA}/cmce.${PDY1}/${eh1}/pgrba
+cmcdir2=${DATA}/cmce.${PDY2}/${eh2}/pgrba
+cmcdir3=${DATA}/cmce.${PDY3}/${eh3}/pgrba
+cmcdir4=${DATA}/cmce.${PDY4}/${eh4}/pgrba
 
 i=1
 while [[ $i -le $ntimes ]]
@@ -138,7 +139,7 @@ if [[ $icopygb -eq 1 ]]; then
            ensfile_lt=${cmcdir}/cmc_gep${nm}.t${eh}z.pgrbaf$lta
            [[ $nm -eq 00 ]] && ensfile_lt=${cmcdir}/cmc_gec00.t${eh}z.pgrbaf$lta
            usefile=gens${nm}.t${eh}z.pgrbaf$lta
-           echo "$COPYGB -g2 -i1 -x ${ensfile_lt} $usefile" >>ncopy.$itask
+           echo "${COPYGB:?} -g2 -i1 -x ${ensfile_lt} $usefile" >>ncopy.$itask
            chmod a+x ncopy.$itask 
              (( itask = itask + 1 ))
           if (( itask == MP_PROCS )); then
@@ -161,7 +162,9 @@ if [[ $icopygb -eq 1 ]]; then
            (( itask = itask + 1 ))
  
           done
-          poe -cmdfile poescript -stdoutmode ordered -ilevel 3
+          #poe -cmdfile poescript -stdoutmode ordered -ilevel 3
+          #$wsrmpexec -cmdfile poescript -stdoutmode ordered -ilevel 3
+          $wsrmpexec cfp poescript
 fi
 
 
@@ -181,8 +184,8 @@ fi
           [[ $nm -eq 00 ]] && ensfile_lt=${cmcdir}/cmc_gec00.t${eh}z.pgrbaf$lta
            usefile=gens${nm}.t${eh}z.pgrbaf$lta
            cat << EOF >>$cmdfile
-           $WGRIB -s -ncep_opn $usefile | grep "${var[$varid]}" |\
-           $WGRIB -i -ncep_opn -text $usefile -o ${WORK}/fort.${fnum}
+           ${WGRIB:?} -s -ncep_opn $usefile | grep "${var[$varid]}" |\
+           ${WGRIB:?} -i -ncep_opn -text $usefile -o ${WORK}/fort.${fnum}
 EOF
            fnum=$(expr $fnum + 1)
            nm=$(expr $nm + 1)
@@ -213,7 +216,9 @@ EOF
            (( itask = itask + 1 ))
           done
 
-         poe -cmdfile ccmd.file -stdoutmode ordered -ilevel 3
+         #poe -cmdfile ccmd.file -stdoutmode ordered -ilevel 3
+         #$wsrmpexec -cmdfile ccmd.file -stdoutmode ordered -ilevel 3
+         $wsrmpexec cfp ccmd.file
    done
    i=$(expr $i + 1)
 done
@@ -267,7 +272,9 @@ done
            ((itask+=1))
          done
  
-   poe -cmdfile reform.file -stdoutmode ordered -ilevel 3
+   #poe -cmdfile reform.file -stdoutmode ordered -ilevel 3
+   #$wsrmpexec -cmdfile reform.file -stdoutmode ordered -ilevel 3
+   $wsrmpexec cfp reform.file
     /bin/rm reform.*
 
 exit
