@@ -10,6 +10,7 @@ cp -pr $libdir/grib_api-1.9.16 $libdir/grib_api-1.9.16-working
 cd $libdir/grib_api-1.9.16-working
 rc=$?
 if (( rc == 0 )); then
+  module load ips/19.0.5.281
   module load jasper/1.900.1
   ecmwfdir=$libdir/ecmwf_grib_api-1.9.16
   ./configure \
