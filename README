@@ -1,14 +1,21 @@
 
 WSR BUild instructions
 
+Two methods:
 
-in libs:
+1) (Recommended)
 
-    run build.sh
+    cd sorc
+    ./build_all.sh
 
-in sorc:
+2) 
+    in libs:
 
-    run build.sh
-    run install.sh
+        run build.sh
+
+    in sorc:
+
+        run build.sh
+        run install.sh
 
 

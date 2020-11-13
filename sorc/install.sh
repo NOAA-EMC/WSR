@@ -2,6 +2,8 @@
 # 
 # install wsr executables for dell
 #
+set -eux
+
 dirpwd=`pwd`
 execlist="calcperts calcspread circlevr dtsset flights_allnorms rawin_allnorms reformat"
 execlist="$execlist sig_pac sigvar_allnorms summ_allnorms tcoeffuvt tgr_special xvvest_allnorms"
@@ -69,5 +71,4 @@ echo install failed for $nf codes $failstring
 echo
 
 exit
-done
 

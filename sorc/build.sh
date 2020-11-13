@@ -2,6 +2,10 @@
 # 
 # build wsr executables for dell
 #
+set -eux
+
+hostname
+
 dirpwd=`pwd`
 execlist="calcperts calcspread circlevr dtsset flights_allnorms rawin_allnorms reformat"
 execlist="$execlist sig_pac sigvar_allnorms summ_allnorms tcoeffuvt tgr_special xvvest_allnorms"
@@ -27,6 +31,7 @@ do
     echo in $sorcdir
     if (( rc == 0 )); then
       echo make -f makefile.dell succeeded
+      make clean -f makefile.dell
       (( ns = ns + 1 ))
     else
       echo make -f makefile.dell FAILED rc=$?
@@ -45,5 +50,4 @@ echo make $command failed for $nf codes $failstring
 echo
 
 exit
-done
 

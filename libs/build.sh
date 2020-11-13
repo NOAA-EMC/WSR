@@ -5,6 +5,8 @@
 
 set -eux
 
+hostname
+
 #libdir=`dirname $0`
 #if [[ $libdir = '.' ]]; then
 libdir=`pwd`
