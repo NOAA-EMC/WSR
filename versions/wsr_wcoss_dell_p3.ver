@@ -1,0 +1,22 @@
+export wsr_ver=v3.2.0
+
+export EnvVars_ver=1.0.3
+export ips_ver=18.0.1.163
+export lsf_ver=10.1
+
+export prod_envir_ver=1.1.0
+export prod_util_ver=1.1.4
+
+export grib_util_ver=1.1.1
+
+export CFP_ver=2.0.2
+
+export python_ver=3.6.3
+
+export HPSS_ver=5.0.2.5
+
+#export USE_CFP=YES
+export PATH=$PATH:.
+
+
+export model_ver=$wsr_ver
