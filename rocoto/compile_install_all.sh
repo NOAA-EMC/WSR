@@ -57,9 +57,9 @@ echo $RunEnvir
 echo ${Structure}
 echo ${Link}
 
-if [ $CompileCode = "yes" ]; then
-    Link=yes
-fi
+#if [ $CompileCode = "yes" ]; then
+#    Link=yes
+#fi
 
 
 if [ $CompileCode = "yes" ]; then

@@ -34,6 +34,8 @@ export HOMEgsi=${HOMEgfs:-$HOMEgfs}
 export HOMEwave=${HOMEwave:-$HOMEgfs}
 export HOMEpost=${HOMEpost:-$HOMEgfs}
 
+export HOMEwsr=$basesource
+
 if [[ ! -d $SOURCEDIR/sorc/global-workflow.fd ]] ; then
     export EXECwave=${HOMEgefs}/exec
 

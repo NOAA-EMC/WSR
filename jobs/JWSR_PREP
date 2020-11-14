@@ -8,6 +8,13 @@ date
 export PS4=' $SECONDS + '
 set -x
 
+####################################
+# Determine Job Output Name on System
+####################################
+export jobid=${jobid:-"$job.$LSB_JOBID"}
+export pgmout="OUTPUT.${LSB_JOBID}"
+export pgmerr=errfile
+
 export DATA=${DATA:-${DATAROOT:?}/${jobid:?}}
 mkdir -p $DATA
 cd $DATA

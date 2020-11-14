@@ -1,7 +1,8 @@
 export wsr_ver=v3.2.0
 
 export EnvVars_ver=1.0.3
-export ips_ver=18.0.1.163
+export ips_ver=18.0.1.163 #19.0.5.281 #18.0.1.163
+export impi_ver=18.0.1 #19.0.5 #18.0.1
 export lsf_ver=10.1
 
 export prod_envir_ver=1.1.0

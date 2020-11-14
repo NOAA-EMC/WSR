@@ -409,6 +409,8 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         else:
             if sQueue.endswith("_shared") and taskname in ['ensstat_hr', 'enspost_hr', 'ensstat_lr', 'enspost_lr', 'gempak', 'gempak_meta', 'avgspr_gempak_meta', 'ensavg_nemsio', 'postsnd', "fcst_post_manager", 'atmos_prep']:
                 strings += ""
+            elif taskname in ['wsr_prep']:
+                strings += ""
             else:
                 strings += sPre_2 + "<native>-R 'affinity[core(1)]'</native>\n"
     else:
