@@ -1,14 +1,12 @@
 #BSUB -J %E%wsr_main_%CYC%
-#BSUB -o /$COM%/output/%ENVIR%/today/wsr_main_%CYC%.o%J
+#BSUB -o %COM%/output/%ENVIR%/today/wsr_main_%CYC%.o%J
 #BSUB -L /bin/sh
 #BSUB -q %QUEUE%
 #BSUB -n 48
 #BSUB -W 00:45
-#BSUB -cwd /tmpnwprd
+#BSUB -cwd /tmp
 #BSUB -R span[ptile=16]
-#BSUB -x    # not_shared
 #BSUB -P %PROJ%-%PROJENVIR%
-#BSUB -a poe
 
 %include <head.h>
 %include <envir-p3.h>
