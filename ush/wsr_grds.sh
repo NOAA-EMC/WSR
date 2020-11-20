@@ -311,7 +311,7 @@ do
    fi
 
    #gxps -ic ec.out -o Plot${case_id}_${vrlat}N${vrlonewest}_summary_${lt1}_${lt2}.ps
-   mv        ec.px     Plot${case_id}_${vrlat}N${vrlonewest}_summary_${lt1}_${lt2}.ps
+   mv        ec.ps     Plot${case_id}_${vrlat}N${vrlonewest}_summary_${lt1}_${lt2}.ps
    if test "$PRINTSDM" = "YES"
    then
     lpr -h -"$sdmprinter" Plot${case_id}_${vrlat}N${vrlonewest}_summary_${lt1}_${lt2}.ps
