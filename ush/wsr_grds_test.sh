@@ -66,6 +66,25 @@ if [[ $testmode = yes ]]; then
       export sdmprinter=hp26_sdm
       useexpid=no
     ;;
+    (Xianwu.Xue)
+      testenvir=dev
+      testemail=Xianwu.Xue@noaa.gov
+      testuser=xianwu.xue
+      testrzdm=emcrzdm
+      testdirectory=/home/www/emc/htdocs/gmb/xianwu.xue/wsr_sdm
+      export PRINTSDM=YES
+      export sdmprinter=
+      useexpid=yes
+      testtmpdir=/gpfs/dell2/ptmp/$LOGNAME/o
+      expid=wsr_rocoto
+      envir=$testenvir
+      testbase=null
+      HOMEwsr=`pwd`/../
+      FIXwsr=`pwd`/../fix
+      GESdir=$testtmpdir/$expid/nwges/$envir/wsr
+      COMIN=$testtmpdir/$expid/com/wsr/$envir
+      ETKFOUT=$testtmpdir/$expid
+    ;;
     (Richard.Wobus)
       testenvir=dev
       testemail=richard.wobus@noaa.gov
@@ -99,7 +118,7 @@ if [[ $testmode = yes ]]; then
 
   if [[ $useexpid = yes ]]; then
 
-    export wsr_ver=v3.1.0.1
+    export wsr_ver=v3.2.0
 
     dfile=$0
     dfb=`basename $dfile`
@@ -108,7 +127,7 @@ if [[ $testmode = yes ]]; then
       dfd=`pwd`
     fi
     #dfd=/nwprod/ush
-    expid=null
+    expid=${expid:-null}
     dfdtestdone=no
     dfdt=$dfd
     while [[ $dfdtestdone = no ]]
@@ -120,7 +139,7 @@ if [[ $testmode = yes ]]; then
       dfdtb=`basename $dfdt`
       if [[ $dfdtb = '/' ]]; then
 	dfdtestdone=yes
-	expid=test
+	expid=${expid:-test}
       else
 	dfdfound=no
 	case $dfdtb in
@@ -147,11 +166,11 @@ if [[ $testmode = yes ]]; then
 
     #testbase=/ensemble/save/$LOGNAME/nw$envir
     #testbase=/ensemble/save/$LOGNAME/s/$expid/nw$envir
-    testbase=/gpfs/dell2/emc/modeling/noscrub/$LOGNAME/s/$expid/nw$envir
-    . $testbase/wsr*/versions/wsr.ver
-    export HOMEwsr=$testbase/wsr.${wsr_ver}/ush
-    export HOMEwsr=$testbase/wsr.${wsr_ver}
-    export FIXwsr=$testbase/wsr.${wsr_ver}/fix
+    testbase=${testbase:-/gpfs/dell2/emc/modeling/noscrub/$LOGNAME/s/$expid/nw$envir}
+    #. $testbase/wsr*/versions/wsr.ver
+    #export HOMEwsr=$testbase/wsr.${wsr_ver}/ush
+    export HOMEwsr=${HOMEwsr:-$testbase/wsr.${wsr_ver}}
+    export FIXwsr=${FIXwsr:-$testbase/wsr.${wsr_ver}/fix}
 
     testtmpdir=$testtmpdir/$expid
     export pid=$$
@@ -311,7 +330,7 @@ do
    fi
 
    #gxps -ic ec.out -o Plot${case_id}_${vrlat}N${vrlonewest}_summary_${lt1}_${lt2}.ps
-   mv        ec.px     Plot${case_id}_${vrlat}N${vrlonewest}_summary_${lt1}_${lt2}.ps
+   mv        ec.ps     Plot${case_id}_${vrlat}N${vrlonewest}_summary_${lt1}_${lt2}.ps
    if test "$PRINTSDM" = "YES"
    then
     lpr -h -"$sdmprinter" Plot${case_id}_${vrlat}N${vrlonewest}_summary_${lt1}_${lt2}.ps
