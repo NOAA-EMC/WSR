@@ -66,6 +66,15 @@ if [[ $testmode = yes ]]; then
       testdirectory=/home/people/emc/www/htdocs/gmb/rwobus/sdm_wsr
       useexpid=yes
     ;;
+    (Xianwu.Xue)
+      testemail=xianwu.xue@noaa.gov
+      testuser=xianwu.xue
+      testrzdm=emcrzdm
+      testdirectory=/home/www/emc/htdocs/gmb/xianwu.xue/wsr_sdm
+      useexpid=yes
+      PTMP=/gpfs/dell2/ptmp
+      expid=wsr_rocoto
+    ;;
     (*)
       echo Please add test settings to $0 for LOGNAME=$LOGNAME
       exit
@@ -87,7 +96,7 @@ if [[ $testmode = yes ]]; then
       dfd=`pwd`
     fi
     #dfd=/nwprod/ush
-    expid=null
+    expid=${expid:-null}
     dfdtestdone=no
     dfdt=$dfd
     while [[ $dfdtestdone = no ]]
@@ -99,7 +108,7 @@ if [[ $testmode = yes ]]; then
       dfdtb=`basename $dfdt`
       if [[ $dfdtb = '/' ]]; then
 	dfdtestdone=yes
-	expid=test
+	expid=${expid:-test}
       else
 	dfdfound=no
 	case $dfdtb in
