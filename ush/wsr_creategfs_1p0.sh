@@ -49,7 +49,7 @@ for CDATE in $date1 $date2 $date3 $date4; do
       rm poe_copygb_${mem}.$PDY$cyc
     fi
     for nfhrs in $hourlist; do
-      infile=${COMINgens}/gefs.${PDY}/$cyc/pgrb2ap5/ge${mem}.t${cyc}z.pgrb2a.0p50.f${nfhrs}    
+      infile=${COMINgens}/gefs.${PDY}/$cyc/atmos/pgrb2ap5/ge${mem}.t${cyc}z.pgrb2a.0p50.f${nfhrs}    
       outfile=$DATA/gefs.$PDY/$cyc/pgrb2a1p0/ge${mem}.t${cyc}z.pgrb2a.1p00.f${nfhrs}            
       if [ -s $infile ]; then 
         echo "${COPYGB2:?} -g \" $grid2 \" -x $infile $outfile" >> poe_copygb_${mem}.$PDY$cyc

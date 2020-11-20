@@ -70,7 +70,7 @@ setpdy.sh
 ##############################
 # Define input COM Directory
 ##############################
-export COMINgens=${COMINgens:-$(compath.py gens/prod)}
+export COMINgens=${COMINgens:-$(compath.py gefs/prod)}
 export COMINcmce=${COMINcmce:-$(compath.py naefs/prod)}
 
 ##############################
