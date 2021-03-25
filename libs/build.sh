@@ -7,6 +7,16 @@ set -eux
 
 hostname
 
+while getopts m: option
+do
+    case "${option}"
+    in
+        m) machine=${OPTARG};;
+    esac
+done
+
+machine=${machine:-acorn} #dell, acorn
+
 #libdir=`dirname $0`
 #if [[ $libdir = '.' ]]; then
 libdir=`pwd`
@@ -24,13 +34,28 @@ fi
 cp -pr $libdir/grib_api-1.9.16 $libdir/grib_api-1.9.16-working
 cd $libdir/grib_api-1.9.16-working
 rc=$?
+ecmwfdir=$libdir/ecmwf_grib_api-1.9.16
+
 if (( rc == 0 )); then
-  module load ips/19.0.5.281
-  module load jasper/1.900.1
-  ecmwfdir=$libdir/ecmwf_grib_api-1.9.16
-  ./configure \
-    --prefix=$ecmwfdir \
-    --with-jasper=/usrx/local/prod/packages/gnu/4.8.5/jasper/1.900.1
+  if [ $machine = "dell" ]; then
+    module load ips/19.0.5.281
+    module load jasper/1.900.1
+
+    ./configure \
+      --prefix=$ecmwfdir \
+      --with-jasper=/usrx/local/prod/packages/gnu/4.8.5/jasper/1.900.1
+
+  elif [ $machine = "acorn" ]; then
+	module purge
+	module load envvar/1.0
+    source /apps/prod/lmodules/startLmod
+    module load intel/19.1.3.304
+    module load gcc/10.2.0
+
+    ./configure \
+      --prefix=$ecmwfdir \
+      --disable-jpeg
+  fi
   rc=$?
   if (( rc != 0 )); then
     echo configure FAILED rc=$rc

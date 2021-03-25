@@ -3,6 +3,16 @@ set -eux
 
 hostname
 
+while getopts m: option
+do
+    case "${option}"
+    in
+        m) machine=${OPTARG};;
+    esac
+done
+
+machine=${machine:-acorn} #dell, acorn
+
 build_dir=`pwd`
 logs_dir=$build_dir/logs
 
@@ -17,21 +27,29 @@ if [ ! -d "../exec" ]; then
   mkdir ../exec
 fi
 
-module purge
-source /usrx/local/prod/lmod/lmod/init/bash
-module load ips/19.0.5.281
+if [ $machine = "dell" ]; then
+  module purge
+  source /usrx/local/prod/lmod/lmod/init/bash
+  module load ips/19.0.5.281
 
-module list
+  module list
+elif [ $machine = "acorn" ]; then
+  module purge
+  source /apps/prod/lmodules/startLmod
+  module load intel/19.1.3.304
+
+  module list
+fi
 
 # Build libs
 echo "Building libs..."
 cd $build_dir/../libs
-./build.sh > $logs_dir/build_libs.log 2>&1
+./build.sh -m ${machine} > $logs_dir/build_libs.log 2>&1
 cd $build_dir
 
 # Build sorcs
 echo "Building programs in sorc/ ..."
-./build.sh > $logs_dir/build_sorc.log 2>&1
+./build.sh -m ${machine} > $logs_dir/build_sorc.log 2>&1
 
 # Install programs in sorc
 echo "Installing programs in sorc/ ..."
