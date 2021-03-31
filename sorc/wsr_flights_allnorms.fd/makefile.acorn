@@ -3,7 +3,7 @@ SHELL=	/bin/bash
 CMD =   wsr_flights_allnorms
 #
 #FC =    ncepxlf  -qmaxmem=-1
-FC =    ifort -mkl=sequential
+FC =    $(FCMP) -mkl=sequential
 FFLAGS= -list -traceback
 FFLAGS= -list -convert big_endian -assume byterecl
 FFLAGS= -list -convert big_endian -assume byterecl -traceback

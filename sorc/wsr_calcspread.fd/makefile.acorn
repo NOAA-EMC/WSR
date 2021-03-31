@@ -4,7 +4,7 @@ CMD =   wsr_calcspread
 #
 #FC =    xlf -O3 -qnostrict 
 #FC =    xlf 
-FC =    ifort -O3
+FC =    $(FCMP) -O3
 FFLAGS= -list -traceback
 FFLAGS= -list -convert big_endian -assume byterecl
 FFLAGS= -list -convert big_endian -assume byterecl -traceback

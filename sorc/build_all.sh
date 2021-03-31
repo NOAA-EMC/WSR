@@ -36,16 +36,18 @@ if [ $machine = "dell" ]; then
 elif [ $machine = "acorn" ]; then
   module purge
   source /apps/prod/lmodules/startLmod
-  module load intel/19.1.3.304
+  module load intel/19.1.3.304 cpe-intel
 
   module list
 fi
 
-# Build libs
-echo "Building libs..."
-cd $build_dir/../libs
-./build.sh -m ${machine} > $logs_dir/build_libs.log 2>&1
-cd $build_dir
+if [ $machine = "dell" ]; then
+  # Build libs
+  echo "Building libs..."
+  cd $build_dir/../libs
+  ./build.sh -m ${machine} > $logs_dir/build_libs.log 2>&1
+  cd $build_dir
+fi
 
 # Build sorcs
 echo "Building programs in sorc/ ..."
