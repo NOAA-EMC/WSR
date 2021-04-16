@@ -4,9 +4,10 @@ CMD =  wsr_tgr_special
 #
 #FC =    ncepxlf
 FC =    $(FCMP)
-FFLAGS= -list -traceback
-FFLAGS= -list -convert big_endian -assume byterecl
-FFLAGS= -list -convert big_endian -assume byterecl -traceback
+#FFLAGS= -list -traceback
+#FFLAGS= -list -convert big_endian -assume byterecl
+#FFLAGS= -list -convert big_endian -assume byterecl -traceback
+FFLAGS  = $(FFLAGSMP)
 
 SRCS=	tgr_special.f
 OBJS=   $(SRCS:.f=.o)

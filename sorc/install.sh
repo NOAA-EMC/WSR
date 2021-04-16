@@ -24,7 +24,7 @@ if [ $machine = "dell" ]; then
   module list
 elif [ $machine = "acorn" ]; then
   source /apps/prod/lmodules/startLmod
-  module load intel/19.1.3.304 cpe-intel
+  module load intel/19.1.3.304 PrgEnv-intel
 
   module list
 fi

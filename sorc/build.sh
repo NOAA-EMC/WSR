@@ -24,16 +24,19 @@ if [ $machine = "dell" ]; then
   module list
 
   export FCMP=ifort
+  export FFLAGSMP="-list -convert big_endian -assume byterecl -traceback"
 elif [ $machine = "acorn" ]; then
   module purge
   source /apps/prod/lmodules/startLmod
   module load envvar/1.0
 
-  module load intel/19.1.3.304 cpe-intel
+  module load intel/19.1.3.304 PrgEnv-intel
 
   module list
   
-  export FCMP=ftn
+  export FCMP=ftn #ifort #ftn
+  export FFLAGSMP="-O3 -fp-model precise -ftz -fast-transcendentals -no-prec-div -no-prec-sqrt -align sequence" #array64byte" # for ftn
+  #export FFLAGSMP="-list -convert big_endian -assume byterecl -traceback" # for init
 fi
 
 

@@ -4,9 +4,10 @@ CMD =  wsr_sig_pac
 #
 #FC =    ncepxlf
 FC =    $(FCMP)
-FFLAGS= -list -traceback
-FFLAGS= -list -convert big_endian -assume byterecl
-FFLAGS= -list -convert big_endian -assume byterecl -traceback
+#FFLAGS= -list -traceback
+#FFLAGS= -list -convert big_endian -assume byterecl
+#FFLAGS= -list -convert big_endian -assume byterecl -traceback
+FFLAGS  = $(FFLAGSMP)
 
 SRCS=	sig_pac.f
 OBJS=   $(SRCS:.f=.o)

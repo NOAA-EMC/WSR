@@ -4,9 +4,10 @@ CMD =   wsr_circlevr
 #
 #FC =    ncepxlf
 FC =    $(FCMP)
-FFLAGS= -list -traceback
-FFLAGS= -list -convert big_endian -assume byterecl
-FFLAGS= -list -convert big_endian -assume byterecl -traceback
+#FFLAGS= -list -traceback
+#FFLAGS= -list -convert big_endian -assume byterecl
+#FFLAGS= -list -convert big_endian -assume byterecl -traceback
+FFLAGS  = $(FFLAGSMP)
 
 SRCS=	circlevr.f
 OBJS=   $(SRCS:.f=.o)
