@@ -11,8 +11,8 @@ set -x
 ####################################
 # Determine Job Output Name on System
 ####################################
-export jobid=${jobid:-"$job.$LSB_JOBID"}
-export pgmout="OUTPUT.${LSB_JOBID}"
+export jobid=${jobid:-"$job.$PBS_JOBID"}
+export pgmout="OUTPUT.${PBS_JOBID}"
 export pgmerr=errfile
 
 export DATA=${DATA:-${DATAROOT:?}/${jobid:?}}
@@ -89,7 +89,7 @@ mkdir -p $GESdir
 # JY- the following can be removed later after test
 export COMENS=$GESdir
 
-export wsrmpexec=mpirun
+export wsrmpexec=mpiexec #mpirun
 echo wsrmpexec=$wsrmpexec
 
 env
