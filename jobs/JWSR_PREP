@@ -53,9 +53,9 @@ export cycle=t${cyc}z
 
 if test "$cyc" = "00"
 then
-  export prev_cyc=12
+	export prev_cyc=12
 else
-  export prev_cyc=00
+	export prev_cyc=00
 fi
 
 export SENDCOM=${SENDCOM:-YES}
@@ -101,11 +101,11 @@ export err=$?; err_chk
 ########################################################
 
 if [ -s $pgmout ]; then
-  cat $pgmout
+	cat $pgmout
 fi
 
 if [ "${KEEPDATA^^}" != "YES" ]; then
-  rm -rf $DATA
+	rm -rf $DATA
 fi
 
 date

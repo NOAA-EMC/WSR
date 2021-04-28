@@ -97,7 +97,7 @@ export nflights=90
 export nrawin=34
 export phase=1
 if [[ $PDY -ge 20110226 ]]; then
-  export phase=2
+	export phase=2
 fi
 
 export wsrmpexec=mpiexec #mpirun
@@ -112,11 +112,11 @@ export err=$?; err_chk
 ########################################################
 
 if [ -s $pgmout ]; then
-  cat $pgmout
+	cat $pgmout
 fi
 
 if [ "${KEEPDATA^^}" != "YES" ]; then
-  rm -rf $DATA
+	rm -rf $DATA
 fi
 
 date
