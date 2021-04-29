@@ -155,7 +155,7 @@ if [[ $ifort -eq 1 ]]; then
 				do
 					ls -al ncopy.$itask
 					if (( itask <= memcm_eh)); then
-						echo "ncopy.$itask" >>poescript
+						echo "sh -xa ncopy.$itask" >>poescript
 					else
 						echo "date" >>poescript
 					fi
@@ -164,7 +164,8 @@ if [[ $ifort -eq 1 ]]; then
 				done
 				#poe -cmdfile poescript -stdoutmode ordered -ilevel 3
 				#$wsrmpexec -cmdfile poescript -stdoutmode ordered -ilevel 3
-				$wsrmpexec cfp poescript
+				#$wsrmpexec cfp poescript
+				$wsrmpexec  -n 32 -ppn 32 --cpu-bind core --configfile  poescript
 			fi
 
 
@@ -184,8 +185,7 @@ if [[ $ifort -eq 1 ]]; then
 					[[ $nm -eq 00 ]] && ensfile_lt=${cmcdir}/cmc_gec00.t${eh}z.pgrbaf$lta
 					usefile=gens${nm}.t${eh}z.pgrbaf$lta
 					cat <<- EOF >>$cmdfile
-						${WGRIB:?} -s -ncep_opn $usefile | grep "${var[$varid]}" |\
-						${WGRIB:?} -i -ncep_opn -text $usefile -o ${WORK}/fort.${fnum}
+						${WGRIB:?} -s -ncep_opn $usefile | grep "${var[$varid]}" | ${WGRIB:?} -i -ncep_opn -text $usefile -o ${WORK}/fort.${fnum}
 					EOF
 					fnum=$(expr $fnum + 1)
 					nm=$(expr $nm + 1)
@@ -209,7 +209,7 @@ if [[ $ifort -eq 1 ]]; then
 			do
 				ls -al ccmd.$itask
 				if (( itask <= nvar )); then
-					echo "ccmd.$itask" >>ccmd.file
+					echo "sh -xa ccmd.$itask" >>ccmd.file
 				else
 					echo "date" >>ccmd.file
 				fi
@@ -218,7 +218,8 @@ if [[ $ifort -eq 1 ]]; then
 
 			#poe -cmdfile ccmd.file -stdoutmode ordered -ilevel 3
 			#$wsrmpexec -cmdfile ccmd.file -stdoutmode ordered -ilevel 3
-			$wsrmpexec cfp ccmd.file
+			#$wsrmpexec cfp ccmd.file
+			$wsrmpexec  -n 32 -ppn 32 --cpu-bind core --configfile  ccmd.file
 		done
 		i=$(expr $i + 1)
 	done
@@ -228,6 +229,7 @@ fi
 #############################
 # Create combined ensemble  #
 #############################
+export MP_PROCS=21
 echo "Creating CMC ens.d ..."
 ((mem1=memcm_eh+1))
 ((mem0=2*mem1))
@@ -265,7 +267,7 @@ done
 while (( itask <= MP_PROCS ))
 do
 	if(( itask <= ntimes )); then
-		echo "reform.$itask" >> reform.file
+		echo "sh -xa reform.$itask" >> reform.file
 	else
 		echo "date" >>reform.file
 	fi
@@ -274,7 +276,9 @@ done
  
 #poe -cmdfile reform.file -stdoutmode ordered -ilevel 3
 #$wsrmpexec -cmdfile reform.file -stdoutmode ordered -ilevel 3
-$wsrmpexec cfp reform.file
+#$wsrmpexec cfp reform.file
+$wsrmpexec  -n 32 -ppn 32 --cpu-bind core --configfile reform.file
 /bin/rm reform.*
+export MP_PROCS=16
 
 exit

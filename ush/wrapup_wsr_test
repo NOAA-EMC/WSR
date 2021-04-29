@@ -28,7 +28,7 @@ esac
 
 if [[ $testmode = yes ]]; then
 
-	PTMP=/gpfs/dell3/ptmp
+	PTMP=/lfs/h1/emc/ptmp
 
 	# these test settings are only used when testmode=yes
 
@@ -64,8 +64,8 @@ if [[ $testmode = yes ]]; then
 			testrzdm=emcrzdm
 			testdirectory=/home/people/emc/www/htdocs/gmb/xianwu.xue/sdm_wsr
 			useexpid=yes
-			expid=wsr_rocoto
-			PTMP=/gpfs/dell2/ptmp
+			expid=port2wcoss2 #wsr_rocoto
+			PTMP=/lfs/h1/emc/ptmp #/gpfs/dell2/ptmp
 			GESROOT=$PTMP/$LOGNAME/o/$expid/nwges
 			;;
 		(*)

@@ -59,7 +59,8 @@ for CDATE in $date1 $date2 $date3 $date4; do
 		done
 		chmod +x poe_copygb_${mem}.$PDY$cyc
 		startmsg
-		$wsrmpexec cfp poe_copygb_${mem}.$PDY$cyc
+		# $wsrmpexec cfp poe_copygb_${mem}.$PDY$cyc
+		$wsrmpexec -n 32 -ppn 32 --cpu-bind core --configfile poe_copygb_${mem}.$PDY$cyc
 		export err=$?; err_chk
 	done
 

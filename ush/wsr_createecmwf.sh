@@ -220,7 +220,7 @@ if [[ $ifort -eq 1 ]]; then
 				do
 					ls -al ecmd.$itask
 					if (( itask <= nvar )); then
-						echo "ecmd.$itask" >>ecmd.file
+						echo "sh -xa ecmd.$itask" >>ecmd.file
 					else
 						echo "date" >>ecmd.file
 					fi
@@ -229,7 +229,8 @@ if [[ $ifort -eq 1 ]]; then
 
 				#/usr/bin/poe -cmdfile ecmd.file -stdoutmode ordered -ilevel 3
 				#$wsrmpexec -cmdfile ecmd.file -stdoutmode ordered -ilevel 3
-				$wsrmpexec cfp ecmd.file
+				# $wsrmpexec cfp ecmd.file
+				#$wsrmpexec  -n 32 -ppn 32 --cpu-bind core --configfile ecmd.file
 				/bin/rm DCE*
 			fi
 
@@ -242,6 +243,7 @@ fi
 #############################
 # Create combined ensemble  #
 #############################
+export MP_PROCS=21
 echo "Creating ECMWF ens.d ..."
 ((mem1=memec_eh+1))
 ((mem0=1*mem1))
@@ -273,7 +275,7 @@ done
 while (( itask <= MP_PROCS ))
 do
 	if(( itask <= ntimes )); then
-		echo "reform.$itask" >> reform.file
+		echo "sh -xa reform.$itask" >> reform.file
 	else
 		echo "date" >>reform.file
 	fi
@@ -282,6 +284,8 @@ done
 
 #/usr/bin/poe -cmdfile reform.file -stdoutmode ordered -ilevel 3
 #$wsrmpexec -cmdfile reform.file -stdoutmode ordered -ilevel 3
-$wsrmpexec cfp reform.file
+# $wsrmpexec cfp reform.file
+#$wsrmpexec  -n 32 -ppn 32 --cpu-bind core --configfile reform.file
 /bin/rm reform.*
+export MP_PROCS=16
 exit
