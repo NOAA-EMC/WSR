@@ -128,7 +128,7 @@ if [[ $ifort -eq 1 ]]; then
 			###################################
 			# Copygb to convert - default     #
 			###################################
-
+			export MP_PROCS=21
 			if [[ $icopygb -eq 1 ]]; then
 				(( itask = 0 ))
 				/bin/rm ncopy.*
@@ -165,11 +165,11 @@ if [[ $ifort -eq 1 ]]; then
 				#poe -cmdfile poescript -stdoutmode ordered -ilevel 3
 				#$wsrmpexec -cmdfile poescript -stdoutmode ordered -ilevel 3
 				#$wsrmpexec cfp poescript
-				$wsrmpexec  -n 32 -ppn 32 --cpu-bind core --configfile  poescript
+				$wsrmpexec  -n $memcm_eh -ppn $memcm_eh --cpu-bind core --configfile  poescript
 			fi
 
 
-
+			export MP_PROCS=20
 			(( itask = 0 ))
 			(( varid = 1 ))
 			/bin/rm ccmd.*
@@ -219,7 +219,7 @@ if [[ $ifort -eq 1 ]]; then
 			#poe -cmdfile ccmd.file -stdoutmode ordered -ilevel 3
 			#$wsrmpexec -cmdfile ccmd.file -stdoutmode ordered -ilevel 3
 			#$wsrmpexec cfp ccmd.file
-			$wsrmpexec  -n 32 -ppn 32 --cpu-bind core --configfile  ccmd.file
+			$wsrmpexec  -n $nvar -ppn $nvar --cpu-bind core --configfile  ccmd.file
 		done
 		i=$(expr $i + 1)
 	done
@@ -246,13 +246,25 @@ do
 		else
 			cmdfile=reform.$((i-MP_PROCS))
 		fi
+
+		if [[ -f ${WORK_ENS}/${lt[$i]}/read.parm ]]; then
+			rm -rf ${WORK_ENS}/${lt[$i]}/read.parm
+		fi
+		echo "$iens ${lt[$i]} $mem1 $mem0 $nvar $idim $jdim" > ${WORK_ENS}/${lt[$i]}/read.parm
+
+		if [[ -f ${WORK_ENS}/${lt[$i]}/vble.dat ]]; then
+			rm -rf ${WORK_ENS}/${lt[$i]}/vble.dat
+		fi
+		if [[ -f ${WORK_ENS}/${lt[$i]}/fort.112 ]]; then
+			rm -rf ${WORK_ENS}/${lt[$i]}/fort.112
+		fi
 		cat <<- EEOF >>$cmdfile
 			cd ${WORK_ENS}/${lt[$i]}
-			/bin/rm read.parm vble.dat
-			echo "$iens ${lt[$i]} $mem1 $mem0 $nvar $idim $jdim" > read.parm
-			rm -rf  fort.112
+			#/bin/rm read.parm vble.dat
+			#echo "$iens ${lt[$i]} $mem1 $mem0 $nvar $idim $jdim" > read.parm
+			#rm -rf  fort.112
 			$EXECwsr/wsr_reformat <read.parm
-			mv vble.dat ${WORK_ETKF}/cm${ensdate}_${lt[$i]}_ens.d
+			#mv vble.dat ${WORK_ETKF}/cm${ensdate}_${lt[$i]}_ens.d
 		EEOF
 		chmod a+x $cmdfile
 	fi
@@ -277,7 +289,16 @@ done
 #poe -cmdfile reform.file -stdoutmode ordered -ilevel 3
 #$wsrmpexec -cmdfile reform.file -stdoutmode ordered -ilevel 3
 #$wsrmpexec cfp reform.file
-$wsrmpexec  -n 32 -ppn 32 --cpu-bind core --configfile reform.file
+$wsrmpexec  -n 21 -ppn 21 --cpu-bind core --configfile reform.file
+i=1
+while [[ $i -le $ntimes ]]
+do
+    if [[ -d ${WORK_ENS}/${lt[$i]} ]]; then
+        mv ${WORK_ENS}/${lt[$i]}/vble.dat ${WORK_ETKF}/cm${ensdate}_${lt[$i]}_ens.d
+    fi
+    ((i+=1))
+done
+
 /bin/rm reform.*
 export MP_PROCS=16
 
