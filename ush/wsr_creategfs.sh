@@ -13,7 +13,7 @@
 # Script history log:
 # 2006-12-10  Yucheng Song Implemented MPMD version for WSR project
 
-set -x
+set -xa
 
 curdate=${PDY:?}00
 
@@ -129,7 +129,7 @@ if [[ $ifort -eq 1 ]]; then
 			###################################
 			# Copygb to convert - default     #
 			###################################
-
+			export MP_PROCS=21
 			if [[ $icopygb -eq 1 ]]; then
 				(( itask = 0 ))
 				/bin/rm ncopy.*
@@ -169,9 +169,9 @@ if [[ $ifort -eq 1 ]]; then
 				#poe -cmdfile poescript -stdoutmode ordered -ilevel 3
 				#$wsrmpexec -cmdfile poescript -stdoutmode ordered -ilevel 3
 				# $wsrmpexec cfp poescript
-				$wsrmpexec -n 32 -ppn 32 --cpu-bind core --configfile poescript
+				$wsrmpexec -n 21 -ppn 21 --cpu-bind core --configfile poescript
 			fi
-
+			export MP_PROCS=20
 			(( itask = 0 ))
 			(( varid = 1 ))
 			/bin/rm ncmd.*
@@ -220,7 +220,7 @@ if [[ $ifort -eq 1 ]]; then
 			#poe  -cmdfile ncmd.file  -stdoutmode ordered -ilevel 2
 			#$wsrmpexec  -cmdfile ncmd.file  -stdoutmode ordered -ilevel 2
 			# $wsrmpexec  cfp ncmd.file
-			$wsrmpexec   -n 32 -ppn 32 --cpu-bind core --configfile ncmd.file
+			$wsrmpexec   -n $nvar -ppn $nvar --cpu-bind core --configfile ncmd.file
 			/bin/rm gens*.t${eh}z.pgrbaf$lta
 		done
 		i=$(expr $i + 1)
@@ -228,6 +228,7 @@ if [[ $ifort -eq 1 ]]; then
 	done
 
 fi
+
 #############################
 # Create combined ensemble  # 
 #############################
@@ -243,21 +244,33 @@ i=1
 while [[ $i -le $ntimes ]]
 do
 	if [[ -d ${WORK_ENS}/${lt[$i]} ]]; then
-	if (( i <= MP_PROCS)); then
-		cmdfile=reform.$i
-		>$cmdfile
-	else
-		cmdfile=reform.$((i-MP_PROCS))
-	fi
-	chmod a+x $cmdfile
-	cat <<- EEOF >>$cmdfile
-		cd ${WORK_ENS}/${lt[$i]}
-		rm read.parm vble.dat
-		echo "$iens ${lt[$i]} $mem1 $mem0 $nvar $idim $jdim" > read.parm
-		rm -rf  fort.112
-		$EXECwsr/wsr_reformat <read.parm
-		mv vble.dat ${WORK_ETKF}/nc${ensdate}_${lt[$i]}_ens.d
-	EEOF
+		if (( i <= MP_PROCS)); then
+			cmdfile=reform.$i
+			>$cmdfile
+		else
+			cmdfile=reform.$((i-MP_PROCS))
+		fi
+		chmod a+x $cmdfile
+
+		if [[ -f ${WORK_ENS}/${lt[$i]}/read.parm ]]; then
+			rm -rf ${WORK_ENS}/${lt[$i]}/read.parm
+		fi
+		echo "$iens ${lt[$i]} $mem1 $mem0 $nvar $idim $jdim" > ${WORK_ENS}/${lt[$i]}/read.parm
+
+		if [[ -f ${WORK_ENS}/${lt[$i]}/vble.dat ]]; then
+            rm -rf ${WORK_ENS}/${lt[$i]}/vble.dat
+        fi
+		if [[ -f ${WORK_ENS}/${lt[$i]}/fort.112 ]]; then
+            rm -rf ${WORK_ENS}/${lt[$i]}/fort.112
+        fi
+		cat <<- EEOF >>$cmdfile
+			cd ${WORK_ENS}/${lt[$i]}
+			#rm read.parm vble.dat
+			#echo "$iens ${lt[$i]} $mem1 $mem0 $nvar $idim $jdim" > read.parm
+			#rm -rf  fort.112
+			$EXECwsr/wsr_reformat <read.parm
+			#mv vble.dat ${WORK_ETKF}/nc${ensdate}_${lt[$i]}_ens.d
+		EEOF
 
 	fi
 	((i+=1))
@@ -266,7 +279,7 @@ done
 ((itask = 1))
 while (( itask <= MP_PROCS ))
 do
-	if(( itask <= ntimes )); then
+	if (( itask <= ntimes )); then
 		echo "sh -xa reform.$itask" >> reform.file
 	else
 		echo "date" >>reform.file
@@ -277,7 +290,15 @@ done
 #/usr/bin/poe -cmdfile reform.file -stdoutmode ordered -ilevel 3
 #$wsrmpexec -cmdfile reform.file -stdoutmode ordered -ilevel 3
 # $wsrmpexec cfp reform.file
-$wsrmpexec  -n 32 -ppn 32 --cpu-bind core --configfile reform.file
+$wsrmpexec  -n 21 -ppn 21 --cpu-bind core --configfile reform.file
+i=1
+while [[ $i -le $ntimes ]]
+do
+    if [[ -d ${WORK_ENS}/${lt[$i]} ]]; then
+		mv ${WORK_ENS}/${lt[$i]}/vble.dat ${WORK_ETKF}/nc${ensdate}_${lt[$i]}_ens.d
+	fi
+	((i+=1))
+done
 /bin/rm reform.*
 export MP_PROCS=16
 
