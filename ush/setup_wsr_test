@@ -622,7 +622,9 @@ do
 			echo "Observation time:  ${obsdate}" >> $text
 			echo "Verification time: ${veridate}" >> $text
 			echo "Latitude:  ${lat}N" >> $text
-			if [[ $long -le 0 ]]; then
+			check_vrlon=`echo "${long} <=0"|bc -l`
+			#if [[ $long -le 0 ]]; then
+			if [[ ${check_vrlon} -eq 1 ]]; then
 				longwest=`echo "0 - ${long}"|bc`
 				echo "Longitude: ${longwest}W" >> $text
 			else
