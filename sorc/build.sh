@@ -34,9 +34,9 @@ elif [ $machine = "acorn" ]; then
 
   module list
   
-  export FCMP=ftn #ifort #ftn
-  export FFLAGSMP="-O3 -fp-model precise -ftz -fast-transcendentals -no-prec-div -no-prec-sqrt -align sequence" #array64byte" # for ftn
-  #export FFLAGSMP="-list -convert big_endian -assume byterecl -traceback" # for init
+  export FCMP=ifort #ftn #ifort #ftn
+  #export FFLAGSMP="-O3 -fp-model precise -ftz -fast-transcendentals -no-prec-div -no-prec-sqrt -align sequence" #array64byte" # for ftn
+  export FFLAGSMP="-list -convert big_endian -assume byterecl -traceback" # for init
 fi
 
 

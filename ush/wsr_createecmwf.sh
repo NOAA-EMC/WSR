@@ -231,6 +231,8 @@ if [[ $ifort -eq 1 ]]; then
 				#$wsrmpexec -cmdfile ecmd.file -stdoutmode ordered -ilevel 3
 				# $wsrmpexec cfp ecmd.file
 				#$wsrmpexec  -n 32 -ppn 32 --cpu-bind core --configfile ecmd.file
+				sh -xa ecmd.file
+
 				/bin/rm DCE*
 			fi
 
@@ -286,6 +288,8 @@ done
 #$wsrmpexec -cmdfile reform.file -stdoutmode ordered -ilevel 3
 # $wsrmpexec cfp reform.file
 #$wsrmpexec  -n 32 -ppn 32 --cpu-bind core --configfile reform.file
-/bin/rm reform.*
+sh -xa reform.file
+
+#/bin/rm reform.*
 export MP_PROCS=16
 exit
