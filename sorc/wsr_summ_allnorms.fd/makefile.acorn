@@ -6,7 +6,7 @@ CMD = wsr_summ_allnorms
 #FC =    mpxlf_r
 #FC =    ifort
 #FC=     mpfort -mpi -mkl=sequential
-FC=mpiifort -mkl=sequential # $(FCMP) #ftn #-qopenmp #    mpiifort -mkl=sequential
+FC= $(FCMP) # mpiifort -mkl=sequential # $(FCMP) #ftn #-qopenmp #    mpiifort -mkl=sequential
 #FFLAGS= -list -traceback
 #FFLAGS= -list -convert big_endian -assume byterecl
 #FFLAGS= -list -convert big_endian -assume byterecl -traceback

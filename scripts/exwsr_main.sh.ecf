@@ -1,6 +1,7 @@
 #!/bin/ksh
 
-set -x
+set -xa
+export PS4='$SECONDS + [$LINENO] '
 
 ###########################################################################
 # This is the main script to produce the U.MIAMI-NCEP Ensemble Transform  #
