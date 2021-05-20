@@ -12,7 +12,8 @@
 ## @ notification = never
 ## @ queue
 
-set -x 
+set -xa
+export PS4='$SECONDS + [$LINENO] ' 
 ### USER SETUP
 
 #. ${NWROOT:-/gpfs/dell1/nco/ops/nw${envir:-prod}}/versions/wsr.ver
@@ -75,8 +76,8 @@ if [[ $testmode = yes ]]; then
 			export PRINTSDM=YES
 			export sdmprinter=
 			useexpid=yes
-			testtmpdir=/gpfs/dell2/ptmp/$LOGNAME/o
-			expid=wsr_rocoto
+			testtmpdir=/lfs/h1/emc/ptmp/$LOGNAME/o
+			expid=port2wcoss2
 			envir=$testenvir
 			testbase=null
 			HOMEwsr=`pwd`/../
@@ -160,9 +161,9 @@ if [[ $testmode = yes ]]; then
 
 		echo expid=$expid
 
-		export GESdir=${GESdir:-/gpfs/dell3/ptmp/$LOGNAME/o/$expid/nwges/$envir/wsr}
-		export COMIN=${COMIN:-/gpfs/dell3/ptmp/$LOGNAME/o/$expid/com/wsr/$envir}
-		export ETKFOUT=${ETKFOUT:-/gpfs/dell3/ptmp/$LOGNAME/o/$expid}
+		export GESdir=${GESdir:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid/nwges/$envir/wsr}
+		export COMIN=${COMIN:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid/com/wsr/$envir}
+		export ETKFOUT=${ETKFOUT:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid}
 
 		#testbase=/ensemble/save/$LOGNAME/nw$envir
 		#testbase=/ensemble/save/$LOGNAME/s/$expid/nw$envir
@@ -201,31 +202,34 @@ fi
 
 #. ${NWROOT:-/gpfs/dell1/nco/ops/nw${envir:-prod}}/versions/wsr.ver
 if [[ $useexpid = no ]]; then
-	. /gpfs/dell1/nco/ops/nw${envir:-prod}/versions/wsr.ver
+	. /lfs/h1/ops/prod/nw${envir:-prod}/versions/wsr.ver
 fi
 
 #shellname=ksh
-# . /usrx/local/Modules/3.2.9/init/$shellname
-. /usrx/local/prod/modules/default/init/sh
+module purge
 
-module use /usrx/local/dev/modulefiles
-module load  GrADS/2.2.0
+source /apps/prod/lmodules/startLmod
+module load envvar/1.0
+
+module use /apps/test/lmodules/core
+module load GrADS/2.2.1
+
 module list 
 
 export job=wsr_main
 
 export envir=${envir:-prod}
-export GESdir=${GESdir:-/gpfs/dell1/nco/ops/nwges/$envir/wsr}
-export COMIN=${COMIN:-/gpfs/dell1/nco/ops/com/wsr/$envir}
+export GESdir=${GESdir:-/lfs/h1/ops/prod/nwges/$envir/wsr}
+export COMIN=${COMIN:-/lfs/h1/ops/prod/com/wsr/$envir}
 # ETKFOUT is the home dir where ET KF results
-export ETKFOUT=${ETKFOUT:-/gpfs/dell1/nco/ops}
+export ETKFOUT=${ETKFOUT:-/lfs/h1/ops}
 export RAWINSONDES=${RAWINSONDES:-"YES"}
 if [[ $testmode = no ]]; then
 	export PRINTSDM=${PRINTSDM:-YES}
 else
 	export PRINTSDM=${PRINTSDM:-NO}
 fi
-export HOMEwsr=${HOMEwsr:-/gpfs/dell1/nco/ops/nw$envir/wsr.${wsr_ver:?}}
+export HOMEwsr=${HOMEwsr:-/lfs/h1/ops/prod/nw$envir/wsr.${wsr_ver:?}}
 export FIXwsr=${FIXwsr:-$HOMEwsr/fix}
 export sdmprinter=${sdmprinter:-hp26_sdm}
 #######################################################
@@ -246,7 +250,7 @@ echo sdmprinter=$sdmprinter
 ### END USER SETUP #########
 
 export pid=$$
-export DATA=${DATA:-/gpfs/dell1/ptmp/$LOGNAME/wsr/tmp/${job}.${pid}}
+export DATA=${DATA:-/lfs/h1/nco/ptmp/$LOGNAME/wsr/tmp/${job}.${pid}}
 
 #echo stop here for testing
 #echo before sorted environment
