@@ -35,6 +35,7 @@ export PS4='$SECONDS + [$LINENO] '
 # nd         : the number of points in the target region                  #
 # DATA       : the directory from which this script is run                #
 # GESdir     : working directory on SP                                    #
+# COMIN      : directory for the input data from wsr_prep                 #
 # COMOUT     : directory to which output is directed                      #
 #                                                                         #
 ########################################################################### 
@@ -271,7 +272,6 @@ mkecmwf='ECMWF'
 mkcmc='CMC'
 
 ensdategr=${ensdate}
-
 tint=$mintint
 while [[ ${tint} -le ${maxtint} ]]
 do
@@ -288,14 +288,16 @@ do
 	[[ $elt -le 9 ]] && elt=0$elt
 	[[ $clt -le 9 ]] && clt=0$clt
 	if [[ nomrf -ne 1 ]]; then
-		if [[ -f ${GESdir}/${curdate}/nc${ensdate}_${mlt}_ens.d ]]
+		fn=${COMIN}.${curdate}/prep/nc${ensdate}_${mlt}_ens.d
+		if [[ -f $fn ]]
 		then
-			cp ${GESdir}/${curdate}/nc${ensdate}_${mlt}_ens.d  fort.${mfn}
+			cp $fn fort.${mfn}
 			ensdategr=${ensdate}
 		else
-			if [[ -f ${GESdir}/${prevdate}/nc${ensdateold}_${mltold}_ens.d ]]
+			fn=${COMIN}.${prevdate}/prep/nc${ensdateold}_${mltold}_ens.d
+			if [[ -f $fn ]]
 			then
-				cp ${GESdir}/${prevdate}/nc${ensdateold}_${mltold}_ens.d fort.${mfn}
+				cp $fn fort.${mfn}
 				oldmrf=1
 				ensdategr=${ensdateold}
 			else
@@ -309,13 +311,15 @@ do
 		mkmrf=''
 	fi
 	if [[ noecmwf -ne 1 ]]; then
-		if [[ -f ${GESdir}/${curdate}/ec${ensdate2}_${elt}_ens.d ]]
+		fn=${COMIN}.${curdate}/prep/ec${ensdate2}_${elt}_ens.d
+		if [[ -f $fn ]]
+		then
+			cp $fn fort.${efn}
+		else
+			fn=${COMIN}.${prev2date}/prep/ec${ensdate2old}_${eltold}_ens.d
+			if [[ -f $fn ]]
 			then
-				cp ${GESdir}/${curdate}/ec${ensdate2}_${elt}_ens.d  fort.${efn}
-			else
-			if [[ -f ${GESdir}/${prev2date}/ec${ensdate2old}_${eltold}_ens.d ]]
-			then
-				cp ${GESdir}/${prev2date}/ec${ensdate2old}_${eltold}_ens.d fort.${efn}
+				cp $fn fort.${efn}
 				oldecmwf=1
 			else
 				noecmwf=1
@@ -328,13 +332,15 @@ do
 		mkecmwf=''
 	fi
 	if [[ nocmc -ne 1 ]] ; then
-		if [[ -f ${GESdir}/${curdate}/cm${ensdate}_${clt}_ens.d ]]
+		fn=${COMIN}.${curdate}/prep/cm${ensdate}_${clt}_ens.d
+		if [[ -f $fn ]]
 		then
-			cp ${GESdir}/${curdate}/cm${ensdate}_${clt}_ens.d  fort.${cfn}
+			cp $fn fort.${cfn}
 		else
-			if [[ -f ${GESdir}/${prevdate}/cm${ensdateold}_${cltold}_ens.d ]]
+			fn=${COMIN}.${prevdate}/prep/cm${ensdateold}_${cltold}_ens.d
+			if [[ -f $fn ]]
 			then
-				cp ${GESdir}/${prevdate}/cm${ensdateold}_${cltold}_ens.d fort.${cfn}
+				cp $fn fort.${cfn}
 				oldcmc=1
 			else
 				nocmc=1
@@ -342,7 +348,7 @@ do
 				mkcmc=''
 			fi
 		fi
-		else
+	else
 		memcm=0
 		mkcmc=''
 	fi
@@ -363,7 +369,6 @@ then
 fi 	
 
 echo "$idim $jdim $mem $memnc $memec $memcm $nvar $mintint $maxtint" > params
-
 export pgm=wsr_calcperts
 . prep_step
 startmsg
@@ -1017,7 +1022,7 @@ do
 		cp targ1.d.gr         $COMOUT/case${i}.targ1.gr
 		cp flights.d          $COMOUT/case${i}.flights.d
 
-		if [[ ${SENDDTS} = YES ]];then
+		if [[ ${SENDDTS} = YES ]]; then
 			cp out.grib1          $COMOUT/${inittime[$i]}_${case_id[$i]}.grib
 		fi
 

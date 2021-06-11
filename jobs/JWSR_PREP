@@ -87,11 +87,9 @@ export DCOMROOT=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/dcom
 ##############################
 # Define output GESdir Directory 
 ##############################
-export GESdir=${GESROOT:?}/${envir}/${RUN}/${PDY}
+#export GESdir=${GESROOT:?}/${envir}/${RUN}/${PDY}
+export GESdir=${COMROOT:?}/${NET}/${envir}/${RUN}.${PDY}/prep
 mkdir -p $GESdir
-
-# JY- the following can be removed later after test
-export COMENS=$GESdir
 
 export wsrmpexec=mpiexec #mpirun
 echo wsrmpexec=$wsrmpexec

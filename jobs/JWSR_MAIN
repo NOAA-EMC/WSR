@@ -59,9 +59,7 @@ export FIXwsr=$HOMEwsr/fix
 # Define GES Directories
 ##############################
 export GESdir=${GESROOT:?}/${envir}/${RUN}
-
-# JY- the following can be removed later after test
-export COMENS=$GESdir
+export COMIN=${COMROOT:?}/${NET}/${envir}/${RUN} #.${PDY}/prep
 
 ##############################
 # Run setpdy and initialize PDY variables
@@ -70,7 +68,7 @@ export PDY=$(head -1 $GESdir/targdata.d)
 setpdy.sh
 . ./PDY
 
-export COMOUT=${COMROOT:?}/${NET}/${envir}/${RUN}.${PDY}
+export COMOUT=${COMROOT:?}/${NET}/${envir}/${RUN}.${PDY}/main
 mkdir -p $COMOUT
 
 #######################################################
