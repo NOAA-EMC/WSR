@@ -77,13 +77,8 @@ setpdy.sh
 ##############################
 # Define input COM Directory
 ##############################
-#export COMPATH=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/gefs/prod
-export COMINgens=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/gefs/prod
 export COMINgens=${COMINgens:-$(compath.py gefs/prod)}
-#export COMPATH=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/naefs/prod
-export COMINcmce=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/naefs/prod
 export COMINcmce=${COMINcmce:-$(compath.py naefs/prod)}
-export DCOMROOT=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/dcom
 ##############################
 # Define output GESdir Directory 
 ##############################
