@@ -73,7 +73,7 @@ if [[ $testmode = yes ]]; then
 			testdirectory=/home/www/emc/htdocs/gmb/xianwu.xue/wsr_sdm
 			useexpid=yes
 			PTMP=/lfs/h1/emc/ptmp #/gpfs/dell2/ptmp
-			expid=port2wcoss2 #wsr_rocoto
+			expid=port2wcoss2
 			PDY=20201120
 			;;
 		(*)
@@ -142,6 +142,7 @@ if [[ $testmode = yes ]]; then
 	echo testmode=$testmode
 fi
 
+mkdir -p $GESdir
 ####################################
 # end set up test mode if required
 ####################################
@@ -194,7 +195,7 @@ else
 	fi
 	if [[ -d $COMdir ]]; then
 		cd $COMdir
-		for dir in wsr.$PDY
+		for dir in wsr.$PDY/main
 		do
 			if [[ -d $dir ]]; then
 				ls -ld $dir

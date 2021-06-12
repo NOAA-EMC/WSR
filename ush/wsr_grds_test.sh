@@ -77,7 +77,7 @@ if [[ $testmode = yes ]]; then
 			export sdmprinter=
 			useexpid=yes
 			testtmpdir=/lfs/h1/emc/ptmp/$LOGNAME/o
-			expid=port2wcoss2
+			expid=${EXPID:-port2wcoss2_new}
 			envir=$testenvir
 			testbase=null
 			HOMEwsr=`pwd`/../
@@ -119,7 +119,7 @@ if [[ $testmode = yes ]]; then
 
 	if [[ $useexpid = yes ]]; then
 
-		export wsr_ver=v3.2.0
+		export wsr_ver=v3.3.0
 
 		dfile=$0
 		dfb=`basename $dfile`
@@ -162,7 +162,7 @@ if [[ $testmode = yes ]]; then
 		echo expid=$expid
 
 		export GESdir=${GESdir:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid/nwges/$envir/wsr}
-		export COMIN=${COMIN:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid/com/wsr/$envir}
+		export COMIN=${COMIN:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid/com/wsr/$envir/main}
 		export ETKFOUT=${ETKFOUT:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid}
 
 		#testbase=/ensemble/save/$LOGNAME/nw$envir
@@ -176,7 +176,7 @@ if [[ $testmode = yes ]]; then
 		testtmpdir=$testtmpdir/$expid
 		export pid=$$
 		dtg=`date +%Y%m%d%H%M%S`
-		export DATA=$testtmpdir/wsr/tmp/wsr.${pid}.$dtg
+		export DATA=$testtmpdir/tmpnwprd/wsr_grads.${pid}.$dtg #wsr/tmp/wsr.${pid}.$dtg
 
 		echo GESdir=$GESdir
 		echo COMIN=$COMIN
@@ -250,7 +250,7 @@ echo sdmprinter=$sdmprinter
 ### END USER SETUP #########
 
 export pid=$$
-export DATA=${DATA:-/lfs/h1/nco/ptmp/$LOGNAME/wsr/tmp/${job}.${pid}}
+export DATA=${DATA:-/lfs/h1/nco/ptmp/$LOGNAME/tmpnwprd/${job}.${pid}} #wsr/tmp/${job}.${pid}}
 
 #echo stop here for testing
 #echo before sorted environment
@@ -264,7 +264,7 @@ rm -rf $DATA/*
 
 PDY=`head -1 $GESdir/targdata.d`
 cases=`head -2 $GESdir/targdata.d | tail -1`
-. $ETKFOUT/com/wsr/${envir}/wsr.$PDY/case1.env
+. $ETKFOUT/com/wsr/${envir}/wsr.$PDY/main/case1.env
 
 #cp $HOMEwsr/fix/wsr_track.* .
 # JY if [[ $testmode = no ]]; then
@@ -277,7 +277,7 @@ cp $HOMEwsr/grads/*.gs $DATA/.
 i=1
 while test ${i} -le ${cases}
 do
-	. $ETKFOUT/com/wsr/${envir}/wsr.$PDY/case${i}.env
+	. $ETKFOUT/com/wsr/${envir}/wsr.$PDY/main/case${i}.env
 
 	#########################################
 	# GRAPHICS START UP
@@ -386,7 +386,7 @@ then
 	i=1
 	while test ${i} -le ${cases}
 	do
-		. $ETKFOUT/com/wsr/${envir}/wsr.$PDY/notwsr_case${i}.env
+		. $ETKFOUT/com/wsr/${envir}/wsr.$PDY/main/notwsr_case${i}.env
 
 		ltdiffsteps=`expr ${ltdiff} / 12`
 		if [ ${ltdiffsteps} -lt 7 ]
@@ -437,7 +437,7 @@ then
 
 else
 
-	. $ETKFOUT/com/wsr/${envir}/wsr.$PDY/ltinfo.env
+	. $ETKFOUT/com/wsr/${envir}/wsr.$PDY/main/ltinfo.env
 
 	mk[2]=`expr ${mk2} - 1`
 	mk[3]=`expr ${mk3} - 1`
@@ -495,7 +495,7 @@ else
 			while test ${k} -le ${mk[$j]}
 			do
 
-				. $ETKFOUT/com/wsr/${envir}/wsr.$PDY/flight${k}_${lt1}.env
+				. $ETKFOUT/com/wsr/${envir}/wsr.$PDY/main/flight${k}_${lt1}.env
 
 				ctr=0
 				while [ ${ctr} -le ${ltdiffsteps} ]
