@@ -18,15 +18,15 @@ date
 export envir='dev'
 export RUN_ENVIR='dev'
 export WHERE_AM_I='acorn'
-export GEFS_ROCOTO='/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/port2wcoss2/rocoto'
-export WORKDIR='/lfs/h1/emc/ptmp/Xianwu.Xue/o/port2wcoss2'
-export EXPID='port2wcoss2'
+export EXPID='port2wcoss2_new'
+export GEFS_ROCOTO="/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}/rocoto"
+export WORKDIR="/lfs/h1/emc/ptmp/Xianwu.Xue/o/${EXPID}"
 export gefs_cych='24'
 export PDY='20201120'
 export cyc='00'
 export cyc_fcst='00'
-export SOURCEDIR='/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/port2wcoss2'
-export job=wsr_prep_${PDY}${cyc}
+export SOURCEDIR="/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}"
+export job=wsr_prep_${EXPID}_${PDY}${cyc}
 export GEFS_NTASKS='16'
 export GEFS_NCORES_PER_NODE='16'
 export GEFS_TPP='1'
@@ -35,5 +35,5 @@ export GEFS_NODES='1'
 #export ROCOTO_TASK_GEO='{(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)}'
 #bsub -J wsr_dell_all_2021032500_ws_ep -P GEN-T2O -o /gpfs/dell2/ptmp/Xianwu.Xue/o/wsr_dell_all/com/output/dev/20210325/wsr_prep_00.%J -W 1:20 -q dev -R span[ptile=16] -n 16
 
-/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/port2wcoss2/rocoto/bin/acorn/wsr_prep.sh
+${GEFS_ROCOTO}/bin/acorn/wsr_prep.sh
 

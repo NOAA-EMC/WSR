@@ -44,7 +44,7 @@ if [[ ! -d $SOURCEDIR/sorc/global-workflow.fd ]] ; then
 fi
 
 # GFSArchivedData=yes
-GFSArchivedData=no
+GFSArchivedData=yes
 
 #Please check with parm/gefs_init.parm to make sure the next line matching
 fhrp=6
@@ -62,6 +62,13 @@ if [[ $GFSArchivedData == "yes" ]]; then
     export COMIN_WAV_ICE=$HOMEdata/sea_ice/sice.${PDY}
     export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc}
     export COMINenkf=${COMINenkf:-${COMINenkf_base}${pdyp}/$cycp}
+
+	# For wsr_prep
+	#export COMPATH=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/gefs/prod
+	export COMINgens=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/gefs/prod
+	#export COMPATH=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/naefs/prod
+	export COMINcmce=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/naefs/prod
+	export DCOMROOT=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/dcom
 else
     export COMPATH=/gpfs/dell3/ptmp/emc.glopara/ROTDIRS/v16rt2/gfs/para
 
