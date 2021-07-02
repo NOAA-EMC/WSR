@@ -26,11 +26,12 @@ if [ $machine = "dell" ]; then
   export FCMP=ifort
   export FFLAGSMP="-list -convert big_endian -assume byterecl -traceback"
 elif [ $machine = "acorn" ]; then
+  . ../versions/build.ver
   module purge
   source /apps/prod/lmodules/startLmod
-  module load envvar/1.0
+  module load envvar/$envvar_ver
 
-  module load intel/19.1.3.304 PrgEnv-intel
+  module load intel/$intel_ver PrgEnv-intel
 
   module list
   
