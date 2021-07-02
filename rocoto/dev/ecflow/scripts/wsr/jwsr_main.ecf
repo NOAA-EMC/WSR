@@ -1,0 +1,43 @@
+#BSUB -J %E%wsr_main_%CYC%
+#BSUB -o %COM%/output/%ENVIR%/today/wsr_main_%CYC%.o%J
+#BSUB -L /bin/sh
+#BSUB -q %QUEUE%
+#BSUB -n 48
+#BSUB -W 00:45
+#BSUB -cwd /tmp
+#BSUB -R span[ptile=16]
+#BSUB -P %PROJ%-%PROJENVIR%
+
+%include <head.h>
+%include <envir-p3.h>
+
+export cyc=%CYC%
+
+#export MP_SHARED_MEMORY=yes
+export MP_TASK_AFFINITY=core
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+
+# versions file for WSR model $model_ver
+model=wsr
+%include <model_ver.h>
+
+${HOMEwsr:?}/jobs/JWSR_MAIN
+
+%include <tail.h>
+
+%manual
+################################################################################
+TASKSCRIPT DOCUMENTATION BLOCK
+
+PURPOSE:  Executes the job that creates the Winter Storm Recon Files.
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+%end
+
