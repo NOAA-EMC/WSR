@@ -72,8 +72,8 @@ if [[ $testmode = yes ]]; then
 			testrzdm=emcrzdm
 			testdirectory=/home/www/emc/htdocs/gmb/xianwu.xue/wsr_sdm
 			useexpid=yes
-			PTMP=/lfs/h1/emc/ptmp #/gpfs/dell2/ptmp
-			expid=port2wcoss2
+			PTMP=/lfs/h1/emc/ptmp
+			expid=port2wcoss2_new
 			PDY=20201120
 			;;
 		(*)
@@ -131,8 +131,10 @@ if [[ $testmode = yes ]]; then
 		echo expid=$expid
 
 		#GESdir=/ptmpd2/$LOGNAME/o/$expid/nwges/dev/wsr
-		GESdir=$PTMP/$LOGNAME/o/$expid/nwges/dev/wsr
+		#GESdir=$PTMP/$LOGNAME/o/$expid/nwges/dev/wsr
 		COMdir=$PTMP/$LOGNAME/o/$expid/com/wsr/dev
+		GESdir=$PTMP/$LOGNAME/o/$expid/com/wsr/dev
+		#${COMROOT:?}/${NET}/${envir}/${RUN}.${PDY}/setup
 
 		echo GESdir=$GESdir
 		echo COMdir=$COMdir
@@ -159,11 +161,12 @@ PDY=${PDY:-${curyy}${curmm}${curdd}}
 ####################################
 # Set Working Directories
 ####################################
-GESROOT=${GESROOT:-/gpfs/dell1/nco/ops/nwges}
+GESROOT=${GESROOT:-/gpfs/dell1/nco/ops/nwges} #COMROOT
 envir=${envir:-prod}
 
 #GESdir=${GESdir:-/nwges/wsr}
 GESdir=${GESdir:-$GESROOT/$envir/wsr}
+GESdir=$GESdir/wsr.$PDY/setup
 if [ ! -s $GESdir ]; then mkdir $GESdir; fi
 
 echo GESdir=$GESdir

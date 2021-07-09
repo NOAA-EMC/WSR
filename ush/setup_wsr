@@ -38,7 +38,7 @@ if [[ $testmode = yes ]]; then
 
 	# these testmode settings are only used when testmode=yes
 
-	PTMP=/gpfs/dell3/ptmp
+	PTMP=/lfs/h1/emc/ptmp
 
 	case $LOGNAME in
 		(SDM)
@@ -72,8 +72,9 @@ if [[ $testmode = yes ]]; then
 			testrzdm=emcrzdm
 			testdirectory=/home/www/emc/htdocs/gmb/xianwu.xue/wsr_sdm
 			useexpid=yes
-			PTMP=/gpfs/dell2/ptmp
-			expid=wsr_rocoto
+			PTMP=/lfs/h1/emc/ptmp
+			expid=port2wcoss2_new
+			PDY=20201120
 			;;
 		(*)
 			echo Please add test settings to $0 for LOGNAME=$LOGNAME
@@ -130,8 +131,9 @@ if [[ $testmode = yes ]]; then
 		echo expid=$expid
 
 		#GESdir=/ptmpd2/$LOGNAME/o/$expid/nwges/dev/wsr
-		GESdir=$PTMP/$LOGNAME/o/$expid/nwges/dev/wsr
+		#GESdir=$PTMP/$LOGNAME/o/$expid/nwges/dev/wsr
 		COMdir=$PTMP/$LOGNAME/o/$expid/com/wsr/dev
+		GESdir=$PTMP/$LOGNAME/o/$expid/com/wsr/dev 
 
 		echo GESdir=$GESdir
 		echo COMdir=$COMdir
@@ -141,6 +143,7 @@ if [[ $testmode = yes ]]; then
 	echo testmode=$testmode
 fi
 
+mkdir -p $GESdir
 ####################################
 # end set up test mode if required
 ####################################
@@ -162,6 +165,7 @@ envir=${envir:-prod}
 
 #GESdir=${GESdir:-/nwges/wsr}
 GESdir=${GESdir:-$GESROOT/$envir/wsr}
+GESdir=$GESdir/wsr.$PDY/setup
 if [ ! -s $GESdir ]; then mkdir $GESdir; fi
 
 echo GESdir=$GESdir
@@ -193,7 +197,7 @@ else
 	fi
 	if [[ -d $COMdir ]]; then
 		cd $COMdir
-		for dir in wsr.$PDY
+		for dir in wsr.$PDY/main
 		do
 			if [[ -d $dir ]]; then
 				ls -ld $dir
@@ -621,8 +625,10 @@ do
 			echo "Observation time:  ${obsdate}" >> $text
 			echo "Verification time: ${veridate}" >> $text
 			echo "Latitude:  ${lat}N" >> $text
-			if [[ $long -le 0 ]]; then
-				longwest=`echo 0 - ${long}|bc`
+			check_vrlon=`echo "${long} <=0"|bc -l`
+			#if [[ $long -le 0 ]]; then
+			if [[ ${check_vrlon} -eq 1 ]]; then
+				longwest=`echo "0 - ${long}"|bc`
 				echo "Longitude: ${longwest}W" >> $text
 			else
 				echo "Longitude: ${long}E" >> $text
@@ -778,30 +784,30 @@ done
 TARGFILE=$GESdir/targdata.d
 
 head -1 $TARGFILE | tail -1 > $GESdir/targdata_tmp.d
-head -2 $TARGFILE | tail -1 | read CASES
-head -3 $TARGFILE | tail -1 | read RESOLUTION 
-head -4 $TARGFILE | tail -1 | read IVNORM
-head -5 $TARGFILE | tail -1 | read RADVR
-head -6 $TARGFILE | tail -1 | read LON1
-head -7 $TARGFILE | tail -1 | read LON2
-head -8 $TARGFILE | tail -1 | read LAT1
-head -9 $TARGFILE | tail -1 | read LAT2
+CASES=`head -2 $TARGFILE | tail -1` #| read CASES
+RESOLUTION=`head -3 $TARGFILE | tail -1` # | read RESOLUTION 
+IVNORM=`head -4 $TARGFILE | tail -1` # | read IVNORM
+RADVR=`head -5 $TARGFILE | tail -1` # | read RADVR
+LON1=`head -6 $TARGFILE | tail -1` # | read LON1
+LON2=`head -7 $TARGFILE | tail -1` # | read LON2
+LAT1=`head -8 $TARGFILE | tail -1` # | read LAT1
+LAT2=`head -9 $TARGFILE | tail -1` # | read LAT2
 
 i=1
 while [ $i -le $CASES ]
 do
 	LINE=`expr ${i} \* 6 + 4`
-	head -n $LINE $TARGFILE | tail -1 | read OBSDATE[i]
+	OBSDATE[i]=`head -n $LINE $TARGFILE | tail -1` # | read OBSDATE[i]
 	LINE=`expr $LINE + 1`
-	head -n $LINE $TARGFILE | tail -1 | read VERIDATE[i]
+	VERIDATE[i]=`head -n $LINE $TARGFILE | tail -1` # | read VERIDATE[i]
 	LINE=`expr $LINE + 1`
-	head -n $LINE $TARGFILE | tail -1 | read VRLON[i]
+	VRLON[i]=`head -n $LINE $TARGFILE | tail -1` # | read VRLON[i]
 	LINE=`expr $LINE + 1`
-	head -n $LINE $TARGFILE | tail -1 | read VRLAT[i]
+	VRLAT[i]=`head -n $LINE $TARGFILE | tail -1` # | read VRLAT[i]
 	LINE=`expr $LINE + 1`
-	head -n $LINE $TARGFILE | tail -1 | read PRIORITY[i]
+	PRIORITY[i]=`head -n $LINE $TARGFILE | tail -1` # | read PRIORITY[i]
 	LINE=`expr $LINE + 1`
-	head -n $LINE $TARGFILE | tail -1 | read COMMENTS[i]
+	COMMENTS[i]=`head -n $LINE $TARGFILE | tail -1` # | read COMMENTS[i]
 	i=`expr ${i} + 1`
 done
 
