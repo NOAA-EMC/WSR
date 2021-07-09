@@ -80,10 +80,11 @@ if [[ $testmode = yes ]]; then
 			expid=${EXPID:-port2wcoss2_new}
 			envir=$testenvir
 			testbase=null
-			HOMEwsr=`pwd`/../
-			FIXwsr=`pwd`/../fix
-			GESdir=$testtmpdir/$expid/nwges/$envir/wsr
-			COMIN=$testtmpdir/$expid/com/wsr/$envir
+			HOMEwsr=`pwd`/../../../
+			FIXwsr=`pwd`/../../../fix
+			PDY=20201120
+			GESdir=$testtmpdir/$expid/com/wsr/$envir/wsr.$PDY/setup #nwges/$envir/wsr
+			COMIN=$testtmpdir/$expid/com/wsr/$envir #/wsr.$PDY/main
 			ETKFOUT=$testtmpdir/$expid
 			;;
 		(Richard.Wobus)
@@ -161,8 +162,8 @@ if [[ $testmode = yes ]]; then
 
 		echo expid=$expid
 
-		export GESdir=${GESdir:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid/nwges/$envir/wsr}
-		export COMIN=${COMIN:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid/com/wsr/$envir/main}
+		export GESdir=${GESdir:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid/com/wsr/$envir} #/wsr.$PDY/setup} #nwges/$envir/wsr}
+		export COMIN=${COMIN:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid/com/wsr/$envir} #/wsr.$PDY/main}
 		export ETKFOUT=${ETKFOUT:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid}
 
 		#testbase=/ensemble/save/$LOGNAME/nw$envir
@@ -202,7 +203,7 @@ fi
 
 #. ${NWROOT:-/gpfs/dell1/nco/ops/nw${envir:-prod}}/versions/wsr.ver
 if [[ $useexpid = no ]]; then
-	. /lfs/h1/ops/prod/nw${envir:-prod}/versions/wsr.ver
+	. /lfs/h1/ops/prod/nw${envir:-prod}/versions/run.ver
 fi
 
 #shellname=ksh
@@ -219,8 +220,8 @@ module list
 export job=wsr_main
 
 export envir=${envir:-prod}
-export GESdir=${GESdir:-/lfs/h1/ops/prod/nwges/$envir/wsr}
-export COMIN=${COMIN:-/lfs/h1/ops/prod/com/wsr/$envir}
+export GESdir=${GESdir:-/lfs/h1/ops/prod/com/wsr/$envir} #/wsr.$PDY/setup} #nwges/$envir/wsr}
+export COMIN=${COMIN:-/lfs/h1/ops/prod/com/wsr/$envir} #/wsr.$PDY/main}
 # ETKFOUT is the home dir where ET KF results
 export ETKFOUT=${ETKFOUT:-/lfs/h1/ops}
 export RAWINSONDES=${RAWINSONDES:-"YES"}
@@ -264,6 +265,9 @@ rm -rf $DATA/*
 
 PDY=`head -1 $GESdir/targdata.d`
 cases=`head -2 $GESdir/targdata.d | tail -1`
+
+#GESdir=${GESdir}/wsr.$PDY/setup
+COMIN=${COMIN}/wsr.$PDY/main
 . $ETKFOUT/com/wsr/${envir}/wsr.$PDY/main/case1.env
 
 #cp $HOMEwsr/fix/wsr_track.* .
@@ -272,7 +276,7 @@ cases=`head -2 $GESdir/targdata.d | tail -1`
 # JY else
 cp $FIXwsr/wsr_track.* .
 # JY fi
-cp $HOMEwsr/grads/*.gs $DATA/.
+cp $HOMEwsr/rocoto/dev/grads/*.gs $DATA/.
 
 i=1
 while test ${i} -le ${cases}
@@ -581,16 +585,19 @@ if [[ $testmode = no ]]; then
 	# uncomment these if needed
 	# ssh -l wx12sd ncorzdm "cp /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/allow.cfg /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}"
 	# ssh -l wx12sd ncorzdm "cp /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/index.php /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}"
-	ssh -l wx12sd ncorzdm "cp $HOMEwsr/grads/allow.cfg /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}"
-	ssh -l wx12sd ncorzdm "cp $HOMEwsr/grads/index.php /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}"
+	ssh -l wx12sd ncorzdm "cp $HOMEwsr/rocoto/dev/grads/allow.cfg /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}"
+	ssh -l wx12sd ncorzdm "cp $HOMEwsr/rocoto/dev/grads/index.php /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}"
 	scp *.png wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}
 
 else
 
+	COMOUT=$testtmpdir/com/wsr/$envir/wsr.$PDY/graphics
+    mkdir $COMOUT
+    cp -rfp *.png $COMOUT/
+
 	ssh -l $testuser $testrzdm "rm -rf  $testdirectory/test$expid/graphics/${PDY}"
 	ssh -l $testuser $testrzdm "mkdir -p $testdirectory/test$expid/graphics/${PDY}"
 	scp *.png $testuser@$testrzdm:$testdirectory/test$expid/graphics/${PDY}
-
 fi
 
 #fi
