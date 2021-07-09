@@ -58,7 +58,8 @@ export FIXwsr=$HOMEwsr/fix
 ##############################
 # Define GES Directories
 ##############################
-export GESdir=${GESROOT:?}/${envir}/${RUN}
+#export GESdir=${GESROOT:?}/${envir}/${RUN}
+export GESdir=${COMROOT:?}/${NET}/${envir}/${RUN}.${PDY}/setup
 export COMIN=${COMROOT:?}/${NET}/${envir}/${RUN} #.${PDY}/prep
 
 ##############################
