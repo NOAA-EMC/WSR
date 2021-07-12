@@ -75,16 +75,13 @@ setpdy.sh
 . PDY
 
 ##############################
-# Define input COM Directory
+# Define COM directories
 ##############################
 export COMINgens=${COMINgens:-$(compath.py gefs/prod)}
 export COMINcmce=${COMINcmce:-$(compath.py naefs/prod)}
-##############################
-# Define output GESdir Directory 
-##############################
-#export GESdir=${GESROOT:?}/${envir}/${RUN}/${PDY}
-export GESdir=${COMROOT:?}/${NET}/${envir}/${RUN}.${PDY}/prep
-mkdir -p $GESdir
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/prep}
+
+mkdir -p COMOUT
 
 export wsrmpexec=mpiexec #mpirun
 echo wsrmpexec=$wsrmpexec

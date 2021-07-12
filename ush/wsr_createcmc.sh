@@ -21,7 +21,7 @@ curdate=${PDY:?}00
 # allow date offset for retrospective runs
 DateOffset=${DateOffset:-00}
 ensdate=$(${NDATE:?} $DateOffset $curdate)
-WORK_ETKF=${WORK_ETKF:-$GESdir}
+WORK_ETKF=${WORK_ETKF:-$COMOUT}
 mkdir -p ${WORK_ETKF}
 WORK_ENS=$DATA/work_cmc/${ensdate}
 
