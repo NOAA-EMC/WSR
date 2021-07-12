@@ -11,6 +11,7 @@
 # UPDATED FOR WSR02 BY J.R.MOSKAITIS 11/14/01 # 
 # UPDATED 2/13/02 TO FIX INSTRUCTIONS REGARDING VERIFICATION LONGITUDE #
 # UPDATED 05/09/13 for WCOSS with test mode by Richard Wobus
+# UPDATED 07/12/2021 for WCOSS2/Acorn with test mode by Xianwu Xue
 
 # for production, name this script setup_wsr
 # for testing, name this script setup_wsr_test
@@ -33,6 +34,9 @@ case $scriptname in
 		exit
 		;;
 esac
+
+NET=${NET:-wsr}
+RUN=${RUN:-wsr}
 
 if [[ $testmode = yes ]]; then
 
@@ -72,6 +76,7 @@ if [[ $testmode = yes ]]; then
 			testrzdm=emcrzdm
 			testdirectory=/home/www/emc/htdocs/gmb/xianwu.xue/wsr_sdm
 			useexpid=yes
+			envir=${envir:-dev}
 			PTMP=/lfs/h1/emc/ptmp
 			expid=port2wcoss2_new
 			PDY=20201120
@@ -130,13 +135,10 @@ if [[ $testmode = yes ]]; then
 
 		echo expid=$expid
 
-		#GESdir=/ptmpd2/$LOGNAME/o/$expid/nwges/dev/wsr
-		#GESdir=$PTMP/$LOGNAME/o/$expid/nwges/dev/wsr
-		COMdir=$PTMP/$LOGNAME/o/$expid/com/wsr/dev
-		GESdir=$PTMP/$LOGNAME/o/$expid/com/wsr/dev
-		#${COMROOT:?}/${NET}/${envir}/${RUN}.${PDY}/setup
+		COMROOT=$PTMP/$LOGNAME/o/$expid/com
+		COMdir=${COMROOT}/${NET}/${envir}
 
-		echo GESdir=$GESdir
+		echo COMOUT=$COMOUT
 		echo COMdir=$COMdir
 
 	fi
@@ -144,7 +146,6 @@ if [[ $testmode = yes ]]; then
 	echo testmode=$testmode
 fi
 
-mkdir -p $GESdir
 ####################################
 # end set up test mode if required
 ####################################
@@ -161,24 +162,22 @@ PDY=${PDY:-${curyy}${curmm}${curdd}}
 ####################################
 # Set Working Directories
 ####################################
-GESROOT=${GESROOT:-/gpfs/dell1/nco/ops/nwges} #COMROOT
 envir=${envir:-prod}
 
-#GESdir=${GESdir:-/nwges/wsr}
-GESdir=${GESdir:-$GESROOT/$envir/wsr}
-GESdir=$GESdir/wsr.$PDY/setup
-if [ ! -s $GESdir ]; then mkdir $GESdir; fi
+COMROOT=${COMROOT:-/lfs/h1/ops/prod/com}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/setup}
 
-echo GESdir=$GESdir
+if [ ! -s $COMOUT ]; then mkdir -p $COMOUT; fi
+echo COMOUT=$COMOUT
 
 if [[ $testmode = yes ]]; then
-	ls -al $GESdir
+	ls -al $COMOUT
 fi
 
-text=${GESdir}/targdata.txt.$curhh
+text=${COMOUT}/targdata.txt.$curhh
 rm -rf $text 2> /dev/null
 
-cd $GESdir
+cd $COMOUT
 if [[ $testmode = no ]]; then
 	rm targdata.d
 	rm -rf targdata.d 2> /dev/null
@@ -206,7 +205,7 @@ else
 				ls -ld $dir.$dtg
 			fi
 		done
-		cd $GESdir
+		cd $COMOUT
 	fi
 fi
 
@@ -218,7 +217,7 @@ else
 	echo "##############################################################################"
 fi
 
-echo $PDY >> $GESdir/targdata.d
+echo $PDY >> $COMOUT/targdata.d
 
 echo "----------------------------------------------------------------"
 echo "|       WINTER STORM RECONNAISSANCE PROGRAM INPUT SCRIPT       |"
@@ -239,7 +238,7 @@ then
 	then
 		echo "PLEASE REMEMBER TO ADD THE CASE(S)! "
 
-		readfile=$GESdir/verifcases$curyy.d
+		readfile=$COMOUT/verifcases$curyy.d
 
 		if [[ -s $readfile ]]; then
 
@@ -278,7 +277,7 @@ read cases
 echo
 echo
 
-echo $cases >> $GESdir/targdata.d
+echo $cases >> $COMOUT/targdata.d
 if [ ${cases} -ne 1 ]; then
 	echo "On ${curmm}/${curdd}/${curyy}, ${cases} cases were run" >> $text
 else
@@ -286,7 +285,7 @@ else
 fi
 
 resolution=1
-echo $resolution >> $GESdir/targdata.d
+echo $resolution >> $COMOUT/targdata.d
 
 if [ ${resolution} -eq 1 ]; then
 	echo "The targeting program was run in synoptic mode" >> $text
@@ -418,12 +417,12 @@ do
 	esac
 done
 
-echo ${vnorm} >> $GESdir/targdata.d
-echo ${radvr} >> $GESdir/targdata.d
-echo ${lon1} >> $GESdir/targdata.d
-echo ${lon2} >> $GESdir/targdata.d
-echo ${lat1} >> $GESdir/targdata.d
-echo ${lat2} >> $GESdir/targdata.d
+echo ${vnorm} >> $COMOUT/targdata.d
+echo ${radvr} >> $COMOUT/targdata.d
+echo ${lon1} >> $COMOUT/targdata.d
+echo ${lon2} >> $COMOUT/targdata.d
+echo ${lat1} >> $COMOUT/targdata.d
+echo ${lat2} >> $COMOUT/targdata.d
 
 case $vnorm in
 	1) echo "200mb, 500mb and 850mb winds were used as the verifying norm" >> $text;;
@@ -612,13 +611,13 @@ do
 
 		if test "$response" = ''
 		then
-			echo $obsdate >> $GESdir/targdata.d
-			echo $veridate >> $GESdir/targdata.d
-			echo $long >> $GESdir/targdata.d
-			echo $lat >> $GESdir/targdata.d
-			echo $priority >> $GESdir/targdata.d
-			echo $comments >> $GESdir/targdata.d
-			chmod u=rwx $GESdir/targdata.d
+			echo $obsdate >> $COMOUT/targdata.d
+			echo $veridate >> $COMOUT/targdata.d
+			echo $long >> $COMOUT/targdata.d
+			echo $lat >> $COMOUT/targdata.d
+			echo $priority >> $COMOUT/targdata.d
+			echo $comments >> $COMOUT/targdata.d
+			chmod u=rwx $COMOUT/targdata.d
 			mk8=1
 
 			echo >> $text
@@ -782,9 +781,9 @@ done
 #  Later edit - march from obsdatas to verifdates 
 #
 
-TARGFILE=$GESdir/targdata.d
+TARGFILE=$COMOUT/targdata.d
 
-head -1 $TARGFILE | tail -1 > $GESdir/targdata_tmp.d
+head -1 $TARGFILE | tail -1 > $COMOUT/targdata_tmp.d
 CASES=`head -2 $TARGFILE | tail -1` #| read CASES
 RESOLUTION=`head -3 $TARGFILE | tail -1` # | read RESOLUTION 
 IVNORM=`head -4 $TARGFILE | tail -1` # | read IVNORM
@@ -835,14 +834,14 @@ do
 	i=`expr ${i} + 1`
 done
 
-echo $CURCASES >> $GESdir/targdata_tmp.d 
-echo $RESOLUTION >> $GESdir/targdata_tmp.d 
-echo $IVNORM >> $GESdir/targdata_tmp.d
-echo $RADVR >> $GESdir/targdata_tmp.d
-echo $LON1 >> $GESdir/targdata_tmp.d
-echo $LON2 >> $GESdir/targdata_tmp.d
-echo $LAT1 >> $GESdir/targdata_tmp.d
-echo $LAT2 >> $GESdir/targdata_tmp.d
+echo $CURCASES >> $COMOUT/targdata_tmp.d
+echo $RESOLUTION >> $COMOUT/targdata_tmp.d
+echo $IVNORM >> $COMOUT/targdata_tmp.d
+echo $RADVR >> $COMOUT/targdata_tmp.d
+echo $LON1 >> $COMOUT/targdata_tmp.d
+echo $LON2 >> $COMOUT/targdata_tmp.d
+echo $LAT1 >> $COMOUT/targdata_tmp.d
+echo $LAT2 >> $COMOUT/targdata_tmp.d
 
 i=1
 while [[ $i -le $CASES ]]
@@ -850,12 +849,12 @@ do
 	OBSDATE_TMP=${OBSDATE[i]}
 	while [[ $OBSDATE_TMP -le ${VERIDATE[i]} && $OBSDATE_TMP -le $latestobstime ]]
 	do
-		echo ${OBSDATE_TMP} >> $GESdir/targdata_tmp.d
-		echo ${VERIDATE[i]} >> $GESdir/targdata_tmp.d
-		echo ${VRLON[i]} >> $GESdir/targdata_tmp.d
-		echo ${VRLAT[i]} >> $GESdir/targdata_tmp.d
-		echo ${PRIORITY[i]} >> $GESdir/targdata_tmp.d
-		echo ${COMMENTS[i]} >> $GESdir/targdata_tmp.d
+		echo ${OBSDATE_TMP} >> $COMOUT/targdata_tmp.d
+		echo ${VERIDATE[i]} >> $COMOUT/targdata_tmp.d
+		echo ${VRLON[i]} >> $COMOUT/targdata_tmp.d
+		echo ${VRLAT[i]} >> $COMOUT/targdata_tmp.d
+		echo ${PRIORITY[i]} >> $COMOUT/targdata_tmp.d
+		echo ${COMMENTS[i]} >> $COMOUT/targdata_tmp.d
 		#OBSDATE_TMP=`/nwprod/util/exec/ndate +12 $OBSDATE_TMP`
 		OBSDATE_TMP=`$NDATE +12 $OBSDATE_TMP`
 	done
@@ -863,28 +862,28 @@ do
 done
 
 
-chmod 777 ${GESdir}/targdata_tmp.d
-mv ${GESdir}/targdata_tmp.d ${GESdir}/targdata.d
+chmod 777 ${COMOUT}/targdata_tmp.d
+mv ${COMOUT}/targdata_tmp.d ${COMOUT}/targdata.d
 
 if [[ $testmode = no ]]; then
 
 	ssh -l wx12sd ncorzdm "mkdir -p /home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY"
-	scp ${GESdir}/targdata.d wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY
-	scp ${GESdir}/targdata.txt.$curhh wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY/targdata.txt
+	scp ${COMOUT}/targdata.d wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY
+	scp ${COMOUT}/targdata.txt.$curhh wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY/targdata.txt
 
 else
 
 	echo "For testing send output text to $testuser on $testrzdm in $testdirectory/test$expid/$PDY"
 	ssh -l $testuser $testrzdm "mkdir -p $testdirectory/test$expid/$PDY"
-	scp ${GESdir}/targdata.d $testuser@$testrzdm:$testdirectory/test$expid/$PDY
-	scp ${GESdir}/targdata.txt.$curhh $testuser@$testrzdm:$testdirectory/test$expid/$PDY/targdata.txt
+	scp ${COMOUT}/targdata.d $testuser@$testrzdm:$testdirectory/test$expid/$PDY
+	scp ${COMOUT}/targdata.txt.$curhh $testuser@$testrzdm:$testdirectory/test$expid/$PDY/targdata.txt
 
 fi
 
 if [[ $testmode = no ]]; then
-	cat  $GESdir/targdata.d | mail -s WSR_SETUP.$PDY sdm@noaa.gov
+	cat  $COMOUT/targdata.d | mail -s WSR_SETUP.$PDY sdm@noaa.gov
 else
-	cat  $GESdir/targdata.d | mail -s WSR_SETUP.$PDY $testemail
+	cat  $COMOUT/targdata.d | mail -s WSR_SETUP.$PDY $testemail
 fi
 
 echo "------------------------------------------------------------------"
@@ -896,7 +895,7 @@ echo "------------------------------------------------------------------"
 #cd /home/people/nco/www/htdocs/pmb/sdm_wsr
 #mkdir $PDY
 #cd $PDY
-#lcd $GESdir
+#lcd $COMOUT
 #put targdata.txt.$curhh targdata.txt
 #put targdata.d targdata.d
 #bye
