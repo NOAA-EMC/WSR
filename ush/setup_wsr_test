@@ -165,7 +165,7 @@ PDY=${PDY:-${curyy}${curmm}${curdd}}
 envir=${envir:-prod}
 
 COMROOT=${COMROOT:-/lfs/h1/ops/prod/com}
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/setup}
+COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/setup}
 
 if [ ! -s $COMOUT ]; then mkdir -p $COMOUT; fi
 echo COMOUT=$COMOUT
@@ -704,7 +704,7 @@ do
 						fi
 
 						latestveritime=`$NDATE +204 ${PDY}00`
-						if [ $veridate} -gt ${latestveritime} ]; then
+						if [ ${veridate} -gt ${latestveritime} ]; then
 							echo "Verification time must be within 204 hours of ${PDY}00"
 							mk4=0
 						fi
