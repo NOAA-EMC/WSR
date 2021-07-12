@@ -57,15 +57,15 @@ cp $FIXwsr/wsr_track.* .
 # Read in targdata.d header (first 9 lines) #
 #############################################
 
-curdate=`head -1 $$COMIN_setup/targdata.d`
-cases=`head -2 $$COMIN_setup/targdata.d | tail -1`
-resolution=`head -3 $$COMIN_setup/targdata.d | tail -1`
-ivnorm=`head -4 $$COMIN_setup/targdata.d | tail -1`
-radvr=`head -5 $$COMIN_setup/targdata.d | tail -1`
-lon1=`head -6 $$COMIN_setup/targdata.d | tail -1`
-lon2=`head -7 $$COMIN_setup/targdata.d | tail -1`
-lat1=`head -8 $$COMIN_setup/targdata.d | tail -1`
-lat2=`head -9 $$COMIN_setup/targdata.d | tail -1`
+curdate=`head -1 $COMIN_setup/targdata.d`
+cases=`head -2 $COMIN_setup/targdata.d | tail -1`
+resolution=`head -3 $COMIN_setup/targdata.d | tail -1`
+ivnorm=`head -4 $COMIN_setup/targdata.d | tail -1`
+radvr=`head -5 $COMIN_setup/targdata.d | tail -1`
+lon1=`head -6 $COMIN_setup/targdata.d | tail -1`
+lon2=`head -7 $COMIN_setup/targdata.d | tail -1`
+lat1=`head -8 $COMIN_setup/targdata.d | tail -1`
+lat2=`head -9 $COMIN_setup/targdata.d | tail -1`
 
 londiff=`expr ${lon2} - ${lon1}`
 latdiff=`expr ${lat2} - ${lat1}`
@@ -82,22 +82,22 @@ while [[ $i -le $cases ]]
 do
 	case_id[i]=$i
 	line=`expr ${i} \* 6 + 4`
-	obsdate[i]=`head -n $line $$COMIN_setup/targdata.d | tail -1`
+	obsdate[i]=`head -n $line $COMIN_setup/targdata.d | tail -1`
 	line=`expr $line + 1`
-	veridate[i]=`head -n $line $$COMIN_setup/targdata.d | tail -1`
+	veridate[i]=`head -n $line $COMIN_setup/targdata.d | tail -1`
 	line=`expr $line + 1`
-	vrlon[i]=`head -n $line $$COMIN_setup/targdata.d | tail -1`
+	vrlon[i]=`head -n $line $COMIN_setup/targdata.d | tail -1`
 	line=`expr $line + 1`
 	check_vrlon=`echo "${vrlon[$i]} <0"|bc -l`
 	if [[ ${check_vrlon} -eq 1 ]]
 	then
 		vrlon[i]=`echo "360 + ${vrlon[$i]}" |bc`
 	fi
-	vrlat[i]=`head -n $line $$COMIN_setup/targdata.d | tail -1`
+	vrlat[i]=`head -n $line $COMIN_setup/targdata.d | tail -1`
 	line=`expr $line + 1`
-	priority[i]=`head -n $line $$COMIN_setup/targdata.d | tail -1`
+	priority[i]=`head -n $line $COMIN_setup/targdata.d | tail -1`
 	line=`expr $line + 1`
-	comments[i]=`head -n $line $$COMIN_setup/targdata.d | tail -1`
+	comments[i]=`head -n $line $COMIN_setup/targdata.d | tail -1`
 	i=`expr ${i} + 1`
 done
 
