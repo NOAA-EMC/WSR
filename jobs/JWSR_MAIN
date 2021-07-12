@@ -56,20 +56,20 @@ export FIXwsr=$HOMEwsr/fix
 #export GASCRP=/usrx/local/grads/gslib
 
 ##############################
-# Define GES Directories
+# Define COM directories
 ##############################
-#export GESdir=${GESROOT:?}/${envir}/${RUN}
-export GESdir=${COMROOT:?}/${NET}/${envir}/${RUN}.${PDY}/setup
-export COMIN=${COMROOT:?}/${NET}/${envir}/${RUN} #.${PDY}/prep
+export COMIN_setup=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/setup
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-export PDY=$(head -1 $GESdir/targdata.d)
+export PDY=$(head -1 $COMIN_setup/targdata.d)
 setpdy.sh
 . ./PDY
 
-export COMOUT=${COMROOT:?}/${NET}/${envir}/${RUN}.${PDY}/main
+export COMIN_setup=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/setup
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/main}
 mkdir -p $COMOUT
 
 #######################################################
