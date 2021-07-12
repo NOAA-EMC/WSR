@@ -78,7 +78,8 @@ if [[ $testmode = yes ]]; then
 			useexpid=yes
 			envir=${envir:-dev}
 			PTMP=/lfs/h1/emc/ptmp
-			expid=port2wcoss2_new
+			expid=$(readlink -f `pwd`/../)
+			expid=`basename $expid` #port2wcoss2_new2_cominout
 			PDY=20201120
 			;;
 		(*)
