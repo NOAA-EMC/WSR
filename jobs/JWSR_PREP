@@ -81,7 +81,7 @@ export COMINgens=${COMINgens:-$(compath.py gefs/prod)}
 export COMINcmce=${COMINcmce:-$(compath.py naefs/prod)}
 export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/prep}
 
-mkdir -p COMOUT
+mkdir -p $COMOUT
 
 export wsrmpexec=mpiexec #mpirun
 echo wsrmpexec=$wsrmpexec
