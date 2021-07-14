@@ -219,8 +219,8 @@ module list
 export job=wsr_main
 
 export envir=${envir:-prod}
-export COMIN_setup=${COMIN_setup:-/lfs/h1/ops/prod/com/wsr/$envir/wsr.$PDY/setup} #nwges/$envir/wsr}
-export COMIN=${COMIN:-/lfs/h1/ops/prod/com/wsr/$envir} #/wsr.$PDY/main}
+export COMIN_setup=${COMIN_setup:-/lfs/h1/ops/prod/com/wsr/$envir/wsr.$PDY/setup}
+export COMIN=${COMIN:-/lfs/h1/ops/prod/com/wsr/$envir}
 # ETKFOUT is the home dir where ET KF results
 export ETKFOUT=${ETKFOUT:-/lfs/h1/ops}
 export RAWINSONDES=${RAWINSONDES:-"YES"}
