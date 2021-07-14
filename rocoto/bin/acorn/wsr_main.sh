@@ -19,16 +19,9 @@ module load cray-pals/1.0.8
 
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
-module load grib_util/$grib_util_ver
 
-module load cce/11.0.2
-module load gcc/10.2.0
-module load libjpeg/9c
-
-module load lsf/$lsf_ver
-
-module load CFP/$CFP_ver
-export USE_CFP=YES
+#module load CFP/$CFP_ver
+#export USE_CFP=YES
 
 module list
 
