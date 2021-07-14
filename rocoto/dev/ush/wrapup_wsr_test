@@ -207,7 +207,7 @@ curyy=`date -u +%Y`
 curmm=`date -u +%m`
 curdd=`date -u +%d`
 curhh=`date -u +%H`
-#PDY=${curyy}${curmm}${curdd}
+PDY=${curyy}${curmm}${curdd}
 
 text=${COMOUT}/${PDY}decision.txt
 carcahtext=${COMOUT}/${PDY}carcah_decision.txt
