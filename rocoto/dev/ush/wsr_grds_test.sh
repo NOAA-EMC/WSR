@@ -42,8 +42,7 @@ esac
 
 if [[ $testmode = yes ]]; then
 
-		# these test settings are only used when testmode=yes
-
+	# these test settings are only used when testmode=yes
 	case $LOGNAME in
 		(SDM)
 			# these are the production locations, edit them to use test locations
@@ -77,13 +76,13 @@ if [[ $testmode = yes ]]; then
 			export sdmprinter=
 			useexpid=yes
 			testtmpdir=/lfs/h1/emc/ptmp/$LOGNAME/o
-			expid=${EXPID:-port2wcoss2_new}
+			expid=$(basename $(readlink -f `pwd`/../../../)) #${EXPID:-port2wcoss2_new}
 			envir=$testenvir
 			testbase=null
 			HOMEwsr=`pwd`/../../../
 			FIXwsr=`pwd`/../../../fix
 			PDY=20201120
-			GESdir=$testtmpdir/$expid/com/wsr/$envir/wsr.$PDY/setup #nwges/$envir/wsr
+			COMIN_setup=$testtmpdir/$expid/com/wsr/$envir/wsr.$PDY/setup #nwges/$envir/wsr
 			COMIN=$testtmpdir/$expid/com/wsr/$envir #/wsr.$PDY/main
 			ETKFOUT=$testtmpdir/$expid
 			;;
@@ -162,7 +161,7 @@ if [[ $testmode = yes ]]; then
 
 		echo expid=$expid
 
-		export GESdir=${GESdir:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid/com/wsr/$envir} #/wsr.$PDY/setup} #nwges/$envir/wsr}
+		export COMIN_setup=${COMIN_setup:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid/com/wsr/$envir/wsr.$PDY/setup} #nwges/$envir/wsr}
 		export COMIN=${COMIN:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid/com/wsr/$envir} #/wsr.$PDY/main}
 		export ETKFOUT=${ETKFOUT:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid}
 
@@ -179,7 +178,7 @@ if [[ $testmode = yes ]]; then
 		dtg=`date +%Y%m%d%H%M%S`
 		export DATA=$testtmpdir/tmpnwprd/wsr_grads.${pid}.$dtg #wsr/tmp/wsr.${pid}.$dtg
 
-		echo GESdir=$GESdir
+		echo COMIN_setup=$COMIN_setup
 		echo COMIN=$COMIN
 		echo ETKFOUT=$ETKFOUT
 		echo testbase=$testbase
@@ -220,7 +219,7 @@ module list
 export job=wsr_main
 
 export envir=${envir:-prod}
-export GESdir=${GESdir:-/lfs/h1/ops/prod/com/wsr/$envir} #/wsr.$PDY/setup} #nwges/$envir/wsr}
+export COMIN_setup=${COMIN_setup:-/lfs/h1/ops/prod/com/wsr/$envir/wsr.$PDY/setup} #nwges/$envir/wsr}
 export COMIN=${COMIN:-/lfs/h1/ops/prod/com/wsr/$envir} #/wsr.$PDY/main}
 # ETKFOUT is the home dir where ET KF results
 export ETKFOUT=${ETKFOUT:-/lfs/h1/ops}
@@ -239,7 +238,7 @@ export sdmprinter=${sdmprinter:-hp26_sdm}
 ######################################################
 #export PATH=.:$PATH:$HOMEwsr/grads
 
-echo GESdir=$GESdir
+echo COMIN_setup=$COMIN_setup
 echo COMIN=$COMIN
 echo ETKFOUT=$ETKFOUT
 echo RAWINDSONDES=$RAWINSONDES
@@ -263,10 +262,10 @@ mkdir -p $DATA
 cd $DATA
 rm -rf $DATA/*
 
-PDY=`head -1 $GESdir/targdata.d`
-cases=`head -2 $GESdir/targdata.d | tail -1`
+PDY=`head -1 $COMIN_setup/targdata.d`
+cases=`head -2 $COMIN_setup/targdata.d | tail -1`
 
-#GESdir=${GESdir}/wsr.$PDY/setup
+#COMIN_setup=${GCOMIN_setupESdir}/wsr.$PDY/setup
 COMIN=${COMIN}/wsr.$PDY/main
 . $ETKFOUT/com/wsr/${envir}/wsr.$PDY/main/case1.env
 
