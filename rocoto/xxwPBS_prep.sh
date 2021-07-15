@@ -18,7 +18,7 @@ date
 export envir='dev'
 export RUN_ENVIR='dev'
 export WHERE_AM_I='acorn'
-export EXPID='port2wcoss2_new'
+export EXPID='port2wcoss2_new2_cominout'
 export GEFS_ROCOTO="/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}/rocoto"
 export WORKDIR="/lfs/h1/emc/ptmp/Xianwu.Xue/o/${EXPID}"
 export gefs_cych='24'
