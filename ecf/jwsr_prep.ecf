@@ -14,12 +14,6 @@
 
 export cyc=%CYC%
 
-export MP_EUIDEVICE=sn_all
-export MP_EUILIB=us
-export MP_TASK_AFFINITY=core 
-export MP_PGMMODEL=mpmd
-export MP_CSS_INTERRUPT=yes
-
 model=wsr
 %include <model_ver.h>
 
@@ -43,6 +37,15 @@ module load libjpeg/9c
 module load CFP/$CFP_ver
 export USE_CFP=YES
 module list
+
+# Export List 
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+export MP_TASK_AFFINITY=core
+export MP_PGMMODEL=mpmd
+export MP_CSS_INTERRUPT=yes
+
+export OMP_NUM_THREADS=1
 
 ${HOMEwsr:?}/jobs/JWSR_PREP
 
