@@ -24,15 +24,9 @@ export cyc='00'
 export SOURCEDIR="/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}"
 export job=wsr_main_${EXPID}_${PDY}${cyc}
 
-
-#export MP_SHARED_MEMORY=yes
-export MP_TASK_AFFINITY=core
-export MP_EUIDEVICE=sn_all
-export MP_EUILIB=us
-
 #set -x
-#ulimit -s unlimited
-#ulimit -a
+ulimit -s unlimited
+ulimit -a
 
 # module_ver.h
 . $SOURCEDIR/versions/wsr_acorn.ver
@@ -73,6 +67,11 @@ export COMROOT=$baseoutput/com
 #export GESROOT=$baseoutput/nwges
 export DATAROOT=$baseoutput/tmpnwprd
 
+# Export List
+#export MP_SHARED_MEMORY=yes
+export MP_TASK_AFFINITY=core
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
 
 #${GEFS_ROCOTO}/bin/acorn/wsr_main.sh
 $SOURCEDIR/jobs/JWSR_MAIN
