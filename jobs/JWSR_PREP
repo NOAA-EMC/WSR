@@ -8,6 +8,13 @@ date
 export PS4=' $SECONDS + '
 set -x
 
+####################################
+# Determine Job Output Name on System
+####################################
+export jobid=${jobid:-"$job.$PBS_JOBID"}
+export pgmout="OUTPUT.${PBS_JOBID}"
+export pgmerr=errfile
+
 export DATA=${DATA:-${DATAROOT:?}/${jobid:?}}
 mkdir -p $DATA
 cd $DATA
@@ -46,9 +53,9 @@ export cycle=t${cyc}z
 
 if test "$cyc" = "00"
 then
-  export prev_cyc=12
+	export prev_cyc=12
 else
-  export prev_cyc=00
+	export prev_cyc=00
 fi
 
 export SENDCOM=${SENDCOM:-YES}
@@ -68,21 +75,15 @@ setpdy.sh
 . PDY
 
 ##############################
-# Define input COM Directory
+# Define COM directories
 ##############################
 export COMINgens=${COMINgens:-$(compath.py gefs/prod)}
 export COMINcmce=${COMINcmce:-$(compath.py naefs/prod)}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/prep}
 
-##############################
-# Define output GESdir Directory 
-##############################
-export GESdir=${GESROOT:?}/${envir}/${RUN}/${PDY}
-mkdir -p $GESdir
+mkdir -p $COMOUT
 
-# JY- the following can be removed later after test
-export COMENS=$GESdir
-
-export wsrmpexec=mpirun
+export wsrmpexec=mpiexec #mpirun
 echo wsrmpexec=$wsrmpexec
 
 env
@@ -94,11 +95,11 @@ export err=$?; err_chk
 ########################################################
 
 if [ -s $pgmout ]; then
-  cat $pgmout
+	cat $pgmout
 fi
 
 if [ "${KEEPDATA^^}" != "YES" ]; then
-  rm -rf $DATA
+	rm -rf $DATA
 fi
 
 date
