@@ -54,11 +54,11 @@ if [[ $testmode = yes ]]; then
 			export sdmprinter=hp26_sdm
 			useexpid=no
 			;;
-		(nwprod)
+		(ops.prod)
 			# these are the production locations, edit them to use test locations
 			testenvir=para
 			testemail=ncep.list.spa-helpdesk@noaa.gov
-			testuser=nwprod
+			testuser=ops.prod
 			testrzdm=ncorzdm
 			testdirectory=/home/people/nco/www/htdocs/pmb/nwprod_wsr
 			export PRINTSDM=NO
@@ -175,7 +175,7 @@ if [[ $testmode = yes ]]; then
 		testtmpdir=$testtmpdir/$expid
 		export pid=$$
 		dtg=`date +%Y%m%d%H%M%S`
-		export DATA=$testtmpdir/tmpnwprd/wsr_grads.${pid}.$dtg #wsr/tmp/wsr.${pid}.$dtg
+		export DATA=$testtmpdir/tmp/wsr_grads.${pid}.$dtg #wsr/tmp/wsr.${pid}.$dtg
 
 		echo COMIN_setup=$COMIN_setup
 		echo COMIN=$COMIN
@@ -249,7 +249,7 @@ echo sdmprinter=$sdmprinter
 ### END USER SETUP #########
 
 export pid=$$
-export DATA=${DATA:-/lfs/h1/nco/ptmp/$LOGNAME/tmpnwprd/${job}.${pid}} #wsr/tmp/${job}.${pid}}
+export DATA=${DATA:-/lfs/h1/nco/ptmp/$LOGNAME/tmp/${job}.${pid}} #wsr/tmp/${job}.${pid}}
 
 #echo stop here for testing
 #echo before sorted environment
