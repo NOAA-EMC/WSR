@@ -402,8 +402,13 @@ def NotUsed(dicBase, sRocoto_WS=""):
     if sVarName not in dicBase:
         dicBase[sVarName] = sVarValue
     # ===
-    sVarName = "tmpnwprd".upper()
-    sVarValue = "&WORKDIR;/tmpnwprd"
+    if WHERE_AM_I.lower() == "acorn":
+        sVarName = "tmp".upper()
+        sVarValue = "&WORKDIR;/tmp"
+    else:
+        sVarName = "tmpnwprd".upper()
+        sVarValue = "&WORKDIR;/tmpnwprd"
+
     if sVarName not in dicBase:
         dicBase[sVarName] = sVarValue
     # ===
@@ -596,9 +601,15 @@ def get_definitions(dicBase):
         Create entities related to the experiment
     '''
 
+    WHERE_AM_I = dicBase["WHERE_AM_I".upper()]
+    if WHERE_AM_I.lower() == "acorn":
+        tmpName = "tmp"
+    else:
+        tmpName = "tmpnwprd"
+
     lstEntity = ["MEMLIST", "CYCLE_THROTTLE", "TASK_THROTTLE", "SDATE", "EDATE", \
                  "INCYC", "WHERE_AM_I", "GEFS_ROCOTO", "BIN", "PRE", \
-                 "WORKFLOW_LOG_DIR", "LOG_DIR", "tmpnwprd", "DATA_DIR", "EXPID", \
+                 "WORKFLOW_LOG_DIR", "LOG_DIR", tmpName, "DATA_DIR", "EXPID", \
                  "PSLOT", "SOURCEDIR", "WORKDIR", "KEEP_DIR", "INIT_DIR", \
                  "HPSS_DIR", "DIRS_TO_KEEP", "DIRS_TO_ARCHIVE", "DIRS_TO_KEEP_WAVE", "DIRS_TO_ARCHIVE_WAVE", \
                  "ACCOUNT", "CUE2RUN", "TRANSFER_QUEUE", "SCHEDULER"]

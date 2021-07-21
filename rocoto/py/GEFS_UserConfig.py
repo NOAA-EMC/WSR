@@ -151,7 +151,13 @@ def create_folders(dicBase):
     if not os.path.exists(WORKDIR):
         os.makedirs(WORKDIR)
 
-    sPath = WORKDIR + sSep + 'tmpnwprd'
+    WHERE_AM_I = dicBase["WHERE_AM_I"]
+
+    if WHERE_AM_I.upper() == "acorn".upper():
+        sPath = WORKDIR + sSep + 'tmp'
+    else:	
+        sPath = WORKDIR + sSep + 'tmpnwprd'
+
     if not os.path.exists(sPath):
         os.makedirs(sPath)
 

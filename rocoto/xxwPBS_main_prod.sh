@@ -65,7 +65,7 @@ export baseoutput=$WORKDIR
 export HOMEwsr=$basesource
 export COMROOT=$baseoutput/com
 #export GESROOT=$baseoutput/nwges
-export DATAROOT=$baseoutput/tmpnwprd
+export DATAROOT=$baseoutput/tmp
 
 # Export List
 #export MP_SHARED_MEMORY=yes
