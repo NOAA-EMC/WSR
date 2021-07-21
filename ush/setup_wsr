@@ -54,10 +54,10 @@ if [[ $testmode = yes ]]; then
 			useexpid=no
 			envir=${envir:-para}
 			;;
-		(nwprod)
+		(ops.prod)
 			# these are the production locations, edit them to use test locations
 			testemail=ncep.list.spa-helpdesk@noaa.gov
-			testuser=nwprod
+			testuser=ops.prod
 			testrzdm=ncorzdm
 			testdirectory=/home/people/nco/www/htdocs/pmb/nwprod_wsr
 			useexpid=no
