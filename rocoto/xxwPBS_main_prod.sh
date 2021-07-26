@@ -32,11 +32,12 @@ ulimit -a
 . $SOURCEDIR/versions/wsr_acorn.ver
 
 module purge
-source /apps/prod/lmodules/startLmod
 module load envvar/$envvar_ver
 module load intel/$intel_ver PrgEnv-intel
-module load intel/$intel_ver/cray-mpich/$mpich_ver
-module load cray-pals/1.0.8
+
+module load craype/$craype_ver
+module load cray-mpich/$cray_mpich_ver
+module load cray-pals/$cray_pals_ver
 
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver

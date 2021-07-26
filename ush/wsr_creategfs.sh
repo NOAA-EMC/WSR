@@ -220,7 +220,7 @@ if [[ $ifort -eq 1 ]]; then
 			#poe  -cmdfile ncmd.file  -stdoutmode ordered -ilevel 2
 			#$wsrmpexec  -cmdfile ncmd.file  -stdoutmode ordered -ilevel 2
 			# $wsrmpexec  cfp ncmd.file
-			$wsrmpexec   -n $nvar -ppn $nvar --cpu-bind core --configfile ncmd.file
+			$wsrmpexec -n $nvar -ppn $nvar --cpu-bind core --configfile ncmd.file
 			/bin/rm gens*.t${eh}z.pgrbaf$lta
 		done
 		i=$(expr $i + 1)

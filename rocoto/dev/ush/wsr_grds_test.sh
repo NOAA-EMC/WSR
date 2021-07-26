@@ -208,7 +208,6 @@ fi
 #shellname=ksh
 module purge
 
-source /apps/prod/lmodules/startLmod
 module load envvar/1.0
 
 module use /apps/test/lmodules/core

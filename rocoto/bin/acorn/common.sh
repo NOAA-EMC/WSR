@@ -5,7 +5,7 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 #export NTASKS=${GEFS_NTASKS}
 export total_tasks=${GEFS_NTASKS}
-export OMP_NUM_THREADS=${GEFS_TPP}
+export OMP_NUM_THREADS=${GEFS_TPP:-1}
 export taskspernode=${GEFS_PPN}
 
 # Calculate the number of tasks based on the task geometry
@@ -25,4 +25,4 @@ export APRUN_CALCINC="mpirun -n 1"
 
 . $GEFS_ROCOTO/parm/setbase
 . $GEFS_ROCOTO/parm/gefs_config
-. $GEFS_ROCOTO/parm/gefs_dev.parm
+#. $GEFS_ROCOTO/parm/gefs_dev.parm

@@ -28,16 +28,19 @@ if [ $machine = "dell" ]; then
 elif [ $machine = "acorn" ]; then
   . ../versions/build.ver
   module purge
-  source /apps/prod/lmodules/startLmod
   module load envvar/$envvar_ver
 
   module load intel/$intel_ver PrgEnv-intel
+  module load craype/$craype_ver
+  module load cray-mpich/$cray_mpich_ver
+
+  module load cray-libsci/$cray_libsci_ver
 
   module list
   
   export FCMP=ftn #ifort #ftn #ifort #ftn
   export FFLAGSMP="-O3 -fp-model precise -ftz -fast-transcendentals -no-prec-div -no-prec-sqrt -align sequence -list -convert big_endian -assume byterecl -traceback" #array64byte" # for ftn
-  export FFLAGSMP="-list -convert big_endian -assume byterecl -traceback" # for init
+  #export FFLAGSMP="-list -convert big_endian -assume byterecl -traceback" # for ifort
 fi
 
 

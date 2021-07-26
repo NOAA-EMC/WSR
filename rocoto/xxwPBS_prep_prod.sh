@@ -2,7 +2,7 @@
 #PBS -N wsr_prep_prod_20201120
 ##PBS -o /lfs/h1/emc/ptmp/Xianwu.Xue/o/wsr_port2wcoss2/com/output/dev/20201120/wsr_prep_00.%J
 #PBS -j oe
-#PBS -l select=1:ncpus=32
+#PBS -l place=vscatter,select=1:ncpus=64
 ##PBS -R span[ptile=16]
 ##PBS -R 'affinity[core(1)]'
 #PBS -q workq
@@ -27,14 +27,6 @@ export SOURCEDIR="/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}"
 export job=wsr_prep_${EXPID}_${PDY}${cyc}
 
 
-# Export List
-#export MP_EUIDEVICE=sn_all
-#export MP_EUILIB=us
-#export MP_TASK_AFFINITY=core
-
-#export MP_PGMMODEL=mpmd
-#export MP_CSS_INTERRUPT=yes
-
 #set -x
 ulimit -s unlimited
 ulimit -a
@@ -43,11 +35,12 @@ ulimit -a
 . $SOURCEDIR/versions/wsr_acorn.ver
 
 module purge
-source /apps/prod/lmodules/startLmod
 module load envvar/$envvar_ver
 module load intel/$intel_ver PrgEnv-intel
-module load intel/$intel_ver/cray-mpich/$mpich_ver
-module load cray-pals/1.0.8
+
+module load craype/$craype_ver
+module load cray-mpich/$cray_mpich_ver
+module load cray-pals/$cray_pals_ver
 
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
@@ -60,11 +53,11 @@ module load libjpeg/9c
 
 #module load lsf/$lsf_ver
 
-module load CFP/$CFP_ver
+module load cfp/$cfp_ver
 export USE_CFP=YES
 module list
 
-KEEPDATA=YES
+export KEEPDATA=YES
 
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export envir=${envir:-dev}

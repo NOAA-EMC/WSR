@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/sh
 
 set -x
 ulimit -s unlimited
@@ -8,15 +8,15 @@ ulimit -a
 . $SOURCEDIR/versions/wsr_acorn.ver
 
 # Load modules
-#. /usrx/local/prod/lmod/lmod/init/ksh
-module list
+#module list
 module purge
 
-source /apps/prod/lmodules/startLmod
 module load envvar/$envvar_ver
 module load intel/$intel_ver PrgEnv-intel
-module load intel/$intel_ver/cray-mpich/$mpich_ver #impi/$impi_ver
-module load cray-pals/1.0.8
+
+module load craype/$craype_ver
+module load cray-mpich/$cray_mpich_ver
+module load cray-pals/$cray_pals_ver
 
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
@@ -27,9 +27,9 @@ module load cce/11.0.2
 module load gcc/10.2.0
 module load libjpeg/9c
 
-module load lsf/$lsf_ver
+#module load lsf/$lsf_ver
 
-module load CFP/$CFP_ver
+module load cfp/$cfp_ver
 export USE_CFP=YES
 
 module list
