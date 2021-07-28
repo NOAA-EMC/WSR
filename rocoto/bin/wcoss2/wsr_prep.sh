@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ksh
 
 set -x
 ulimit -s unlimited
@@ -23,9 +23,9 @@ module load prod_envir/$prod_envir_ver
 
 module load grib_util/$grib_util_ver
 
-module load cce/11.0.2
-module load gcc/10.2.0
-module load libjpeg/9c
+#module load cce/11.0.2
+#module load gcc/10.2.0
+module load libjpeg/$libjpeg_ver
 
 #module load lsf/$lsf_ver
 
