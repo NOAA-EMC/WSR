@@ -17,7 +17,7 @@ date
 
 export envir='dev'
 export RUN_ENVIR='dev'
-export WHERE_AM_I='acorn'
+export WHERE_AM_I='wcoss2'
 export EXPID='port2wcoss2_new2_cominout'
 export GEFS_ROCOTO="/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}/rocoto"
 export WORKDIR="/lfs/h1/emc/ptmp/Xianwu.Xue/o/${EXPID}"
@@ -32,7 +32,7 @@ ulimit -s unlimited
 ulimit -a
 
 # module_ver.h
-. $SOURCEDIR/versions/wsr_acorn.ver
+. $SOURCEDIR/versions/wsr_wcoss2.ver
 
 module purge
 module load envvar/$envvar_ver
@@ -96,5 +96,5 @@ export MP_CSS_INTERRUPT=yes
 
 export OMP_NUM_THREADS=1
 
-#${GEFS_ROCOTO}/bin/acorn/wsr_prep.sh
+#${GEFS_ROCOTO}/bin/wcoss2/wsr_prep.sh
 $SOURCEDIR/jobs/JWSR_PREP

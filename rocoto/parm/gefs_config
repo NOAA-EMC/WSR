@@ -19,7 +19,7 @@ export KEEPDATA=${KEEPDATA:-NO}
 #
 export COMROOT=$baseoutput/com
 export GESROOT=$baseoutput/nwges
-if [[ $machine == 'ACORN' ]]; then
+if [[ $machine == 'WCOSS2' ]]; then
 	export DATAROOT=$baseoutput/tmp
 else
 	export DATAROOT=$baseoutput/tmpnwprd

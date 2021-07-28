@@ -17,7 +17,7 @@ date
 
 export envir='dev'
 export RUN_ENVIR='dev'
-export WHERE_AM_I='acorn'
+export WHERE_AM_I='wcoss2'
 export EXPID='port2wcoss2_new2_cominout'
 export GEFS_ROCOTO="/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}/rocoto"
 export WORKDIR="/lfs/h1/emc/ptmp/Xianwu.Xue/o/${EXPID}"
@@ -35,5 +35,5 @@ export GEFS_TPP='1'
 #export ROCOTO_TASK_GEO='{(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)}'
 #bsub -J wsr_dell_all_2021032500_ws_ep -P GEN-T2O -o /gpfs/dell2/ptmp/Xianwu.Xue/o/wsr_dell_all/com/output/dev/20210325/wsr_prep_00.%J -W 1:20 -q dev -R span[ptile=16] -n 16
 
-${GEFS_ROCOTO}/bin/acorn/wsr_prep.sh
+${GEFS_ROCOTO}/bin/wcoss2/wsr_prep.sh
 

@@ -5,7 +5,7 @@ ulimit -s unlimited
 ulimit -a
 
 # module_ver.h
-. $SOURCEDIR/versions/wsr_acorn.ver
+. $SOURCEDIR/versions/wsr_wcoss2.ver
 
 # Load modules
 module list
@@ -25,7 +25,7 @@ module load prod_envir/$prod_envir_ver
 module list
 
 # For Development
-. $GEFS_ROCOTO/bin/acorn/common.sh
+. $GEFS_ROCOTO/bin/wcoss2/common.sh
 
 # Export List
 

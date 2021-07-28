@@ -8,7 +8,7 @@ Inputs (via environment variables):
 	EXPID           : GEFS experiment ID
 	PDY             : Initialization date in YYYYMMDD form
 	cyc             : Initialization hour in HH form
-	tmpName         : Tmp folder name  tmpnwprd or tmp for acorn
+	tmpName         : Tmp folder name  tmpnwprd or tmp for wcoss2
 Outputs:
 	The following files/directories in WORKDIR and all files contained within will all be deleted:
 		<WORKDIR>/tmp[tmpnwprd]/<EXPID><PDY><cyc>*
@@ -93,7 +93,7 @@ time_last_cyc = time + timedelta(hours=-6)
 # Start building up directories to remove
 dirs_to_remove = []
 
-if os.path.lexists('/apps/prod'): # Acorn
+if os.path.lexists('/apps/prod'): # WCOSS2
     tmpName="tmp"
 else:
     tmpName="tmpnwprd"

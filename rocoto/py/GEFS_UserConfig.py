@@ -153,7 +153,7 @@ def create_folders(dicBase):
 
     WHERE_AM_I = dicBase["WHERE_AM_I"]
 
-    if WHERE_AM_I.upper() == "acorn".upper():
+    if WHERE_AM_I.upper() == "wcoss2".upper():
         sPath = WORKDIR + sSep + 'tmp'
     else:	
         sPath = WORKDIR + sSep + 'tmpnwprd'
@@ -199,7 +199,7 @@ def get_WHERE_AM_I(dicBase):
         elif os.path.lexists('/usrx') and os.path.realpath('/usrx').startswith('/gpfs/dell'):
             dicBase[sVarName] = 'wcoss_dell_p3'
         elif os.path.lexists('/apps/prod'):
-            dicBase[sVarName] = 'acorn'
+            dicBase[sVarName] = 'wcoss2'
         elif os.path.exists('c:'):
             dicBase[sVarName] = 'wins'
         else:

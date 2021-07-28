@@ -11,7 +11,7 @@ do
     esac
 done
 
-machine=${machine:-acorn} #dell, acorn
+machine=${machine:-wcoss2} #dell, wcoss2
 
 build_dir=`pwd`
 logs_dir=$build_dir/logs
@@ -33,14 +33,7 @@ if [ $machine = "dell" ]; then
   module load ips/19.0.5.281
 
   module list
-elif [ $machine = "acorn" ]; then
-  module purge
-  module load intel/19.1.3.304 PrgEnv-intel
 
-  module list
-fi
-
-if [ $machine = "dell" ]; then
   # Build libs
   echo "Building libs..."
   cd $build_dir/../libs

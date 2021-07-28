@@ -71,8 +71,8 @@ elif [[ -L /usrx ]] ; then #&& "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; t
     # export COMROOThps=${HOMEdata}
 
 elif [[ -d /apps/prod ]]; then
-	echo "Using settings for WCOSSII Acorn"
-	export machine='ACORN'
+	echo "Using settings for WCOSS2"
+	export machine='WCOSS2'
 
 fi
 

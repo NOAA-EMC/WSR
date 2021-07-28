@@ -402,7 +402,7 @@ def NotUsed(dicBase, sRocoto_WS=""):
     if sVarName not in dicBase:
         dicBase[sVarName] = sVarValue
     # ===
-    if WHERE_AM_I.lower() == "acorn":
+    if WHERE_AM_I.lower() == "wcoss2":
         sVarName = "tmp".upper()
         sVarValue = "&WORKDIR;/tmp"
     else:
@@ -602,7 +602,7 @@ def get_definitions(dicBase):
     '''
 
     WHERE_AM_I = dicBase["WHERE_AM_I".upper()]
-    if WHERE_AM_I.lower() == "acorn":
+    if WHERE_AM_I.lower() == "wcoss2":
         tmpName = "tmp"
     else:
         tmpName = "tmpnwprd"

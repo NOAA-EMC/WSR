@@ -15,7 +15,7 @@ do
     esac
 done
 
-machine=${machine:-acorn} #dell, acorn
+machine=${machine:-wcoss2} #dell, wcoss2
 
 #libdir=`dirname $0`
 #if [[ $libdir = '.' ]]; then
@@ -45,10 +45,10 @@ if (( rc == 0 )); then
       --prefix=$ecmwfdir \
       --with-jasper=/usrx/local/prod/packages/gnu/4.8.5/jasper/1.900.1
 
-  elif [ $machine = "acorn" ]; then
+  elif [ $machine = "wcoss2" ]; then
 	module purge
 	module load envvar/1.0
-    source /apps/prod/lmodules/startLmod
+    #source /apps/prod/lmodules/startLmod
     module load intel/19.1.3.304
     module load gcc/10.2.0
 

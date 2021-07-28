@@ -387,7 +387,7 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         strings += ""
     elif WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
         strings += ""
-    elif WHERE_AM_I.upper() == "acorn".upper():
+    elif WHERE_AM_I.upper() == "wcoss2".upper():
         strings += sPre_2 + '<native>-cwd &tmp;</native>\n'
     else:
         strings += sPre_2 + '<native>-cwd &tmpnwprd;</native>\n'

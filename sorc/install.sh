@@ -14,7 +14,7 @@ do
     esac
 done
 
-machine=${machine:-acorn} #dell, acorn
+machine=${machine:-wcoss2} #dell, wcoss2
 
 if [ $machine = "dell" ]; then
   module purge
@@ -22,7 +22,7 @@ if [ $machine = "dell" ]; then
   module load ips/19.0.5.281
 
   module list
-elif [ $machine = "acorn" ]; then
+elif [ $machine = "wcoss2" ]; then
   module purge
   #module load intel/19.1.3.304 PrgEnv-intel
 

@@ -31,7 +31,7 @@ if [ $machine = "nomachine" ]; then
     if [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then # We are on NOAA Mars or Venus
         machine=wcoss_dell_p3
 	elif [[ -d /apps/prod ]]; then
-		machine=acorn
+		machine=wcoss2
     else
         echo "This is not supported by this script!"
         exit 55
@@ -51,10 +51,10 @@ if [ $CompileCode = "yes" ]; then
     ## Build the code and install
     if [[ $machine == "wcoss_dell_p3" ]]; then
     	./build_all.sh -m dell
-    elif [[ $machine == "acorn" ]]; then
-        ./build_all.sh -m acorn
+    elif [[ $machine == "wcoss2" ]]; then
+        ./build_all.sh -m wcoss2
     else
-        ./build_all.sh -m acorn
+        ./build_all.sh -m wcoss2
     fi
 
 fi
@@ -96,7 +96,7 @@ if [ $RunRocoto = "yes" ]; then
         module load rocoto/complete
         module load python/3.6.3
 
-    elif [ $machine = "acorn" ]; then
+    elif [ $machine = "wcoss2" ]; then
         module purge
         module load envvar/1.0
 
@@ -115,7 +115,7 @@ fi # For RunRocoto
 # For Crontab
 if [ $AddCrontabToMyCrontab = "yes" ]; then
     cd $sWS
-    if [ $machine = "acorn" ]; then
+    if [ $machine = "wcoss2" ]; then
         if [ -f $HOME/cron/mycrontab ]; then
             echo "Adding crontab to $HOME/cron/mycrontab!" 
         else 

@@ -11,7 +11,7 @@
 # UPDATED FOR WSR02 BY J.R.MOSKAITIS 11/14/01 # 
 # UPDATED 2/13/02 TO FIX INSTRUCTIONS REGARDING VERIFICATION LONGITUDE #
 # UPDATED 05/09/13 for WCOSS with test mode by Richard Wobus
-# UPDATED 07/12/2021 for WCOSS2/Acorn with test mode by Xianwu Xue
+# UPDATED 07/12/2021 for WCOSS2 with test mode by Xianwu Xue
 
 # for production, name this script setup_wsr
 # for testing, name this script setup_wsr_test

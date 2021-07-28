@@ -14,7 +14,7 @@ do
     esac
 done
 
-machine=${machine:-acorn} #dell, acorn
+machine=${machine:-wcoss2} #dell, wcoss2
 
 if [ $machine = "dell" ]; then
   module purge
@@ -25,12 +25,14 @@ if [ $machine = "dell" ]; then
 
   export FCMP=ifort
   export FFLAGSMP="-list -convert big_endian -assume byterecl -traceback"
-elif [ $machine = "acorn" ]; then
+elif [ $machine = "wcoss2" ]; then
   . ../versions/build.ver
   module purge
   module load envvar/$envvar_ver
 
-  module load intel/$intel_ver PrgEnv-intel
+  module load intel/$intel_ver
+  module load PrgEnv-intel/$prgenv_intel_ver
+
   module load craype/$craype_ver
   module load cray-mpich/$cray_mpich_ver
 
