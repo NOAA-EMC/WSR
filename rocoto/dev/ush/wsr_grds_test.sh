@@ -202,7 +202,7 @@ fi
 
 #. ${NWROOT:-/gpfs/dell1/nco/ops/nw${envir:-prod}}/versions/wsr.ver
 if [[ $useexpid = no ]]; then
-	. /lfs/h1/ops/prod/nw${envir:-prod}/versions/run.ver
+	. ${PACKAGEROOT}/wsr.${wsr_ver}/versions/run.ver
 fi
 
 #shellname=ksh
@@ -228,7 +228,7 @@ if [[ $testmode = no ]]; then
 else
 	export PRINTSDM=${PRINTSDM:-NO}
 fi
-export HOMEwsr=${HOMEwsr:-/lfs/h1/ops/prod/nw$envir/wsr.${wsr_ver:?}}
+export HOMEwsr=${HOMEwsr:-${PACKAGEROOT}/wsr.${wsr_ver:?}}
 export FIXwsr=${FIXwsr:-$HOMEwsr/fix}
 export sdmprinter=${sdmprinter:-hp26_sdm}
 #######################################################

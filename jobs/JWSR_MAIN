@@ -44,7 +44,7 @@ export XLFRTEOPTS="unit_vars=yes"
 export NET=wsr
 export RUN=wsr
 
-export HOMEwsr=${HOMEwsr:-${NWROOT:?}/wsr.${wsr_ver:?}}
+export HOMEwsr=${HOMEwsr:-${PACKAGEROOT:?}/wsr.${wsr_ver:?}}
 export EXECwsr=$HOMEwsr/exec
 export FIXwsr=$HOMEwsr/fix
 

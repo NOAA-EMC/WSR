@@ -64,7 +64,7 @@ export SENDECF=${SENDECF:-YES}
 export NET=wsr
 export RUN=wsr
 
-export HOMEwsr=${HOMEwsr:-${NWROOT:?}/wsr.${wsr_ver:?}}
+export HOMEwsr=${HOMEwsr:-${PACKAGEROOT:?}/wsr.${wsr_ver:?}}
 export EXECwsr=$HOMEwsr/exec
 export USHwsr=$HOMEwsr/ush
 

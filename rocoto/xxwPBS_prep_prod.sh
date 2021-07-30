@@ -2,7 +2,7 @@
 #PBS -N wsr_prep_prod_20201120
 ##PBS -o /lfs/h1/emc/ptmp/Xianwu.Xue/o/wsr_port2wcoss2/com/output/dev/20201120/wsr_prep_00.%J
 #PBS -j oe
-#PBS -l place=vscatter,select=1:ncpus=64
+#PBS -l select=1:ncpus=64
 ##PBS -R span[ptile=16]
 ##PBS -R 'affinity[core(1)]'
 #PBS -q workq
@@ -14,6 +14,8 @@ set -x
 #module purge
 
 date
+
+cd $PBS_O_WORKDIR
 
 export envir='dev'
 export RUN_ENVIR='dev'
