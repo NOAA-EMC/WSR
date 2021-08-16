@@ -17,6 +17,8 @@ export cyc=%CYC%
 model=wsr
 %include <model_ver.h>
 
+cd $PBS_O_WORKDIR
+
 module load envvar/$envvar_ver
 module load intel/$intel_ver
 module load PrgEnv-intel/$prgenv_intel_ver

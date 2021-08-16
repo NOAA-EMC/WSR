@@ -9,10 +9,6 @@ Two methods:
     ./build_all.sh
 
 2) 
-    in libs:
-
-        run build.sh
-
     in sorc:
 
         run build.sh

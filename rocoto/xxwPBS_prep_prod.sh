@@ -6,7 +6,7 @@
 ##PBS -R span[ptile=16]
 ##PBS -R 'affinity[core(1)]'
 #PBS -q workq
-#PBS -l walltime=3:20:00
+#PBS -l walltime=1:20:00
 ##PBS -L /bin/sh
 #PBS -A GEN-T2O
 
