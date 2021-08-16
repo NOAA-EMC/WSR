@@ -83,7 +83,7 @@ export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/prep}
 
 mkdir -p $COMOUT
 
-export wsrmpexec=mpiexec #mpirun
+export wsrmpexec="mpiexec"
 echo wsrmpexec=$wsrmpexec
 
 env

@@ -1,11 +1,11 @@
 #PBS -N %E%wsr_prep_%CYC%
 #PBS -j oe
 #PBS -o %COM%/output/%ENVIR%/today/wsr_prep_%CYC%.o%J
-#PBS -L /bin/sh
+##PBS -L /bin/sh
 #PBS -q %QUEUE%
 #PBS -l walltime=1:20:00
 #PBS -cwd /tmp
-#PBS -l select=1:ncpus=32
+#PBS -l place=vscatter,select=1:ncpus=32:mem=100GB
 #PBS -A %PROJ%-%PROJENVIR%
 
 
@@ -18,7 +18,8 @@ model=wsr
 %include <model_ver.h>
 
 module load envvar/$envvar_ver
-module load intel/$intel_ver PrgEnv-intel
+module load intel/$intel_ver
+module load PrgEnv-intel/$prgenv_intel_ver
 
 module load craype/$craype_ver
 module load cray-mpich/$cray_mpich_ver

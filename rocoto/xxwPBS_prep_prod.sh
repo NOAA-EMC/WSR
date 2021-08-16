@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/ksh -l
 #PBS -N wsr_prep_prod_20201120
 ##PBS -o /lfs/h1/emc/ptmp/Xianwu.Xue/o/wsr_port2wcoss2/com/output/dev/20201120/wsr_prep_00.%J
 #PBS -j oe
-#PBS -l select=1:ncpus=64
+#PBS -l place=vscatter,select=1:ncpus=32:mem=100GB
 ##PBS -R span[ptile=16]
 ##PBS -R 'affinity[core(1)]'
 #PBS -q workq
@@ -38,7 +38,8 @@ ulimit -a
 
 module purge
 module load envvar/$envvar_ver
-module load intel/$intel_ver PrgEnv-intel
+module load intel/$intel_ver
+module load PrgEnv-intel/$prgenv_intel_ver
 
 module load craype/$craype_ver
 module load cray-mpich/$cray_mpich_ver

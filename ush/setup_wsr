@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/ksh -l
 ################################################################################
 # setup_wsr -- setup script to be run before wsr_main job is submitted
 ################################################################################
@@ -62,6 +62,7 @@ if [[ $testmode = yes ]]; then
 			testdirectory=/home/people/nco/www/htdocs/pmb/nwprod_wsr
 			useexpid=no
 			envir=${envir:-para}
+			#PDY=20201120 # For the Canned case
 			;;
 		(Richard.Wobus)
 			testemail=richard.wobus@noaa.gov
@@ -156,7 +157,7 @@ curyy=`date -u +%Y`
 curmm=`date -u +%m`
 curdd=`date -u +%d`
 curhh=`date -u +%H`
-PDY=${curyy}${curmm}${curdd}
+#PDY=${curyy}${curmm}${curdd}
 PDY=${PDY:-${curyy}${curmm}${curdd}}
 
 ####################################
