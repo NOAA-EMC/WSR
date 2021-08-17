@@ -66,7 +66,6 @@ if [[ $testmode = yes ]]; then
 			useexpid=yes
 			expid=$(basename $(readlink -f `pwd`/../../../)) #${EXPID:-port2wcoss2_new}
 			PTMP=/lfs/h1/emc/ptmp #/gpfs/dell2/ptmp
-			GESROOT=$PTMP/$LOGNAME/o/$expid/nwges
 			PDY=20201120
 			;;
 		(*)

@@ -81,7 +81,6 @@ export baseoutput=$WORKDIR
 
 export HOMEwsr=$basesource
 export COMROOT=$baseoutput/com
-#export GESROOT=$baseoutput/nwges
 export DATAROOT=$baseoutput/tmp
 
 export COMINgens=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/gefs/prod
