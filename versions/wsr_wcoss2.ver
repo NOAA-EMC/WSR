@@ -17,9 +17,5 @@ export grib_util_ver=1.2.2
 
 export cfp_ver=2.0.4
 
-export python_ver=3.8.6
-
-#export HPSS_ver=5.0.2.5
-
 #export USE_CFP=YES
 export PATH=$PATH:.
