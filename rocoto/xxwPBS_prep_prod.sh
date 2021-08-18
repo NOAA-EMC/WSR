@@ -34,7 +34,7 @@ ulimit -s unlimited
 ulimit -a
 
 # module_ver.h
-. $SOURCEDIR/versions/wsr_wcoss2.ver
+. $SOURCEDIR/versions/run.ver #wsr_wcoss2.ver
 
 module purge
 module load envvar/$envvar_ver

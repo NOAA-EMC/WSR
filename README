@@ -3,15 +3,19 @@ WSR BUild instructions
 
 Two methods:
 
-1) (Recommended)
+	1) (Recommended)
 
-    cd sorc
-    ./build_all.sh
+		cd sorc
+		./build_all.sh
 
-2) 
-    in sorc:
+	2) 
+		cd  sorc
+		run build.sh
+		run install.sh
 
-        run build.sh
-        run install.sh
+Run canned case:
+	Add below statements to ecf/
 
-
+		export COMINgens=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/gefs/prod
+		export COMINcmce=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/naefs/prod
+		export DCOMROOT=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/dcom
