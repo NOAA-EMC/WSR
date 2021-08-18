@@ -3,7 +3,7 @@
 set -x
 
 msg="JOB $job HAS BEGUN"
-postmsg "$jlogfile" "$msg"
+echo "$msg"
 
 cd $DATA
 
@@ -42,7 +42,6 @@ if [ $err -ne 0 ]; then
 	echo "WARNING: $USHwsr/wsr_createecmwf.sh return code is $err"
 fi
 
-msg="JOB $job HAS COMPLETED NORMALLY"
-postmsg "$jlogfile" "$msg"
+echo "JOB $job HAS COMPLETED NORMALLY"
 
 exit

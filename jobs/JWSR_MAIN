@@ -23,11 +23,6 @@ mkdir -p $DATA
 cd $DATA
 
 ####################################
-# File To Log Msgs
-####################################
-export jlogfile=${jlogfile:-$DATA/jlogfile.${jobid:?}}
-
-####################################
 # Determine Job Output Name on System
 ####################################
 export pgmout="OUTPUT.$$"

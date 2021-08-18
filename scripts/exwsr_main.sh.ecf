@@ -1502,9 +1502,8 @@ echo "**************$job  COMPLETED NORMALLY ON THE IBM SP"
 set -x
 #####################################################################
 
-postmsg "$jlogfile" "$0 has completed normally"
-
 ############## END OF SCRIPT #######################
+echo "JOB $job HAS COMPLETED NORMALLY"
 
 exit
 

@@ -40,11 +40,6 @@ export ifort=1
 export icopygb=1
 
 ####################################
-# File To Log Msgs
-####################################
-export jlogfile=${jlogfile:-$DATA/jlogfile.${jobid:?}}
-
-####################################
 # Determine Job Output Name on System
 ####################################
 export pgmout="OUTPUT.$$"
