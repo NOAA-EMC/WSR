@@ -8,7 +8,7 @@
 ##############################################################
 
 date
-export PS4=' $SECONDS + '
+export PS4='$SECONDS + $(basename ${0})[$LINENO]'
 set -x
 
 ####################################
@@ -17,6 +17,7 @@ set -x
 export jobid=${jobid:-"$job.$PBS_JOBID"}
 export pgmout="OUTPUT.${PBS_JOBID}"
 export pgmerr=errfile
+export ver=${ver:-v3.3}
 
 export DATA=${DATA:-${DATAROOT:?}/${jobid:?}}
 mkdir -p $DATA
@@ -53,18 +54,27 @@ export FIXwsr=$HOMEwsr/fix
 ##############################
 # Define COM directories
 ##############################
-export COMIN_setup=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/setup
+#export COMIN_setup=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/setup
+#export COMIN_setup=$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-export PDY=$(head -1 $COMIN_setup/targdata.d)
+#export PDY=$(head -1 $COMIN_setup/targdata.d)
 setpdy.sh
 . ./PDY
 
-export COMIN_setup=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/setup
-export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}}
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/main}
+
+COMDIR=$(compath.py ${envir}/com/${NET}/${ver})
+if [ -z $COMDIR ]; then
+	COMROOT=${COMROOT:-/lfs/h1/ops/prod/com}
+    COMDIR=${COMROOT}/${NET}/${ver}
+fi
+
+export COMIN=${COMIN:-${COMDIR}/${RUN}}
+export COMIN_setup=${COMIN_setup:-${COMDIR}/${RUN}.${PDY}/setup}
+export COMOUT=${COMOUT:-${COMDIR}/${RUN}.${PDY}/main}
+
 mkdir -p $COMOUT
 
 #######################################################

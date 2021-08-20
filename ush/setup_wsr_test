@@ -38,6 +38,8 @@ esac
 
 NET=${NET:-wsr}
 RUN=${RUN:-wsr}
+envir=${envir:-prod}
+ver=${ver:-v3.3}
 
 if [[ $testmode = yes ]]; then
 
@@ -53,7 +55,7 @@ if [[ $testmode = yes ]]; then
 			testrzdm=ncorzdm
 			testdirectory=/home/people/nco/www/htdocs/pmb/sdm_wsr
 			useexpid=no
-			envir=${envir:-para}
+			envir=para
 			;;
 		(ops.prod)
 			# these are the production locations, edit them to use test locations
@@ -62,15 +64,8 @@ if [[ $testmode = yes ]]; then
 			testrzdm=ncorzdm
 			testdirectory=/home/people/nco/www/htdocs/pmb/nwprod_wsr
 			useexpid=no
-			envir=${envir:-para}
+			envir=para
 			#PDY=20201120 # For the Canned case
-			;;
-		(Richard.Wobus)
-			testemail=richard.wobus@noaa.gov
-			testuser=wd20rw
-			testrzdm=emcrzdm
-			testdirectory=/home/people/emc/www/htdocs/gmb/rwobus/sdm_wsr
-			useexpid=yes
 			;;
 		(Xianwu.Xue)
 			testemail=xianwu.xue@noaa.gov
@@ -78,7 +73,7 @@ if [[ $testmode = yes ]]; then
 			testrzdm=emcrzdm
 			testdirectory=/home/www/emc/htdocs/gmb/xianwu.xue/wsr_sdm
 			useexpid=yes
-			envir=${envir:-dev}
+			envir=dev
 			PTMP=/lfs/h1/emc/ptmp
 			expid=$(basename $(readlink -f `pwd`/../)) #port2wcoss2_new2_cominout
 			PDY=20201120
@@ -137,11 +132,10 @@ if [[ $testmode = yes ]]; then
 
 		echo expid=$expid
 
-		COMROOT=$PTMP/$LOGNAME/o/$expid/com
-		COMdir=${COMROOT}/${NET}/${envir}
+		COMROOT=$PTMP/$LOGNAME/o/$expid/${envir}/com
+		COMDIR=${COMROOT}/${NET}/${ver}
 
-		echo COMOUT=$COMOUT
-		echo COMdir=$COMdir
+		echo COMDIR=$COMDIR
 
 	fi
 
@@ -164,10 +158,12 @@ PDY=${PDY:-${curyy}${curmm}${curdd}}
 ####################################
 # Set Working Directories
 ####################################
-envir=${envir:-prod}
-
-COMROOT=${COMROOT:-/lfs/h1/ops/prod/com}
-COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/setup}
+COMDIR=${COMDIR:-$(compath.py ${envir}/com/${NET}/${ver})}
+if [ -z "$COMDIR" ]; then
+	COMROOT=${COMROOT:-/lfs/h1/ops/prod/com}
+	COMDIR=${COMROOT}/${NET}/${ver}
+fi
+COMOUT=${COMOUT:-${COMDIR}/${RUN}.${PDY}/setup}
 
 if [ ! -s $COMOUT ]; then mkdir -p $COMOUT; fi
 echo COMOUT=$COMOUT
@@ -197,8 +193,8 @@ else
 			fi
 		done
 	fi
-	if [[ -d $COMdir ]]; then
-		cd $COMdir
+	if [[ -d $COMDIR ]]; then
+		cd $COMDIR
 		for dir in wsr.$PDY/main
 		do
 			if [[ -d $dir ]]; then

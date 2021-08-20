@@ -49,8 +49,11 @@ KEEPDATA=YES
 
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export envir=${envir:-dev}
-#export NET=${NET:-wsr}
-#export RUN=${RUN:-wsr}
+export NET=${NET:-wsr}
+export RUN=${RUN:-wsr}
+
+export ver=${ver:-v3.3}
+
 export SENDDBN=${SENDDBN:-NO}
 export SENDDBN_NTC=${SENDDBN_NTC:-NO}
 
@@ -65,7 +68,9 @@ export basesource=$SOURCEDIR
 export baseoutput=$WORKDIR
 
 export HOMEwsr=$basesource
-export COMROOT=$baseoutput/com
+export COMROOT=$baseoutput/${envir}/com
+#export COMIN=$baseoutput/$envir/com/${NET}/${ver}/${RUN}.${PDY}/prep
+#export COMOUT=$baseoutput/$envir/com/${NET}/${ver}/${RUN}.${PDY}/main
 export DATAROOT=$baseoutput/tmp
 
 # Export List

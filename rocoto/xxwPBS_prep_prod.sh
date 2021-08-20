@@ -28,7 +28,6 @@ export cyc='00'
 export SOURCEDIR="/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}"
 export job=wsr_prep_${EXPID}_${PDY}${cyc}
 
-
 #set -x
 ulimit -s unlimited
 ulimit -a
@@ -64,8 +63,11 @@ export KEEPDATA=YES
 
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export envir=${envir:-dev}
-#export NET=${NET:-wsr}
-#export RUN=${RUN:-wsr}
+export ver=${ver:-v3.3}
+
+export NET=${NET:-wsr}
+export RUN=${RUN:-wsr}
+
 export SENDDBN=${SENDDBN:-NO}
 export SENDDBN_NTC=${SENDDBN_NTC:-NO}
 
@@ -81,6 +83,7 @@ export baseoutput=$WORKDIR
 
 export HOMEwsr=$basesource
 export COMROOT=$baseoutput/com
+export COMOUT=$baseoutput/$envir/com/${NET}/${ver}/${RUN}.${PDY}/prep
 export DATAROOT=$baseoutput/tmp
 
 export COMINgens=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/gefs/prod

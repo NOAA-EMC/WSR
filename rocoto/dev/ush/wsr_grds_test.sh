@@ -12,9 +12,14 @@
 ## @ notification = never
 ## @ queue
 
-set -xa
-export PS4='$SECONDS + [$LINENO] ' 
+set -xua
+export PS4='$SECONDS + $(basename ${0})[$LINENO] ' 
 ### USER SETUP
+
+NET=${NET:-wsr}
+RUN=${RUN:-wsr}
+envir=${envir:-prod}
+ver=${ver:-v3.3}
 
 #. ${NWROOT:-/gpfs/dell1/nco/ops/nw${envir:-prod}}/versions/wsr.ver
 
@@ -71,6 +76,7 @@ if [[ $testmode = yes ]]; then
 			testemail=Xianwu.Xue@noaa.gov
 			testuser=xianwu.xue
 			testrzdm=emcrzdm
+			envir=dev
 			testdirectory=/home/www/emc/htdocs/gmb/xianwu.xue/wsr_sdm
 			export PRINTSDM=YES
 			export sdmprinter=
@@ -82,20 +88,10 @@ if [[ $testmode = yes ]]; then
 			HOMEwsr=`pwd`/../../../
 			FIXwsr=`pwd`/../../../fix
 			PDY=20201120
-			COMIN_setup=$testtmpdir/$expid/com/wsr/$envir/wsr.$PDY/setup #nwges/$envir/wsr
-			COMIN=$testtmpdir/$expid/com/wsr/$envir #/wsr.$PDY/main
-			ETKFOUT=$testtmpdir/$expid
-			;;
-		(Richard.Wobus)
-			testenvir=dev
-			testemail=richard.wobus@noaa.gov
-			testuser=wd20rw
-			testrzdm=emcrzdm
-			testdirectory=/home/people/emc/www/htdocs/gmb/rwobus/sdm_wsr
-			export PRINTSDM=NO
-			export sdmprinter=
-			useexpid=yes
-			testtmpdir=/gpfs/dell3/ptmp/$LOGNAME/o
+			COMDIR=$testtmpdir/$expid/${envir}/com/${NET}/${ver}
+			COMIN_setup=${COMDIR}/${RUN}.$PDY/setup #nwges/$envir/wsr ${NET}/${ver}
+			COMIN=${COMDIR}/${RUN}.$PDY/main #$testtmpdir/$expid/com/wsr/$envir #/wsr.$PDY/main
+			COMOUT_graphics=${COMDIR}/${RUN}.$PDY/graphics
 			;;
 		(*)
 			echo Please add test settings to $0 for LOGNAME=$LOGNAME
@@ -161,9 +157,9 @@ if [[ $testmode = yes ]]; then
 
 		echo expid=$expid
 
-		export COMIN_setup=${COMIN_setup:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid/com/wsr/$envir/wsr.$PDY/setup} #nwges/$envir/wsr}
-		export COMIN=${COMIN:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid/com/wsr/$envir} #/wsr.$PDY/main}
-		export ETKFOUT=${ETKFOUT:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid}
+		export COMIN_setup=${COMIN_setup:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid/${envir}/com/${NET}/${ver}/${RUN}.$PDY/setup}
+		export COMIN=${COMIN:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid/${envir}/${envir}/com/${NET}/${ver}/${RUN}.$PDY/main}
+		export COMOUT_graphics=${COMOUT_graphics:-${COMDIR}/${RUN}.$PDY/graphics}
 
 		#testbase=/ensemble/save/$LOGNAME/nw$envir
 		#testbase=/ensemble/save/$LOGNAME/s/$expid/nw$envir
@@ -180,7 +176,6 @@ if [[ $testmode = yes ]]; then
 
 		echo COMIN_setup=$COMIN_setup
 		echo COMIN=$COMIN
-		echo ETKFOUT=$ETKFOUT
 		echo testbase=$testbase
 		echo HOMEwsr=$HOMEwsr
 		echo FIXwsr=$FIXwsr
@@ -199,7 +194,6 @@ fi
 ####################################
 # end set up test mode
 ####################################
-
 #. ${NWROOT:-/gpfs/dell1/nco/ops/nw${envir:-prod}}/versions/wsr.ver
 if [[ $useexpid = no ]]; then
 	. ${PACKAGEROOT}/wsr.${wsr_ver}/versions/run.ver
@@ -217,11 +211,18 @@ module list
 
 export job=wsr_main
 
-export envir=${envir:-prod}
-export COMIN_setup=${COMIN_setup:-/lfs/h1/ops/prod/com/wsr/$envir/wsr.$PDY/setup}
-export COMIN=${COMIN:-/lfs/h1/ops/prod/com/wsr/$envir}
-# ETKFOUT is the home dir where ET KF results
-export ETKFOUT=${ETKFOUT:-/lfs/h1/ops}
+COMDIR=${COMDIR:-$(compath.py ${envir}/com/${NET}/${ver})}
+if [ -z "$COMDIR" ]; then
+	COMROOT=${COMROOT:-/lfs/h1/ops/prod/com}
+	COMDIR=${COMROOT}/${NET}/${ver}
+fi
+export COMIN_setup=${COMIN_setup:-${COMDIR}/${RUN}.${PDY}/setup}
+export COMIN=${COMIN:-${COMDIR}/${RUN}.${PDY}/main}
+export COMOUT_graphics=${COMOUT_graphics:-${COMDIR}/${RUN}.${PDY}/graphics}
+#export COMIN_setup=${COMIN_setup:-/lfs/h1/ops/${envir}/com/${NET}/${ver}/$RUN.$PDY/setup}
+#export COMIN=${COMIN:-/lfs/h1/ops/${envir}/com/${NET}/${ver}/$RUN.$PDY/main}
+#export COMOUT_graphics=${COMOUT_graphics:-/lfs/h1/ops/${envir}/com/${NET}/${ver}/$RUN.$PDY/graphics}
+
 export RAWINSONDES=${RAWINSONDES:-"YES"}
 if [[ $testmode = no ]]; then
 	export PRINTSDM=${PRINTSDM:-YES}
@@ -239,7 +240,6 @@ export sdmprinter=${sdmprinter:-hp26_sdm}
 
 echo COMIN_setup=$COMIN_setup
 echo COMIN=$COMIN
-echo ETKFOUT=$ETKFOUT
 echo RAWINDSONDES=$RAWINSONDES
 echo PRINTSDM=$PRINTSDM
 echo HOMEwsr=$HOMEwsr
@@ -265,8 +265,8 @@ PDY=`head -1 $COMIN_setup/targdata.d`
 cases=`head -2 $COMIN_setup/targdata.d | tail -1`
 
 #COMIN_setup=${GCOMIN_setupESdir}/wsr.$PDY/setup
-COMIN=${COMIN}/wsr.$PDY/main
-. $ETKFOUT/com/wsr/${envir}/wsr.$PDY/main/case1.env
+#COMIN=${COMIN}/wsr.$PDY/main
+. ${COMIN}/case1.env
 
 #cp $HOMEwsr/fix/wsr_track.* .
 # JY if [[ $testmode = no ]]; then
@@ -279,7 +279,7 @@ cp $HOMEwsr/rocoto/dev/grads/*.gs $DATA/.
 i=1
 while test ${i} -le ${cases}
 do
-	. $ETKFOUT/com/wsr/${envir}/wsr.$PDY/main/case${i}.env
+	. ${COMIN}/case${i}.env
 
 	#########################################
 	# GRAPHICS START UP
@@ -388,7 +388,7 @@ then
 	i=1
 	while test ${i} -le ${cases}
 	do
-		. $ETKFOUT/com/wsr/${envir}/wsr.$PDY/main/notwsr_case${i}.env
+		. $COMIN/notwsr_case${i}.env
 
 		ltdiffsteps=`expr ${ltdiff} / 12`
 		if [ ${ltdiffsteps} -lt 7 ]
@@ -439,7 +439,7 @@ then
 
 else
 
-	. $ETKFOUT/com/wsr/${envir}/wsr.$PDY/main/ltinfo.env
+	. $COMIN/ltinfo.env
 
 	mk[2]=`expr ${mk2} - 1`
 	mk[3]=`expr ${mk3} - 1`
@@ -497,7 +497,7 @@ else
 			while test ${k} -le ${mk[$j]}
 			do
 
-				. $ETKFOUT/com/wsr/${envir}/wsr.$PDY/main/flight${k}_${lt1}.env
+				. $COMIN/flight${k}_${lt1}.env
 
 				ctr=0
 				while [ ${ctr} -le ${ltdiffsteps} ]
@@ -588,17 +588,13 @@ if [[ $testmode = no ]]; then
 	scp *.png wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}
 
 else
-
-	COMOUT=$testtmpdir/com/wsr/$envir/wsr.$PDY/graphics
-    mkdir $COMOUT
-    cp -rfp *.png $COMOUT/
+	if [ ! -s $COMOUT ]; then mkdir -p $COMOUTi_graphics; fi
+    cp -rfp *.png $COMOUT_graphics/
 
 	ssh -l $testuser $testrzdm "rm -rf  $testdirectory/test$expid/graphics/${PDY}"
 	ssh -l $testuser $testrzdm "mkdir -p $testdirectory/test$expid/graphics/${PDY}"
 	scp *.png $testuser@$testrzdm:$testdirectory/test$expid/graphics/${PDY}
 fi
-
-#fi
 
 #ssh -l ysong rzdm "mkdir -p /home/people/emc/www/htdocs/gmb/tparc/special/trop1_${PDY}_${ensemble}"
 #scp *.png ysong@rzdm:/home/people/emc/www/htdocs/gmb/tparc/special/trop1_${PDY}_${ensemble}

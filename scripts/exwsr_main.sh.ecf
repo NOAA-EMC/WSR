@@ -1,7 +1,7 @@
 #!/bin/ksh
 
 set -xa
-export PS4='$SECONDS + [$LINENO] '
+export PS4='$SECONDS + $(basename ${0})[$LINENO]'
 
 ###########################################################################
 # This is the main script to produce the U.MIAMI-NCEP Ensemble Transform  #
@@ -962,8 +962,8 @@ do
 	fi
 
 	#### copies raw data for summary maps for saving purposes
-
-	if [[ $vrlon -gt 180 ]]; then
+	check_vrlonewest=`echo "$vrlon >180"|bc -l`
+	if [[ $check_vrlonewest -eq 1 ]]; then
 		vrlonewest=`echo "360 - ${vrlon}"|bc `W
 	else
 		vrlonewest=${vrlon}E
