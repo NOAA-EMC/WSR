@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/ksh -l
 
 ## @ job_name = jwsr_grads
 ## @ output = /stmpp1/wsr_grads.o$(jobid)
@@ -81,13 +81,13 @@ if [[ $testmode = yes ]]; then
 			export PRINTSDM=YES
 			export sdmprinter=
 			useexpid=yes
-			testtmpdir=/lfs/h1/emc/ptmp/$LOGNAME/o
+			testtmpdir=/lfs/h2/emc/ptmp/$LOGNAME/o
 			expid=$(basename $(readlink -f `pwd`/../../../)) #${EXPID:-port2wcoss2_new}
 			envir=$testenvir
 			testbase=null
 			HOMEwsr=`pwd`/../../../
 			FIXwsr=`pwd`/../../../fix
-			PDY=20201120
+			PDY=20210215
 			COMDIR=$testtmpdir/$expid/${envir}/com/${NET}/${ver}
 			COMIN_setup=${COMDIR}/${RUN}.$PDY/setup #nwges/$envir/wsr ${NET}/${ver}
 			COMIN=${COMDIR}/${RUN}.$PDY/main #$testtmpdir/$expid/com/wsr/$envir #/wsr.$PDY/main
@@ -157,8 +157,8 @@ if [[ $testmode = yes ]]; then
 
 		echo expid=$expid
 
-		export COMIN_setup=${COMIN_setup:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid/${envir}/com/${NET}/${ver}/${RUN}.$PDY/setup}
-		export COMIN=${COMIN:-/lfs/h1/emc/ptmp/$LOGNAME/o/$expid/${envir}/${envir}/com/${NET}/${ver}/${RUN}.$PDY/main}
+		export COMIN_setup=${COMIN_setup:-/lfs/h2/emc/ptmp/$LOGNAME/o/$expid/${envir}/com/${NET}/${ver}/${RUN}.$PDY/setup}
+		export COMIN=${COMIN:-/lfs/h2/emc/ptmp/$LOGNAME/o/$expid/${envir}/${envir}/com/${NET}/${ver}/${RUN}.$PDY/main}
 		export COMOUT_graphics=${COMOUT_graphics:-${COMDIR}/${RUN}.$PDY/graphics}
 
 		#testbase=/ensemble/save/$LOGNAME/nw$envir
@@ -204,12 +204,15 @@ module purge
 
 module load envvar/1.0
 
-module use /apps/test/lmodules/core
-module load GrADS/2.2.1
+#module use /apps/test/lmodules/core
+#module load GrADS/2.2.1
+module use -a /apps/test/modules
+module avail grads
+module load GrADS/2.2.1-cce-11.0.4
 
 module list 
 
-export job=wsr_main
+export job=wsr_main_grads
 
 COMDIR=${COMDIR:-$(compath.py ${envir}/com/${NET}/${ver})}
 if [ -z "$COMDIR" ]; then
@@ -249,7 +252,7 @@ echo sdmprinter=$sdmprinter
 ### END USER SETUP #########
 
 export pid=$$
-export DATA=${DATA:-/lfs/h1/nco/ptmp/$LOGNAME/tmp/${job}.${pid}} #wsr/tmp/${job}.${pid}}
+export DATA=${DATA:-/lfs/h2/nco/ptmp/$LOGNAME/tmp/${job}.${pid}} #wsr/tmp/${job}.${pid}}
 
 #echo stop here for testing
 #echo before sorted environment
@@ -588,7 +591,7 @@ if [[ $testmode = no ]]; then
 	scp *.png wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}
 
 else
-	if [ ! -s $COMOUT ]; then mkdir -p $COMOUTi_graphics; fi
+	if [ ! -s $COMOUT_graphics ]; then mkdir -p $COMOUT_graphics; fi
     cp -rfp *.png $COMOUT_graphics/
 
 	ssh -l $testuser $testrzdm "rm -rf  $testdirectory/test$expid/graphics/${PDY}"
