@@ -1,6 +1,6 @@
 #!/bin/ksh -l
-#PBS -N wsr_main_prod_20201120
-##PBS -o /lfs/h1/emc/ptmp/Xianwu.Xue/o/wsr_port2wcoss2/com/output/dev/20201120/wsr_main_00.%J
+#PBS -N wsr_main_prod_2021021500
+##PBS -o /lfs/h2/emc/ptmp/Xianwu.Xue/o/wsr_port2wcoss2/com/output/dev/20210215/wsr_main_00.%J
 #PBS -j oe
 #PBS -l select=1:ncpus=48
 ##PBS -R span[ptile=16]
@@ -17,11 +17,11 @@ export envir='dev'
 export RUN_ENVIR='dev'
 export WHERE_AM_I='wcoss2'
 export EXPID='port2wcoss2_new2_cominout'
-export GEFS_ROCOTO="/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}/rocoto"
-export WORKDIR="/lfs/h1/emc/ptmp/Xianwu.Xue/o/${EXPID}"
-export PDY='20201120'
+export GEFS_ROCOTO="/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}/rocoto"
+export WORKDIR="/lfs/h2/emc/ptmp/Xianwu.Xue/o/${EXPID}"
+export PDY='20210215'
 export cyc='00'
-export SOURCEDIR="/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}"
+export SOURCEDIR="/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}"
 export job=wsr_main_${EXPID}_${PDY}${cyc}
 
 #set -x

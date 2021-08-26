@@ -1,6 +1,6 @@
 #!/bin/ksh -l
-#PBS -N wsr_prep_prod_20201120
-##PBS -o /lfs/h1/emc/ptmp/Xianwu.Xue/o/wsr_port2wcoss2/com/output/dev/20201120/wsr_prep_00.%J
+#PBS -N wsr_prep_prod_2021021500
+##PBS -o /lfs/h2/emc/ptmp/Xianwu.Xue/o/wsr_port2wcoss2/com/output/dev/2021021500/wsr_prep_00.%J
 #PBS -j oe
 #PBS -l place=vscatter,select=1:ncpus=32:mem=100GB
 ##PBS -R span[ptile=16]
@@ -21,11 +21,11 @@ export envir='dev'
 export RUN_ENVIR='dev'
 export WHERE_AM_I='wcoss2'
 export EXPID='port2wcoss2_new2_cominout'
-export GEFS_ROCOTO="/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}/rocoto"
-export WORKDIR="/lfs/h1/emc/ptmp/Xianwu.Xue/o/${EXPID}"
-export PDY='20201120'
+export GEFS_ROCOTO="/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}/rocoto"
+export WORKDIR="/lfs/h2/emc/ptmp/Xianwu.Xue/o/${EXPID}"
+export PDY='20210215'
 export cyc='00'
-export SOURCEDIR="/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}"
+export SOURCEDIR="/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}"
 export job=wsr_prep_${EXPID}_${PDY}${cyc}
 
 #set -x
@@ -86,10 +86,10 @@ export COMROOT=$baseoutput/com
 export COMOUT=$baseoutput/$envir/com/${NET}/${ver}/${RUN}.${PDY}/prep
 export DATAROOT=$baseoutput/tmp
 
-export COMINgens=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/gefs/prod
-#export COMPATH=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/naefs/prod
-export COMINcmce=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/naefs/prod
-export DCOMROOT=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/dcom
+export COMINgens=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/gefs/prod
+#export COMPATH=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/naefs/prod
+export COMINcmce=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/naefs/prod
+export DCOMROOT=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/dcom
 
 # Export List
 export MP_EUIDEVICE=sn_all

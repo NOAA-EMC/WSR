@@ -45,7 +45,7 @@ if [[ $testmode = yes ]]; then
 
 	# these testmode settings are only used when testmode=yes
 
-	PTMP=/lfs/h1/emc/ptmp
+	PTMP=/lfs/h2/emc/ptmp
 
 	case $LOGNAME in
 		(SDM)
@@ -65,7 +65,7 @@ if [[ $testmode = yes ]]; then
 			testdirectory=/home/people/nco/www/htdocs/pmb/nwprod_wsr
 			useexpid=no
 			envir=para
-			#PDY=20201120 # For the Canned case
+			#PDY=20210215 # For the Canned case
 			;;
 		(Xianwu.Xue)
 			testemail=xianwu.xue@noaa.gov
@@ -74,9 +74,9 @@ if [[ $testmode = yes ]]; then
 			testdirectory=/home/www/emc/htdocs/gmb/xianwu.xue/wsr_sdm
 			useexpid=yes
 			envir=dev
-			PTMP=/lfs/h1/emc/ptmp
+			PTMP=/lfs/h2/emc/ptmp
 			expid=$(basename $(readlink -f `pwd`/../)) #port2wcoss2_new2_cominout
-			PDY=20201120
+			PDY=20210215
 			;;
 		(*)
 			echo Please add test settings to $0 for LOGNAME=$LOGNAME
