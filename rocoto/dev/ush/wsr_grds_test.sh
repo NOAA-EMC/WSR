@@ -212,7 +212,7 @@ module load GrADS/2.2.1-cce-11.0.4
 
 module list 
 
-export job=wsr_main_grads
+export job=wsr_grads
 
 COMDIR=${COMDIR:-$(compath.py ${envir}/com/${NET}/${ver})}
 if [ -z "$COMDIR" ]; then
