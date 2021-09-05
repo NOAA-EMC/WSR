@@ -35,10 +35,12 @@ case $scriptname in
 		;;
 esac
 
+. ../versions/run.ver
+
 NET=${NET:-wsr}
 RUN=${RUN:-wsr}
 envir=${envir:-prod}
-ver=${ver:-v3.3}
+ver=${ver:-$(echo ${wsr_ver:-v3.3.0}|cut -c1-4)}
 
 if [[ $testmode = yes ]]; then
 

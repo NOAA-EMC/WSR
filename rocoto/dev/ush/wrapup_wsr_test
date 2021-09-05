@@ -14,7 +14,12 @@
 NET=${NET:-wsr}
 RUN=${RUN:-wsr}
 envir=${envir:-prod}
-ver=${ver:-v3.3}
+if [[ $useexpid = no ]]; then
+	. ${PACKAGEROOT}/wsr.${wsr_ver}/versions/run.ver
+else
+	. ../../../versions/run.ver
+fi
+ver=${ver:-$(echo ${wsr_ver:-v3.3.0}|cut -c1-4)}
 
 scriptname=`basename $0`
 case $scriptname in

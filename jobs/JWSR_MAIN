@@ -17,7 +17,7 @@ set -x
 export jobid=${jobid:-"$job.$PBS_JOBID"}
 export pgmout="OUTPUT.${PBS_JOBID}"
 export pgmerr=errfile
-export ver=${ver:-v3.3}
+export ver=${ver:-$(echo ${wsr_ver:-v3.3.0}|cut -c1-4)}
 
 export DATA=${DATA:-${DATAROOT:?}/${jobid:?}}
 mkdir -p $DATA

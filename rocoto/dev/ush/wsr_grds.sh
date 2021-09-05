@@ -19,9 +19,13 @@ export PS4='$SECONDS + $(basename ${0})[$LINENO] '
 NET=${NET:-wsr}
 RUN=${RUN:-wsr}
 envir=${envir:-prod}
-ver=${ver:-v3.3}
 
-#. ${NWROOT:-/gpfs/dell1/nco/ops/nw${envir:-prod}}/versions/wsr.ver
+if [[ $useexpid = no ]]; then
+	. ${PACKAGEROOT}/wsr.${wsr_ver}/versions/run.ver
+else
+	. ../../../versions/run.ver
+fi
+ver=${ver:-$(echo ${wsr_ver:-v3.3.0}|cut -c1-4)}
 
 # for production, name this script wsr_grds.sh
 # for testing, name this script wsr_grds_test.sh
@@ -207,7 +211,6 @@ module load envvar/1.0
 #module use /apps/test/lmodules/core
 #module load GrADS/2.2.1
 module use -a /apps/test/modules
-module avail grads
 module load GrADS/2.2.1-cce-11.0.4
 
 module list 

@@ -14,7 +14,7 @@ set -x
 export jobid=${jobid:-"$job.$PBS_JOBID"}
 export pgmout="OUTPUT.${PBS_JOBID}"
 export pgmerr=errfile
-export ver=${ver:-v3.3}
+export ver=${ver:-$(echo ${wsr_ver:-v3.3.0}|cut -c1-4)}
 
 export DATA=${DATA:-${DATAROOT:?}/${jobid:?}}
 mkdir -p $DATA
@@ -73,8 +73,10 @@ setpdy.sh
 ##############################
 # Define COM directories
 ##############################
-export COMINgens=${COMINgens:-$(compath.py prod/com/gefs/v12.2)}
-export COMINcmce=${COMINcmce:-$(compath.py prod/naefs/v6.2)}
+export ver_gefs=${ver_gefs:-v12.2}
+export ver_naefs=${ver_naefs:-v6.2}
+export COMINgens=${COMINgens:-$(compath.py prod/com/gefs/${ver_gefs})}
+export COMINcmce=${COMINcmce:-$(compath.py prod/naefs/${ver_naefs})}
 
 COMDIR=$(compath.py ${envir}/com/${NET}/${ver})
 if [ -z $COMDIR ]; then
