@@ -159,12 +159,7 @@ PDY=${PDY:-${curyy}${curmm}${curdd}}
 ####################################
 # Set Working Directories
 ####################################
-COMDIR=${COMDIR:-$(compath.py ${envir}/com/${NET}/${ver})}
-if [ -z "$COMDIR" ]; then
-	COMROOT=${COMROOT:-/lfs/h1/ops/prod/com}
-	COMDIR=${COMROOT}/${NET}/${ver}
-fi
-COMOUT=${COMOUT:-${COMDIR}/${RUN}.${PDY}/setup}
+COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup}
 
 if [ ! -s $COMOUT ]; then mkdir -p $COMOUT; fi
 echo COMOUT=$COMOUT

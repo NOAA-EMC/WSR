@@ -5,10 +5,11 @@
 #PBS -l place=vscatter,select=1:ncpus=32:mem=100GB
 ##PBS -R span[ptile=16]
 ##PBS -R 'affinity[core(1)]'
-#PBS -q workq
+#PBS -q dev
 #PBS -l walltime=1:20:00
 ##PBS -L /bin/sh
-#PBS -A GEN-T2O
+#PBS -A GEFS-DEV
+#PBS -l debug=true
 
 set -x
 #module purge
@@ -20,12 +21,13 @@ cd $PBS_O_WORKDIR
 export envir='dev'
 export RUN_ENVIR='dev'
 export WHERE_AM_I='wcoss2'
-export EXPID='port2wcoss2_new2_cominout'
-export GEFS_ROCOTO="/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}/rocoto"
+export EXPID='wsr_wcoss2_final'
+export SOURCEDIR="/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}"
+export GEFS_ROCOTO="${SOURCEDIR}/rocoto"
 export WORKDIR="/lfs/h2/emc/ptmp/Xianwu.Xue/o/${EXPID}"
+
 export PDY='20210215'
 export cyc='00'
-export SOURCEDIR="/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}"
 export job=wsr_prep_${EXPID}_${PDY}${cyc}
 
 #set -x
@@ -33,7 +35,7 @@ ulimit -s unlimited
 ulimit -a
 
 # module_ver.h
-. $SOURCEDIR/versions/run.ver #wsr_wcoss2.ver
+. $SOURCEDIR/versions/run.ver
 
 module purge
 module load envvar/$envvar_ver
@@ -47,13 +49,8 @@ module load cray-pals/$cray_pals_ver
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
 
-module load grib_util/$grib_util_ver
-
-#module load cce/11.0.2
-#module load gcc/10.2.0
 module load libjpeg/$libjpeg_ver
-
-#module load lsf/$lsf_ver
+module load grib_util/$grib_util_ver
 
 module load cfp/$cfp_ver
 export USE_CFP=YES
@@ -63,7 +60,7 @@ export KEEPDATA=YES
 
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export envir=${envir:-dev}
-export ver=${ver:-v3.3}
+export ver=${ver:-$(echo ${wsr_ver:-v3.3.0}|cut -c1-4)}
 
 export NET=${NET:-wsr}
 export RUN=${RUN:-wsr}
@@ -83,13 +80,20 @@ export baseoutput=$WORKDIR
 
 export HOMEwsr=$basesource
 export COMROOT=$baseoutput/com
-export COMOUT=$baseoutput/$envir/com/${NET}/${ver}/${RUN}.${PDY}/prep
+#export COMOUT=$baseoutput/$envir/com/${NET}/${ver}/${RUN}.${PDY}/prep
 export DATAROOT=$baseoutput/tmp
 
-export COMINgens=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/gefs/prod
+#export COMINgens=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/gefs/prod
 #export COMPATH=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/naefs/prod
-export COMINcmce=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/naefs/prod
-export DCOMROOT=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/dcom
+#export COMINcmce=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/naefs/prod
+#export DCOMROOT=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/dcom
+
+export HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR
+#export HOMEdata=/lfs/h1/ops
+
+export COMPATH=$HOMEdata/canned/com/gefs:$HOMEdata/canned/com/naefs:${WORKDIR}/$envir/com/${NET} #$COMROOT/$RUN
+export DCOMROOT=${HOMEdata}/canned/dcom
+
 
 # Export List
 export MP_EUIDEVICE=sn_all
@@ -101,5 +105,6 @@ export MP_CSS_INTERRUPT=yes
 
 export OMP_NUM_THREADS=1
 
+export envir=prod
 #${GEFS_ROCOTO}/bin/wcoss2/wsr_prep.sh
 $SOURCEDIR/jobs/JWSR_PREP

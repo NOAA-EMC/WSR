@@ -64,16 +64,9 @@ export FIXwsr=$HOMEwsr/fix
 setpdy.sh
 . ./PDY
 
-
-COMDIR=$(compath.py ${envir}/com/${NET}/${ver})
-if [ -z $COMDIR ]; then
-	COMROOT=${COMROOT:-/lfs/h1/ops/prod/com}
-    COMDIR=${COMROOT}/${NET}/${ver}
-fi
-
-export COMIN=${COMIN:-${COMDIR}/${RUN}}
-export COMIN_setup=${COMIN_setup:-${COMDIR}/${RUN}.${PDY}/setup}
-export COMOUT=${COMOUT:-${COMDIR}/${RUN}.${PDY}/main}
+export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}}
+export COMIN_setup=${COMIN_setup:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup}
+export COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/main}
 
 mkdir -p $COMOUT
 
