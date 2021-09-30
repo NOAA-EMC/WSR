@@ -87,7 +87,7 @@ env
 
 ########################################################
 # Execute the script.
-$HOMEwsr/scripts/exwsr_prep.sh.ecf
+$HOMEwsr/scripts/exwsr_prep.sh
 export err=$?; err_chk
 ########################################################
 

@@ -104,7 +104,7 @@ env|sort
 
 ########################################################
 # Execute the script.
-$HOMEwsr/scripts/exwsr_main.sh.ecf
+$HOMEwsr/scripts/exwsr_main.sh
 export err=$?; err_chk
 ########################################################
 
