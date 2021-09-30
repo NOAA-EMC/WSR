@@ -37,6 +37,16 @@ esac
 
 . ../versions/run.ver
 
+module purge
+
+module load envvar/$envvar_ver
+
+module load prod_envir/$prod_envir_ver
+module load prod_util/$prod_util_ver
+
+module list
+
+
 NET=${NET:-wsr}
 RUN=${RUN:-wsr}
 envir=${envir:-prod}
@@ -45,8 +55,6 @@ ver=${ver:-$(echo ${wsr_ver:-v3.3.0}|cut -c1-4)}
 if [[ $testmode = yes ]]; then
 
 	# these testmode settings are only used when testmode=yes
-
-	PTMP=/lfs/h2/emc/ptmp
 
 	case $LOGNAME in
 		(SDM)
@@ -77,7 +85,9 @@ if [[ $testmode = yes ]]; then
 			envir=dev
 			PTMP=/lfs/h2/emc/ptmp
 			expid=$(basename $(readlink -f `pwd`/../))
-			PDY=20210215
+			PDY=20210215 #20210215 20201120
+			export COMPATH=$PTMP/$LOGNAME/o/$expid/$envir/com/${NET}
+			envir=prod #To make compath.py get the right path
 			;;
 		(*)
 			echo Please add test settings to $0 for LOGNAME=$LOGNAME
@@ -130,13 +140,7 @@ if [[ $testmode = yes ]]; then
 		done
 
 		# specify expid here if the procedure above does not choose it appropriately
-
 		echo expid=$expid
-
-		COMROOT=$PTMP/$LOGNAME/o/$expid/${envir}/com
-		COMDIR=${COMROOT}/${NET}/${ver}
-
-		echo COMDIR=$COMDIR
 
 	fi
 

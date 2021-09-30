@@ -26,7 +26,7 @@ export SOURCEDIR="/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}"
 export GEFS_ROCOTO="${SOURCEDIR}/rocoto"
 export WORKDIR="/lfs/h2/emc/ptmp/Xianwu.Xue/o/${EXPID}"
 
-export PDY='20210215'
+export PDY='20210215' #'20201120' #'20210215'
 export cyc='00'
 export job=wsr_prep_${EXPID}_${PDY}${cyc}
 
@@ -60,7 +60,7 @@ export KEEPDATA=YES
 
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export envir=${envir:-dev}
-export ver=${ver:-$(echo ${wsr_ver:-v3.3.0}|cut -c1-4)}
+#export ver=${ver:-$(echo ${wsr_ver:-v3.3.0}|cut -c1-4)}
 
 export NET=${NET:-wsr}
 export RUN=${RUN:-wsr}
@@ -75,13 +75,9 @@ export KEEPDATA=${KEEPDATA:-NO}
 
 # Enviorenmenat variables related to Development work place and output files
 #
-export basesource=$SOURCEDIR
-export baseoutput=$WORKDIR
-
-export HOMEwsr=$basesource
-export COMROOT=$baseoutput/com
-#export COMOUT=$baseoutput/$envir/com/${NET}/${ver}/${RUN}.${PDY}/prep
-export DATAROOT=$baseoutput/tmp
+export HOMEwsr=$SOURCEDIR
+export COMROOT=$WORKDIR/$envir/com
+export DATAROOT=$WORKDIR/tmp
 
 #export COMINgens=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/gefs/prod
 #export COMPATH=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/naefs/prod

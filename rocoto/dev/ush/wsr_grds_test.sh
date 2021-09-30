@@ -20,12 +20,27 @@ NET=${NET:-wsr}
 RUN=${RUN:-wsr}
 envir=${envir:-prod}
 
-if [[ $useexpid = no ]]; then
-	. ${PACKAGEROOT}/wsr.${wsr_ver}/versions/run.ver
-else
-	. ../../../versions/run.ver
-fi
-ver=${ver:-$(echo ${wsr_ver:-v3.3.0}|cut -c1-4)}
+#if [[ $useexpid = no ]]; then
+#	. ${PACKAGEROOT}/wsr.${wsr_ver}/versions/run.ver
+#else
+#	. ../../../versions/run.ver
+#fi
+#ver=${ver:-$(echo ${wsr_ver:-v3.3.0}|cut -c1-4)}
+. ../../../versions/run.ver
+
+#shellname=ksh
+module purge
+
+module load envvar/1.0
+
+module load prod_envir/2.0.5
+module load prod_util/2.0.9
+module use /apps/test/lmodules/core
+module load GrADS/2.2.1
+#module use -a /apps/test/modules
+#module load GrADS/2.2.1-cce-11.0.4
+
+module list
 
 # for production, name this script wsr_grds.sh
 # for testing, name this script wsr_grds_test.sh
@@ -91,11 +106,14 @@ if [[ $testmode = yes ]]; then
 			testbase=null
 			HOMEwsr=`pwd`/../../../
 			FIXwsr=`pwd`/../../../fix
-			PDY=20210215
-			COMDIR=$testtmpdir/$expid/${envir}/com/${NET}/${ver}
-			COMIN_setup=${COMDIR}/${RUN}.$PDY/setup #nwges/$envir/wsr ${NET}/${ver}
-			COMIN=${COMDIR}/${RUN}.$PDY/main #$testtmpdir/$expid/com/wsr/$envir #/wsr.$PDY/main
-			COMOUT_graphics=${COMDIR}/${RUN}.$PDY/graphics
+			PDY=20210215 #20201120 #20210215
+			export DATAROOT=$testtmpdir/$expid/tmp
+			export COMPATH=$testtmpdir/$expid/$envir/com/${NET}
+			export testenvir=prod #To make compath.py get the right path
+			#COMDIR=$testtmpdir/$expid/${envir}/com/${NET}/${ver}
+			#COMIN_setup=${COMDIR}/${RUN}.$PDY/setup #nwges/$envir/wsr ${NET}/${ver}
+			#COMIN=${COMDIR}/${RUN}.$PDY/main #$testtmpdir/$expid/com/wsr/$envir #/wsr.$PDY/main
+			#COMOUT_graphics=${COMDIR}/${RUN}.$PDY/graphics
 			;;
 		(*)
 			echo Please add test settings to $0 for LOGNAME=$LOGNAME
@@ -161,30 +179,32 @@ if [[ $testmode = yes ]]; then
 
 		echo expid=$expid
 
-		export COMIN_setup=${COMIN_setup:-/lfs/h2/emc/ptmp/$LOGNAME/o/$expid/${envir}/com/${NET}/${ver}/${RUN}.$PDY/setup}
-		export COMIN=${COMIN:-/lfs/h2/emc/ptmp/$LOGNAME/o/$expid/${envir}/${envir}/com/${NET}/${ver}/${RUN}.$PDY/main}
-		export COMOUT_graphics=${COMOUT_graphics:-${COMDIR}/${RUN}.$PDY/graphics}
+		#export COMIN_setup=${COMIN_setup:-/lfs/h2/emc/ptmp/$LOGNAME/o/$expid/${envir}/com/${NET}/${ver}/${RUN}.$PDY/setup}
+		#export COMIN=${COMIN:-/lfs/h2/emc/ptmp/$LOGNAME/o/$expid/${envir}/${envir}/com/${NET}/${ver}/${RUN}.$PDY/main}
+		#export COMOUT_graphics=${COMOUT_graphics:-${COMDIR}/${RUN}.$PDY/graphics}
 
 		#testbase=/ensemble/save/$LOGNAME/nw$envir
 		#testbase=/ensemble/save/$LOGNAME/s/$expid/nw$envir
-		testbase=${testbase:-/gpfs/dell2/emc/modeling/noscrub/$LOGNAME/s/$expid/nw$envir}
+		#testbase=${testbase:-/gpfs/dell2/emc/modeling/noscrub/$LOGNAME/s/$expid/nw$envir}
 		#. $testbase/wsr*/versions/wsr.ver
 		#export HOMEwsr=$testbase/wsr.${wsr_ver}/ush
-		export HOMEwsr=${HOMEwsr:-$testbase/wsr.${wsr_ver}}
-		export FIXwsr=${FIXwsr:-$testbase/wsr.${wsr_ver}/fix}
+		#export HOMEwsr=${HOMEwsr:-$testbase/wsr.${wsr_ver}}
+		#export FIXwsr=${FIXwsr:-$testbase/wsr.${wsr_ver}/fix}
 
-		testtmpdir=$testtmpdir/$expid
-		export pid=$$
-		dtg=`date +%Y%m%d%H%M%S`
-		export DATA=$testtmpdir/tmp/wsr_grads.${pid}.$dtg #wsr/tmp/wsr.${pid}.$dtg
+		#testtmpdir=$testtmpdir/$expid
+		#export pid=$$
+		#dtg=`date +%Y%m%d%H%M%S`
+		#export DATA=$testtmpdir/tmp/wsr_grads.${pid}.$dtg #wsr/tmp/wsr.${pid}.$dtg
 
-		echo COMIN_setup=$COMIN_setup
-		echo COMIN=$COMIN
-		echo testbase=$testbase
-		echo HOMEwsr=$HOMEwsr
-		echo FIXwsr=$FIXwsr
-		echo testtmpdir=$testtmpdir
-		echo DATA=$DATA
+		#echo COMIN_setup=$COMIN_setup
+		#echo COMIN=$COMIN
+		#echo testbase=$testbase
+		#echo HOMEwsr=$HOMEwsr
+		#echo FIXwsr=$FIXwsr
+		#echo testtmpdir=$testtmpdir
+		#echo DATA=$DATA
+		#export pid=$$
+		#export DATA=${DATA:-${DATAROOT:?}/${job}.${pid}}
 
 	fi
 
@@ -199,35 +219,31 @@ fi
 # end set up test mode
 ####################################
 #. ${NWROOT:-/gpfs/dell1/nco/ops/nw${envir:-prod}}/versions/wsr.ver
-if [[ $useexpid = no ]]; then
-	. ${PACKAGEROOT}/wsr.${wsr_ver}/versions/run.ver
-fi
+#if [[ $useexpid = no ]]; then
+#	. ${PACKAGEROOT}/wsr.${wsr_ver}/versions/run.ver
+#fi
 
 #shellname=ksh
-module purge
+#module purge
 
-module load envvar/1.0
+#module load envvar/1.0
 
+#module load prod_envir/2.0.5
+#module load prod_util/2.0.9
 #module use /apps/test/lmodules/core
 #module load GrADS/2.2.1
-module use -a /apps/test/modules
-module load GrADS/2.2.1-cce-11.0.4
+#module use -a /apps/test/modules
+#module load GrADS/2.2.1-cce-11.0.4
 
-module list 
+#module list 
 
 export job=wsr_grads
 
-COMDIR=${COMDIR:-$(compath.py ${envir}/com/${NET}/${ver})}
-if [ -z "$COMDIR" ]; then
-	COMROOT=${COMROOT:-/lfs/h1/ops/prod/com}
-	COMDIR=${COMROOT}/${NET}/${ver}
-fi
-export COMIN_setup=${COMIN_setup:-${COMDIR}/${RUN}.${PDY}/setup}
-export COMIN=${COMIN:-${COMDIR}/${RUN}.${PDY}/main}
-export COMOUT_graphics=${COMOUT_graphics:-${COMDIR}/${RUN}.${PDY}/graphics}
-#export COMIN_setup=${COMIN_setup:-/lfs/h1/ops/${envir}/com/${NET}/${ver}/$RUN.$PDY/setup}
-#export COMIN=${COMIN:-/lfs/h1/ops/${envir}/com/${NET}/${ver}/$RUN.$PDY/main}
-#export COMOUT_graphics=${COMOUT_graphics:-/lfs/h1/ops/${envir}/com/${NET}/${ver}/$RUN.$PDY/graphics}
+export ver=${ver:-$(echo ${wsr_ver:-v3.3.0}|cut -c1-4)}
+
+export COMIN_setup=${COMIN_setup:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup}
+export COMIN_main=${COMIN_main:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/main}
+export COMOUT_graphics=${COMOUT_graphics:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/graphics}
 
 export RAWINSONDES=${RAWINSONDES:-"YES"}
 if [[ $testmode = no ]]; then
@@ -245,7 +261,7 @@ export sdmprinter=${sdmprinter:-hp26_sdm}
 #export PATH=.:$PATH:$HOMEwsr/grads
 
 echo COMIN_setup=$COMIN_setup
-echo COMIN=$COMIN
+echo COMIN_main=$COMIN_main
 echo RAWINDSONDES=$RAWINSONDES
 echo PRINTSDM=$PRINTSDM
 echo HOMEwsr=$HOMEwsr
@@ -255,7 +271,8 @@ echo sdmprinter=$sdmprinter
 ### END USER SETUP #########
 
 export pid=$$
-export DATA=${DATA:-/lfs/h2/nco/ptmp/$LOGNAME/tmp/${job}.${pid}} #wsr/tmp/${job}.${pid}}
+export DATA=${DATA:-${DATAROOT:?}/${job}.${pid}}
+#${DATA:-/lfs/h2/nco/ptmp/$LOGNAME/tmp/${job}.${pid}} #wsr/tmp/${job}.${pid}}
 
 #echo stop here for testing
 #echo before sorted environment
@@ -272,7 +289,7 @@ cases=`head -2 $COMIN_setup/targdata.d | tail -1`
 
 #COMIN_setup=${GCOMIN_setupESdir}/wsr.$PDY/setup
 #COMIN=${COMIN}/wsr.$PDY/main
-. ${COMIN}/case1.env
+. ${COMIN_main}/case1.env
 
 #cp $HOMEwsr/fix/wsr_track.* .
 # JY if [[ $testmode = no ]]; then

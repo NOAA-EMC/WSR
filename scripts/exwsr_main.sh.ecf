@@ -549,7 +549,7 @@ do
 	#poe $EXECwsr/wsr_summ_allnorms < params >> $pgmout 2> errfile
 	#$wsrmpexec $EXECwsr/wsr_summ_allnorms < params >> $pgmout 2> errfile
 	#$wsrmpexec -n 48 -ppn 24 --cpu-bind core --depth 2 $EXECwsr/wsr_summ_allnorms < params >> $pgmout 2> errfile
-	$EXECwsr/wsr_summ_allnorms < params >> $pgmout 2> errfile
+	$wsrmpexec -n 48 -ppn 24 $EXECwsr/wsr_summ_allnorms < params >> $pgmout 2> errfile
 
 	export err=$?;err_chk
 

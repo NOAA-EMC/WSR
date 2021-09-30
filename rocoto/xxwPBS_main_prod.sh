@@ -2,12 +2,13 @@
 #PBS -N wsr_main_prod_2021021500
 ##PBS -o /lfs/h2/emc/ptmp/Xianwu.Xue/o/wsr_port2wcoss2/com/output/dev/20210215/wsr_main_00.%J
 #PBS -j oe
-#PBS -l select=1:ncpus=48
+#PBS -l select=1:ncpus=48:mem=10GB
 ##PBS -R span[ptile=16]
-#PBS -q workq
+#PBS -q dev
 #PBS -l walltime=0:45:00
 ##PBS -L /bin/sh
-#PBS -A GEN-T2O
+#PBS -A GEFS-DEV
+#PBS -l debug=true
 
 set -x
 module purge
@@ -16,12 +17,13 @@ module purge
 export envir='dev'
 export RUN_ENVIR='dev'
 export WHERE_AM_I='wcoss2'
-export EXPID='port2wcoss2_new2_cominout'
-export GEFS_ROCOTO="/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}/rocoto"
-export WORKDIR="/lfs/h2/emc/ptmp/Xianwu.Xue/o/${EXPID}"
-export PDY='20210215'
-export cyc='00'
+export EXPID='wsr_wcoss2_final'
 export SOURCEDIR="/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}"
+export GEFS_ROCOTO="${SOURCEDIR}/rocoto"
+export WORKDIR="/lfs/h2/emc/ptmp/Xianwu.Xue/o/${EXPID}"
+
+export PDY='20210215' #'20201120' #'20210215'
+export cyc='00'
 export job=wsr_main_${EXPID}_${PDY}${cyc}
 
 #set -x
@@ -29,7 +31,7 @@ ulimit -s unlimited
 ulimit -a
 
 # module_ver.h
-. $SOURCEDIR/versions/run.ver #wsr_wcoss2.ver
+. $SOURCEDIR/versions/run.ver
 
 module purge
 module load envvar/$envvar_ver
@@ -45,14 +47,14 @@ module load prod_envir/$prod_envir_ver
 
 module list
 
-KEEPDATA=YES
+export KEEPDATA=YES
 
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export envir=${envir:-dev}
 export NET=${NET:-wsr}
 export RUN=${RUN:-wsr}
 
-export ver=${ver:-v3.3}
+#export ver=${ver:-v3.3}
 
 export SENDDBN=${SENDDBN:-NO}
 export SENDDBN_NTC=${SENDDBN_NTC:-NO}
@@ -64,14 +66,14 @@ export KEEPDATA=${KEEPDATA:-NO}
 
 # Enviorenmenat variables related to Development work place and output files
 #
-export basesource=$SOURCEDIR
-export baseoutput=$WORKDIR
 
-export HOMEwsr=$basesource
-export COMROOT=$baseoutput/${envir}/com
+export HOMEwsr=$SOURCEDIR
+export COMROOT=$WORKDIR/${envir}/com
 #export COMIN=$baseoutput/$envir/com/${NET}/${ver}/${RUN}.${PDY}/prep
 #export COMOUT=$baseoutput/$envir/com/${NET}/${ver}/${RUN}.${PDY}/main
-export DATAROOT=$baseoutput/tmp
+export DATAROOT=$WORKDIR/tmp
+
+export COMPATH=${WORKDIR}/$envir/com/${NET}
 
 # Export List
 #export MP_SHARED_MEMORY=yes
@@ -79,6 +81,7 @@ export MP_TASK_AFFINITY=core
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
 
+export envir=prod
 #${GEFS_ROCOTO}/bin/wcoss2/wsr_main.sh
 $SOURCEDIR/jobs/JWSR_MAIN
 ~                                                                                                                                                              
