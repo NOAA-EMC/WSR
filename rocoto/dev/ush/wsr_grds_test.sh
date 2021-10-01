@@ -35,10 +35,10 @@ module load envvar/1.0
 
 module load prod_envir/2.0.5
 module load prod_util/2.0.9
-module use /apps/test/lmodules/core
-module load GrADS/2.2.1
-#module use -a /apps/test/modules
-#module load GrADS/2.2.1-cce-11.0.4
+#module use /apps/test/lmodules/core
+#module load GrADS/2.2.1
+module use -a /apps/test/modules
+module load GrADS/2.2.1-cce-11.0.4
 
 module list
 

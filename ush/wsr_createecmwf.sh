@@ -118,10 +118,10 @@ if [[ $ifort -eq 1 ]]; then
 	#ecdir2=/dcom/us007003/${PDY2}/wgrbbul/ecmwf
 	#ecdir3=/dcom/us007003/${PDY3}/wgrbbul/ecmwf
 	#ecdir4=/dcom/us007003/${PDY4}/wgrbbul/ecmwf
-	ecdir1=${DCOMROOT}/prod/${PDY1}/wgrbbul/ecmwf
-	ecdir2=${DCOMROOT}/prod/${PDY2}/wgrbbul/ecmwf
-	ecdir3=${DCOMROOT}/prod/${PDY3}/wgrbbul/ecmwf
-	ecdir4=${DCOMROOT}/prod/${PDY4}/wgrbbul/ecmwf
+	ecdir1=${DCOMROOT}/${PDY1}/wgrbbul/ecmwf
+	ecdir2=${DCOMROOT}/${PDY2}/wgrbbul/ecmwf
+	ecdir3=${DCOMROOT}/${PDY3}/wgrbbul/ecmwf
+	ecdir4=${DCOMROOT}/${PDY4}/wgrbbul/ecmwf
 
 	i=1
 	while [[ $i -le $ntimes ]]
