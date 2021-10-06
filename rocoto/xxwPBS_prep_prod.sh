@@ -26,7 +26,7 @@ export SOURCEDIR="/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}"
 export GEFS_ROCOTO="${SOURCEDIR}/rocoto"
 export WORKDIR="/lfs/h2/emc/ptmp/Xianwu.Xue/o/${EXPID}"
 
-export PDY='20210215' #'20201120' #'20210215'
+export PDY='20201120' #'20201120' #'20210215'
 export cyc='00'
 export job=wsr_prep_${EXPID}_${PDY}${cyc}
 
@@ -40,7 +40,7 @@ ulimit -a
 module purge
 module load envvar/$envvar_ver
 module load intel/$intel_ver
-module load PrgEnv-intel/$prgenv_intel_ver
+module load PrgEnv-intel/$PrgEnv_intel_ver
 
 module load craype/$craype_ver
 module load cray-mpich/$cray_mpich_ver

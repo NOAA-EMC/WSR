@@ -36,7 +36,7 @@ ulimit -a
 module purge
 module load envvar/$envvar_ver
 module load intel/$intel_ver
-module load PrgEnv-intel/$prgenv_intel_ver
+module load PrgEnv-intel/$PrgEnv_intel_ver
 
 module load craype/$craype_ver
 module load cray-mpich/$cray_mpich_ver
