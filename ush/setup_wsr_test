@@ -40,12 +40,10 @@ esac
 module purge
 
 module load envvar/$envvar_ver
-
 module load prod_envir/$prod_envir_ver
 module load prod_util/$prod_util_ver
 
 module list
-
 
 NET=${NET:-wsr}
 RUN=${RUN:-wsr}
@@ -65,6 +63,7 @@ if [[ $testmode = yes ]]; then
 			testdirectory=/home/people/nco/www/htdocs/pmb/sdm_wsr
 			useexpid=no
 			envir=para
+			#PDY=20210215 # For the Canned case
 			;;
 		(ops.prod)
 			# these are the production locations, edit them to use test locations
