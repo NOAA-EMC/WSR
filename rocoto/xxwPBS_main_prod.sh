@@ -1,17 +1,14 @@
-#!/bin/ksh -l
 #PBS -N wsr_main_prod_2021021500
-##PBS -o /lfs/h2/emc/ptmp/Xianwu.Xue/o/wsr_port2wcoss2/com/output/dev/20210215/wsr_main_00.%J
 #PBS -j oe
-#PBS -l select=1:ncpus=48:mem=10GB
-##PBS -R span[ptile=16]
+#PBS -S /bin/bash
 #PBS -q dev
-#PBS -l walltime=0:45:00
-##PBS -L /bin/sh
 #PBS -A GEFS-DEV
+#PBS -l walltime=0:45:00
+#PBS -l select=1:ncpus=48:mem=10GB
 #PBS -l debug=true
 
 set -x
-module purge
+#module purge
 
 
 export envir='dev'
@@ -68,7 +65,7 @@ export KEEPDATA=${KEEPDATA:-NO}
 #
 
 export HOMEwsr=$SOURCEDIR
-export COMROOT=$WORKDIR/${envir}/com
+#export COMROOT=$WORKDIR/${envir}/com
 #export COMIN=$baseoutput/$envir/com/${NET}/${ver}/${RUN}.${PDY}/prep
 #export COMOUT=$baseoutput/$envir/com/${NET}/${ver}/${RUN}.${PDY}/main
 export DATAROOT=$WORKDIR/tmp
@@ -82,7 +79,6 @@ export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
 
 export envir=prod
-#${GEFS_ROCOTO}/bin/wcoss2/wsr_main.sh
-$SOURCEDIR/jobs/JWSR_MAIN
+${HOMEwsr:?}/jobs/JWSR_MAIN
 ~                                                                                                                                                              
 

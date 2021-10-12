@@ -13,7 +13,7 @@
 ## @ queue
 
 set -xua
-export PS4='$SECONDS + $(basename ${0})[$LINENO] ' 
+export PS4='$SECONDS + $(basename ${0})[$LINENO] '
 ### USER SETUP
 
 NET=${NET:-wsr}
@@ -29,6 +29,7 @@ envir=${envir:-prod}
 . ../../../versions/run.ver
 
 #shellname=ksh
+. /usr/share/lmod/lmod/init/profile
 module purge
 
 module load envvar/1.0
@@ -110,10 +111,6 @@ if [[ $testmode = yes ]]; then
 			export DATAROOT=$testtmpdir/$expid/tmp
 			export COMPATH=$testtmpdir/$expid/$envir/com/${NET}
 			export testenvir=prod #To make compath.py get the right path
-			#COMDIR=$testtmpdir/$expid/${envir}/com/${NET}/${ver}
-			#COMIN_setup=${COMDIR}/${RUN}.$PDY/setup #nwges/$envir/wsr ${NET}/${ver}
-			#COMIN=${COMDIR}/${RUN}.$PDY/main #$testtmpdir/$expid/com/wsr/$envir #/wsr.$PDY/main
-			#COMOUT_graphics=${COMDIR}/${RUN}.$PDY/graphics
 			;;
 		(*)
 			echo Please add test settings to $0 for LOGNAME=$LOGNAME
@@ -272,7 +269,6 @@ echo sdmprinter=$sdmprinter
 
 export pid=$$
 export DATA=${DATA:-${DATAROOT:?}/${job}.${pid}}
-#${DATA:-/lfs/h2/nco/ptmp/$LOGNAME/tmp/${job}.${pid}} #wsr/tmp/${job}.${pid}}
 
 #echo stop here for testing
 #echo before sorted environment

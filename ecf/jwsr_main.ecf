@@ -1,21 +1,18 @@
-#PBS -N %E%wsr_main_%CYC%
-#PBS -o %COM%/output/%ENVIR%/today/wsr_main_%CYC%.o%J
+#PBS -N wsr_main_%CYC%
 #PBS -j oe
-##PBS -L /bin/sh
+#PBS -S /bin/bash
 #PBS -q %QUEUE%
-#PBS -l select=1:ncpus=48
-#PBS -l walltime=0:45:00
-#PBS -cwd /tmp
 #PBS -A %PROJ%-%PROJENVIR%
+#PBS -l walltime=0:45:00
+#PBS -l select=1:ncpus=48:mem=10GB
+#PBS -l debug=true
+
+export model=wsr
 
 %include <head.h>
 %include <envir-p1.h>
 
 export cyc=%CYC%
-
-# versions file for WSR model $model_ver
-model=wsr
-%include <model_ver.h>
 
 cd $PBS_O_WORKDIR
 
@@ -39,6 +36,9 @@ module list
 export MP_TASK_AFFINITY=core
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
+
+# For Canned Data
+# export PDY='20210215'
 
 ${HOMEwsr:?}/jobs/JWSR_MAIN
 

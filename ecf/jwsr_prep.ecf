@@ -1,21 +1,19 @@
-#PBS -N %E%wsr_prep_%CYC%
+#PBS -N wsr_prep_%CYC%
 #PBS -j oe
-#PBS -o %COM%/output/%ENVIR%/today/wsr_prep_%CYC%.o%J
-##PBS -L /bin/sh
+#PBS -S /bin/sh
 #PBS -q %QUEUE%
-#PBS -l walltime=1:20:00
-#PBS -cwd /tmp
-#PBS -l place=vscatter,select=1:ncpus=32:mem=100GB
 #PBS -A %PROJ%-%PROJENVIR%
+#PBS -l walltime=1:20:00
+#PBS -l place=vscatter,select=1:ncpus=16:mem=30GB
+##PBS -l place=vscatter,select=1:ncpus=%NTASK%:mpiprocs=%PTILE%:ompthreads=1:mem=30GB
+#PBS -l debug=true
 
+export model=wsr
 
 %include <head.h>
 %include <envir-p1.h>
 
 export cyc=%CYC%
-
-model=wsr
-%include <model_ver.h>
 
 cd $PBS_O_WORKDIR
 
@@ -30,11 +28,8 @@ module load cray-pals/$cray_pals_ver
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
 
-module load grib_util/$grib_util_ver
-
 module load libjpeg/$libjpeg_ver
-
-#module load lsf/$lsf_ver
+module load grib_util/$grib_util_ver
 
 module load cfp/$cfp_ver
 export USE_CFP=YES
@@ -48,6 +43,11 @@ export MP_PGMMODEL=mpmd
 export MP_CSS_INTERRUPT=yes
 
 export OMP_NUM_THREADS=1
+
+# For Canned Data
+# export PDY='20210215'
+# export COMPATH=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/canned/com/gefs:/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/canned/com/naefs
+# export DCOMROOT=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/canned/dcom
 
 ${HOMEwsr:?}/jobs/JWSR_PREP
 

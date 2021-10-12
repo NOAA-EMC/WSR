@@ -1,14 +1,10 @@
-#!/bin/ksh -l
 #PBS -N wsr_prep_prod_2021021500
-##PBS -o /lfs/h2/emc/ptmp/Xianwu.Xue/o/wsr_port2wcoss2/com/output/dev/2021021500/wsr_prep_00.%J
 #PBS -j oe
-#PBS -l place=vscatter,select=1:ncpus=32:mem=100GB
-##PBS -R span[ptile=16]
-##PBS -R 'affinity[core(1)]'
+#PBS -S /bin/bash
 #PBS -q dev
-#PBS -l walltime=1:20:00
-##PBS -L /bin/sh
 #PBS -A GEFS-DEV
+#PBS -l walltime=1:20:00
+#PBS -l place=vscatter,select=1:ncpus=16:mem=30GB
 #PBS -l debug=true
 
 set -x
@@ -26,7 +22,7 @@ export SOURCEDIR="/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/${EXPID}"
 export GEFS_ROCOTO="${SOURCEDIR}/rocoto"
 export WORKDIR="/lfs/h2/emc/ptmp/Xianwu.Xue/o/${EXPID}"
 
-export PDY='20201120' #'20201120' #'20210215'
+export PDY='20210215' #'20201120' #'20210215'
 export cyc='00'
 export job=wsr_prep_${EXPID}_${PDY}${cyc}
 
@@ -76,7 +72,7 @@ export KEEPDATA=${KEEPDATA:-NO}
 # Enviorenmenat variables related to Development work place and output files
 #
 export HOMEwsr=$SOURCEDIR
-export COMROOT=$WORKDIR/$envir/com
+#export COMROOT=$WORKDIR/$envir/com
 export DATAROOT=$WORKDIR/tmp
 
 #export COMINgens=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/gefs/prod
@@ -103,4 +99,4 @@ export OMP_NUM_THREADS=1
 
 export envir=prod
 #${GEFS_ROCOTO}/bin/wcoss2/wsr_prep.sh
-$SOURCEDIR/jobs/JWSR_PREP
+${HOMEwsr:?}/jobs/JWSR_PREP
