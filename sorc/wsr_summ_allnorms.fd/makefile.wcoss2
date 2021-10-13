@@ -1,0 +1,39 @@
+SHELL=	/bin/bash
+#
+CMD = wsr_summ_allnorms
+#
+#FC =    ncepxlf -C 
+#FC =    mpxlf_r
+#FC =    ifort
+#FC=     mpfort -mpi -mkl=sequential
+FC= $(FCMP) # mpiifort -mkl=sequential # $(FCMP) #ftn #-qopenmp #    mpiifort -mkl=sequential
+#FFLAGS= -list -traceback
+#FFLAGS= -list -convert big_endian -assume byterecl
+#FFLAGS= -list -convert big_endian -assume byterecl -traceback
+FFLAGS  = -qopenmp $(FFLAGSMP)
+
+SRCS=	summ_allnorms.f subroutines.f eigen.f
+OBJS=   $(SRCS:.f=.o)
+#LIBS=/usr/lib/libblas.a
+LIBS=
+
+# Lines from here on down should not need to be changed.  They are the
+# actual rules which make uses to build a.out.
+#
+all:	$(CMD)
+
+$(CMD):	$(OBJS)
+	$(FC) -qopenmp -o $(@) $(OBJS) $(LIBS)
+
+$(OBJS):        $(SRCS)
+	$(FC) $(FFLAGS) -c $(SRCS)
+
+$(OBJS):        makefile.dell
+
+allclean:       clean all
+
+clean:
+	-rm -f $(OBJS)
+
+clobber:        clean
+	-rm -f $(CMD)

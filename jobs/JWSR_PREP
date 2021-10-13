@@ -8,6 +8,14 @@ date
 export PS4=' $SECONDS + '
 set -x
 
+####################################
+# Determine Job Output Name on System
+####################################
+export jobid=${jobid:-"$job.$PBS_JOBID"}
+export pgmout="OUTPUT.${PBS_JOBID}"
+export pgmerr=errfile
+export ver=${ver:-$(echo ${wsr_ver:-v3.3.0}|cut -c1-4)}
+
 export DATA=${DATA:-${DATAROOT:?}/${jobid:?}}
 mkdir -p $DATA
 cd $DATA
@@ -33,11 +41,6 @@ export ifort=1
 export icopygb=1
 
 ####################################
-# File To Log Msgs
-####################################
-export jlogfile=${jlogfile:-$DATA/jlogfile.${jobid:?}}
-
-####################################
 # Determine Job Output Name on System
 ####################################
 export pgmout="OUTPUT.$$"
@@ -46,9 +49,9 @@ export cycle=t${cyc}z
 
 if test "$cyc" = "00"
 then
-  export prev_cyc=12
+	export prev_cyc=12
 else
-  export prev_cyc=00
+	export prev_cyc=00
 fi
 
 export SENDCOM=${SENDCOM:-YES}
@@ -57,7 +60,7 @@ export SENDECF=${SENDECF:-YES}
 export NET=wsr
 export RUN=wsr
 
-export HOMEwsr=${HOMEwsr:-${NWROOT:?}/wsr.${wsr_ver:?}}
+export HOMEwsr=${HOMEwsr:-${PACKAGEROOT:?}/wsr.${wsr_ver:?}}
 export EXECwsr=$HOMEwsr/exec
 export USHwsr=$HOMEwsr/ush
 
@@ -68,37 +71,32 @@ setpdy.sh
 . PDY
 
 ##############################
-# Define input COM Directory
+# Define COM directories
 ##############################
-export COMINgens=${COMINgens:-$(compath.py gefs/prod)}
-export COMINcmce=${COMINcmce:-$(compath.py naefs/prod)}
+export COMINgens=${COMINgens:-$(compath.py prod/com/gefs/${ver_gefs})}
+export COMINcmce=${COMINcmce:-$(compath.py prod/naefs/${ver_naefs})}
 
-##############################
-# Define output GESdir Directory 
-##############################
-export GESdir=${GESROOT:?}/${envir}/${RUN}/${PDY}
-mkdir -p $GESdir
+export COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/prep}
 
-# JY- the following can be removed later after test
-export COMENS=$GESdir
+mkdir -p $COMOUT
 
-export wsrmpexec=mpirun
+export wsrmpexec="mpiexec"
 echo wsrmpexec=$wsrmpexec
 
 env
 
 ########################################################
 # Execute the script.
-$HOMEwsr/scripts/exwsr_prep.sh.ecf
+$HOMEwsr/scripts/exwsr_prep.sh
 export err=$?; err_chk
 ########################################################
 
 if [ -s $pgmout ]; then
-  cat $pgmout
+	cat $pgmout
 fi
 
 if [ "${KEEPDATA^^}" != "YES" ]; then
-  rm -rf $DATA
+	rm -rf $DATA
 fi
 
 date

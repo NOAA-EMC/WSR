@@ -1,23 +1,21 @@
 
-WSR V3.2 BUild instructions
+WSR BUild instructions
 
+Two methods:
 
-in libs:
+	1) (Recommended)
 
-run build.sh
+		cd sorc
+		./build_all.sh
 
-If successful, follow these instructions that will be printed at
-the end of the buildh:
+	2) 
+		cd  sorc
+		run build.sh
+		run install.sh
 
-cd grib_api-1.9.16-working
-make
-make check
-make install
+Run canned case:
+	Add below statements to ecf/
 
-
-in sorc:
-
-run build.sh
-run install.sh
-
-
+		export COMINgens=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/gefs/prod
+		export COMINcmce=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/naefs/prod
+		export DCOMROOT=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/dcom
