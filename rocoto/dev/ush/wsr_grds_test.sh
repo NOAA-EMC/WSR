@@ -237,6 +237,10 @@ fi
 export job=wsr_grads
 
 export ver=${ver:-$(echo ${wsr_ver:-v3.3.0}|cut -c1-4)}
+curyy=`date -u +%Y`
+curmm=`date -u +%m`
+curdd=`date -u +%d`
+PDY=${PDY:-${curyy}${curmm}${curdd}}
 
 export COMIN_setup=${COMIN_setup:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup}
 export COMIN_main=${COMIN_main:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/main}
