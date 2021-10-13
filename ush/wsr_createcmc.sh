@@ -165,7 +165,8 @@ if [[ $ifort -eq 1 ]]; then
 				#poe -cmdfile poescript -stdoutmode ordered -ilevel 3
 				#$wsrmpexec -cmdfile poescript -stdoutmode ordered -ilevel 3
 				#$wsrmpexec cfp poescript
-				$wsrmpexec  -n $memcm_eh -ppn $memcm_eh --cpu-bind core --configfile  poescript
+				#$wsrmpexec  -n $memcm_eh -ppn $memcm_eh --cpu-bind core --configfile  poescript
+				$wsrmpexec  -n $memcm_eh cfp poescript
 			fi
 
 
@@ -219,7 +220,8 @@ if [[ $ifort -eq 1 ]]; then
 			#poe -cmdfile ccmd.file -stdoutmode ordered -ilevel 3
 			#$wsrmpexec -cmdfile ccmd.file -stdoutmode ordered -ilevel 3
 			#$wsrmpexec cfp ccmd.file
-			$wsrmpexec  -n $nvar -ppn $nvar --cpu-bind core --configfile  ccmd.file
+			#$wsrmpexec  -n $nvar -ppn $nvar --cpu-bind core --configfile  ccmd.file
+			$wsrmpexec  -n $nvar cfp ccmd.file
 		done
 		i=$(expr $i + 1)
 	done
@@ -289,7 +291,8 @@ done
 #poe -cmdfile reform.file -stdoutmode ordered -ilevel 3
 #$wsrmpexec -cmdfile reform.file -stdoutmode ordered -ilevel 3
 #$wsrmpexec cfp reform.file
-$wsrmpexec  -n 21 -ppn 21 --cpu-bind core --configfile reform.file
+#$wsrmpexec  -n 21 -ppn 21 --cpu-bind core --configfile reform.file
+$wsrmpexec  -n 21 cfp reform.file
 i=1
 while [[ $i -le $ntimes ]]
 do

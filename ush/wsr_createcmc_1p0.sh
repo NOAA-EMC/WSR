@@ -63,7 +63,8 @@ for CDATE in $date1  $date3; do
 		chmod +x poe_copygb_${mem}.$PDY$cyc
 		startmsg
 		# $wsrmpexec cfp poe_copygb_${mem}.$PDY$cyc
-		$wsrmpexec  -n 22 -ppn 22 --cpu-bind core --configfile poe_copygb_${mem}.$PDY$cyc
+		# $wsrmpexec  -n 22 -ppn 22 --cpu-bind core --configfile poe_copygb_${mem}.$PDY$cyc
+		$wsrmpexec  -n 22 cfp poe_copygb_${mem}.$PDY$cyc
 		export err=$?; err_chk
 	done
 
@@ -87,7 +88,8 @@ for CDATE in $date1  $date3; do
 		chmod +x poe_cnvgrib_${mem}.$PDY$cyc
 		startmsg
 		# $wsrmpexec cfp poe_cnvgrib_${mem}.$PDY$cyc
-		$wsrmpexec -n 22 -ppn 22 --cpu-bind core --configfile poe_cnvgrib_${mem}.$PDY$cyc
+		# $wsrmpexec -n 22 -ppn 22 --cpu-bind core --configfile poe_cnvgrib_${mem}.$PDY$cyc
+		$wsrmpexec -n 22 cfp poe_cnvgrib_${mem}.$PDY$cyc
 		export err=$?; err_chk
 	done
 
