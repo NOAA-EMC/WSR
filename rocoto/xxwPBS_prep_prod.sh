@@ -4,7 +4,7 @@
 #PBS -q dev
 #PBS -A GEFS-DEV
 #PBS -l walltime=1:20:00
-#PBS -l place=vscatter,select=1:ncpus=16:mem=30GB
+#PBS -l place=vscatter,select=1:ncpus=16:mem=50GB
 #PBS -l debug=true
 
 set -x
@@ -17,7 +17,7 @@ cd $PBS_O_WORKDIR
 export envir='dev'
 export RUN_ENVIR='dev'
 export WHERE_AM_I='wcoss2'
-export EXPID='wsr_wcoss2_final'
+export EXPID=$(basename $(readlink -f `pwd`/../)) #'wsr_wcoss2_final'
 export SOURCEDIR="/lfs/h2/emc/ens/noscrub/$LOGNAME/wsr/${EXPID}"
 export GEFS_ROCOTO="${SOURCEDIR}/rocoto"
 export WORKDIR="/lfs/h2/emc/ptmp/$LOGNAME/o/${EXPID}"

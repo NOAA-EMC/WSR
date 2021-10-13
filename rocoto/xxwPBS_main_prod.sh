@@ -10,11 +10,12 @@
 set -x
 #module purge
 
+cd $PBS_O_WORKDIR
 
 export envir='dev'
 export RUN_ENVIR='dev'
 export WHERE_AM_I='wcoss2'
-export EXPID='wsr_wcoss2_final'
+export EXPID=$(basename $(readlink -f `pwd`/../)) #'wsr_wcoss2_final'
 export SOURCEDIR="/lfs/h2/emc/ens/noscrub/$LOGNAME/wsr/${EXPID}"
 export GEFS_ROCOTO="${SOURCEDIR}/rocoto"
 export WORKDIR="/lfs/h2/emc/ptmp/$LOGNAME/o/${EXPID}"
