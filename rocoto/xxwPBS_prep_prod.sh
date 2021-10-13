@@ -4,7 +4,7 @@
 #PBS -q dev
 #PBS -A GEFS-DEV
 #PBS -l walltime=1:20:00
-#PBS -l place=vscatter,select=1:ncpus=16:mem=30GB:mpiprocs=16:ompthreads=1
+#PBS -l place=vscatter,select=1:ncpus=16:mem=3GB:mpiprocs=16:ompthreads=1
 #PBS -l debug=true
 
 set -x
@@ -95,7 +95,7 @@ export MP_TASK_AFFINITY=core
 export MP_PGMMODEL=mpmd
 export MP_CSS_INTERRUPT=yes
 
-export OMP_NUM_THREADS=1
+#export OMP_NUM_THREADS=1
 
 export envir=prod
 #${GEFS_ROCOTO}/bin/wcoss2/wsr_prep.sh

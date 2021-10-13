@@ -4,7 +4,7 @@
 #PBS -q %QUEUE%
 #PBS -A %PROJ%-%PROJENVIR%
 #PBS -l walltime=1:20:00
-#PBS -l place=vscatter,select=1:ncpus=16:mem=50GB
+#PBS -l place=vscatter,select=1:ncpus=16:mem=3GB:mpiprocs=16:ompthreads=1
 #PBS -l debug=true
 
 export model=wsr
@@ -42,8 +42,6 @@ export MP_EUILIB=us
 export MP_TASK_AFFINITY=core
 export MP_PGMMODEL=mpmd
 export MP_CSS_INTERRUPT=yes
-
-export OMP_NUM_THREADS=1
 
 # For Canned Data
 # export PDY='20210215'
