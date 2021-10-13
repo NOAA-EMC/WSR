@@ -5,7 +5,6 @@
 #PBS -A %PROJ%-%PROJENVIR%
 #PBS -l walltime=1:20:00
 #PBS -l place=vscatter,select=1:ncpus=16:mem=30GB
-##PBS -l place=vscatter,select=1:ncpus=%NTASK%:mpiprocs=%PTILE%:ompthreads=1:mem=30GB
 #PBS -l debug=true
 
 export model=wsr
@@ -35,7 +34,9 @@ module load cfp/$cfp_ver
 export USE_CFP=YES
 module list
 
-# Export List 
+# Export List
+set -x
+
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
 export MP_TASK_AFFINITY=core
