@@ -37,6 +37,7 @@ esac
 
 . ../versions/run.ver
 
+. /usr/share/lmod/lmod/init/profile
 module purge
 
 module load envvar/$envvar_ver
