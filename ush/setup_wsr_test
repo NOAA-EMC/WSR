@@ -66,12 +66,12 @@ if [[ $testmode = yes ]]; then
 			envir=para
 			#PDY=20210215 # For the Canned case
 			;;
-		(ops.prod)
+		(ops.para)
 			# these are the production locations, edit them to use test locations
 			testemail=ncep.list.spa-helpdesk@noaa.gov
 			testuser=ops.prod
 			testrzdm=ncorzdm
-			testdirectory=/home/people/nco/www/htdocs/pmb/nwprod_wsr
+			testdirectory=/home/people/nco/www/htdocs/pmb/sdm_wsr
 			useexpid=no
 			envir=para
 			#PDY=20210215 # For the Canned case

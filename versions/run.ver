@@ -19,5 +19,19 @@ export grib_util_ver=1.2.3
 
 export cfp_ver=2.0.4
 
+export DATAFS=h1
+export COMPATH=/lfs/h1/ops/canned/com # canned-test
+export PDY=${PDY:-20210824}
+
+export COMINgens=/lfs/h1/ops/canned/com/gefs/v12.2/
+export COMINcmce=/lfs/h1/ops/canned/com/naefs/v6.1/
+export DCOMROOT=/lfs/h1/ops/canned/dcom/
+
+
+#export COMINgens=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/canned/com/gefs/
+#export COMINcmce=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/canned/com/naefs/
+#export DCOMROOT=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/canned/dcom
+
+
 #export USE_CFP=YES
 export PATH=$PATH:.

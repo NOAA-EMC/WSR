@@ -75,7 +75,7 @@ setpdy.sh
 ##############################
 export COMINgens=${COMINgens:-$(compath.py prod/com/gefs/${ver_gefs})}
 export COMINcmce=${COMINcmce:-$(compath.py prod/naefs/${ver_naefs})}
-
+export DCOMROOT=${DCOMROOT:-${DCOMROOT}}
 export COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/prep}
 
 mkdir -p $COMOUT
