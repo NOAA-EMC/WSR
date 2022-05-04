@@ -1,4 +1,4 @@
-#PBS -N wsr_prep_prod_2021021500
+#PBS -N wsr_prep_prod_2022050200
 #PBS -j oe
 #PBS -S /bin/bash
 #PBS -q dev
@@ -18,11 +18,11 @@ export envir='dev'
 export RUN_ENVIR='dev'
 export WHERE_AM_I='wcoss2'
 export EXPID=$(basename $(readlink -f `pwd`/../)) #'wsr_wcoss2_final'
-export SOURCEDIR="/lfs/h2/emc/ens/noscrub/$LOGNAME/wsr/${EXPID}"
+export SOURCEDIR="/lfs/h2/emc/ens/noscrub/$LOGNAME/WSR/${EXPID}"
 export GEFS_ROCOTO="${SOURCEDIR}/rocoto"
 export WORKDIR="/lfs/h2/emc/ptmp/$LOGNAME/o/${EXPID}"
 
-export PDY='20210215' #'20201120' #'20210215'
+export PDY='20220502' #'20201120' #'20210215'
 export cyc='00'
 export job=wsr_prep_${EXPID}_${PDY}${cyc}
 
@@ -80,12 +80,13 @@ export DATAROOT=$WORKDIR/tmp
 #export COMINcmce=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/com/naefs/prod
 #export DCOMROOT=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR/dcom
 
-export HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR
-#export HOMEdata=/lfs/h1/ops
+#export HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR
+export HOMEdata=/lfs/h1/ops
 
-export COMPATH=$HOMEdata/canned/com/gefs:$HOMEdata/canned/com/naefs:${WORKDIR}/$envir/com/${NET} #$COMROOT/$RUN
-export DCOMROOT=${HOMEdata}/canned/dcom
+#export COMPATH=$HOMEdata/canned/com/gefs:$HOMEdata/canned/com/naefs:${WORKDIR}/$envir/com/${NET} #$COMROOT/$RUN
+#export DCOMROOT=${HOMEdata}/canned/dcom
 
+export COMPATH=${WORKDIR}/$envir/com/${NET}
 
 # Export List
 export MP_EUIDEVICE=sn_all
