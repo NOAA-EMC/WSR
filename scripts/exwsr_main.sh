@@ -550,30 +550,10 @@ do
 	#$wsrmpexec $EXECwsr/wsr_summ_allnorms < params >> $pgmout 2> errfile
 	#$wsrmpexec -n 48 -ppn 24 --cpu-bind core --depth 2 $EXECwsr/wsr_summ_allnorms < params >> $pgmout 2> errfile
 	#$wsrmpexec -n 48 -ppn 24 $EXECwsr/wsr_summ_allnorms < params >> $pgmout 2> errfile
-	$wsrmpexec -n 48 $EXECwsr/wsr_summ_allnorms < params >> $pgmout 2> errfile
+	$wsrmpexec -n 16 $EXECwsr/wsr_summ_allnorms < params >> $pgmout 2> errfile
 
 	export err=$?;err_chk
 
-	##########################################################################
-	# Convert Summary map data into DTS grib format
-	##########################################################################
-	if [[ ${SENDDTS} = YES ]];then
-		export pgm=wsr_dtsset
-		. prep_step
-
-		echo "$nlon $nlat $lon1 $lon2 $lat1 $lat2 $reso ${obsdate[$i]} ${vrlatu[$i]} ${vrlonl[$i]} ${vrlatl[$i]} ${vrlonu[$i]} ${leadtime[$i]} ${opttime[$i]} ${mem}" > params
-		export XLFRTEOPTS="unit_vars=yes"
-		export XLFUNIT_121="targ_${ymmdd}_${lt1}_${lt2}_${mem}.d"
-		export     FORT121="targ_${ymmdd}_${lt1}_${lt2}_${mem}.d"
-
-		rm out.grib1
-
-		startmsg
-		$EXECwsr/wsr_dtsset < params >> $pgmout 2> errfile
-		export err=$?;err_chk
-		cp out.grib1  ${inittime[$i]}_${case_id[$i]}.grib
-
-	fi
 	##########################################################################
 	# Radiosonde station guidance
 	##########################################################################
@@ -1024,10 +1004,6 @@ do
 		cp targ1.d.gr         $COMOUT/case${i}.targ1.gr
 		cp flights.d          $COMOUT/case${i}.flights.d
 
-		if [[ ${SENDDTS} = YES ]]; then
-			cp out.grib1          $COMOUT/${inittime[$i]}_${case_id[$i]}.grib
-		fi
-
 		echo "export COMOUT=$COMOUT"       > $COMOUT/case${i}.env
 		echo "export COMIN=$COMOUT"        >> $COMOUT/case${i}.env
 		echo "export RAWINSONDES=$RAWINSONDES" >> $COMOUT/case${i}.env
@@ -1089,77 +1065,6 @@ done
 if [ ${searchareacode} -eq 0 ]; then
 	#SMS#/nwprod/util/ush/prodllsubmit wx12sm /u/wx12sm/wsr/grads/wsr_grds.sh
 	#$HOMEwsr/grads/wsr_grds.sh
-	if [[ ${SENDDTS} = YES ]];then
-
-		####################################
-		# Get the corresponding MSLP, 500mb height and 850mb vort
-		# from GFS 00Z run
-
-		i=1
-		while [ $i -le $cases ]
-		do
-			day=$(echo ${inittime[$i]} |cut -c1-8)
-			fto=/com/gfs/prod/gfs.$day/gfs.t${cyc}z.pgrbf${leadtime[$i]}
-			ftn1=${inittime[$i]}_${case_id[$i]}_z500.grib
-			ftn2=${inittime[$i]}_${case_id[$i]}_msl.grib
-			ftn3=${inittime[$i]}_${case_id[$i]}_vo850.grib
-
-			$WGRIB -s $fto |grep ":HGT:500 mb" |$WGRIB $fto -i -grib -o $ftn1
-			$WGRIB -s $fto |grep "PRMSL:MSL" |$WGRIB $fto -i -grib -o $ftn2
-			$WGRIB -s $fto |grep "ABSV:850 mb" |$WGRIB $fto -i -grib -o $ftn3
-			i=`expr ${i} + 1`
-		done
-
-
-		rm ftpd.scr
-		#   USER=tparc
-		#   PASSWD=tparc_200808
-
-		#   echo "user $USER" >ftpd.scr
-		#   echo "$PASSWD" >>ftpd.scr
-		echo 'bin' >ftpd.scr
-		echo 'umask 022' >>ftpd.scr
-		echo 'cd sac_ncep' >>ftpd.scr
-		i=1
-		while [ $i -le $cases ]
-		do
-			echo "put ${inittime[$i]}_${case_id[$i]}.grib" >>ftpd.scr
-			i=`expr ${i} + 1`
-		done
-		echo 'cd ../fields_ncep' >>ftpd.scr
-
-		i=1
-		while [ $i -le $cases ]
-		do
-			echo "put ${inittime[$i]}_${case_id[$i]}_z500.grib" >>ftpd.scr
-			echo "put ${inittime[$i]}_${case_id[$i]}_msl.grib" >>ftpd.scr
-			echo "put ${inittime[$i]}_${case_id[$i]}_vo850.grib" >>ftpd.scr
-			i=`expr ${i} + 1`
-		done
-
-		echo 'quit' >>ftpd.scr
-
-		waittime=120
-		count=1
-		dum=
-		while [ -z "$dum" ] ; do
-			echo "Trying ftp to ftp.ecmwf.int" >ftp.out
-			ftp -v ftp.ecmwf.int < ftpd.scr >>ftp.out
-			grep 'Not connected' ftp.out  >/dev/null
-			if [ $? -eq 0 ] ; then
-				if [ $count -gt 5 ] ; then
-					echo 'ftp not connected' >>ftp.out
-					exit 1
-					else
-					sleep $waittime
-					count=`expr $count + 1`
-				fi
-			else
-				echo "ftp connection to ftp.ecmwf.int successful" >>ftp.out
-				break
-			fi
-		done
-	fi
 
 	# If Search area is zero, then exit
 	exit

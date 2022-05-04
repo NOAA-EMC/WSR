@@ -68,7 +68,7 @@ export USHwsr=$HOMEwsr/ush
 # Run setpdy and initialize PDY variables
 ##############################
 setpdy.sh
-. PDY
+. ./PDY
 
 ##############################
 # Define COM directories

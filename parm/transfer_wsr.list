@@ -23,17 +23,10 @@
 # directory are included, so if no exclude patterns match that file, it will be
 # transferred.
 
-_GESROOT_/_ENVIR_/wsr/_PDY_/
+_COMROOT_/$NET/_SHORTVER_/_PDY_/
 B 1584
 Z
 
-_GESROOT_/_ENVIR_/wsr/_PDYm1_/
-B 1584
-Z
-
-_GESROOT_/_ENVIR_/wsr/
-+ targdata.d
-+ targdata.txt.??
-- *
+_COMROOT_/$NET/_SHORTVER_/_PDYm1_/
 B 1584
 Z

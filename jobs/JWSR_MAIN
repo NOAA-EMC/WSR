@@ -32,7 +32,6 @@ export cycle=t${cyc}z
 
 export SENDCOM=${SENDCOM:-YES}
 export SENDECF=${SENDECF:-YES}
-export SENDDTS=${SENDDTS:-NO}
 export RAWINSONDES=${RAWINSONDES:-NO}
 export PRINTSDM=${PRINTSDM:-YES}
 export XLFRTEOPTS="unit_vars=yes"
