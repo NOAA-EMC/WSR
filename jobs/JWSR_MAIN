@@ -32,7 +32,6 @@ export cycle=t${cyc}z
 
 export SENDCOM=${SENDCOM:-YES}
 export SENDECF=${SENDECF:-YES}
-export SENDDTS=${SENDDTS:-NO}
 export RAWINSONDES=${RAWINSONDES:-NO}
 export PRINTSDM=${PRINTSDM:-YES}
 export XLFRTEOPTS="unit_vars=yes"
@@ -65,7 +64,8 @@ setpdy.sh
 . ./PDY
 
 export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}}
-export COMIN_setup=${COMIN_setup:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup}
+export COMIN_setup=${COMIN_setup:-$(compath.py ${envir}/com/${NET}/${ver})/setup}
+#export COMIN_setup=${COMIN_setup:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup}
 export COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/main}
 
 mkdir -p $COMOUT

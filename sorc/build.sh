@@ -49,9 +49,6 @@ fi
 dirpwd=`pwd`
 execlist="calcperts calcspread circlevr flights_allnorms rawin_allnorms reformat"
 execlist="$execlist sig_pac sigvar_allnorms summ_allnorms tcoeffuvt tgr_special xvvest_allnorms"
-if [ $machine = "dell" ]; then
-	execlist="$execlist dtsset"
-fi
 
 echo execlist=$execlist
 command=

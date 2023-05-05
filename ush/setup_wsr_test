@@ -35,7 +35,9 @@ case $scriptname in
 		;;
 esac
 
-. ../versions/run.ver
+dirname=`dirname $0`;
+. $dirname/../versions/run.ver
+#. ../versions/run.ver
 
 . /usr/share/lmod/lmod/init/profile
 module purge
@@ -56,23 +58,39 @@ if [[ $testmode = yes ]]; then
 	# these testmode settings are only used when testmode=yes
 
 	case $LOGNAME in
-		(SDM)
+#		(SDM)
+		(nco.sdm)
 			# these are the production locations, edit them to use test locations
 			testemail=sdm@noaa.gov
 			testuser=wx12sd
 			testrzdm=ncorzdm
 			testdirectory=/home/people/nco/www/htdocs/pmb/sdm_wsr
 			useexpid=no
+			expid=""
 			envir=para
 			#PDY=20210215 # For the Canned case
 			;;
 		(ops.prod)
 			# these are the production locations, edit them to use test locations
-			testemail=ncep.list.spa-helpdesk@noaa.gov
-			testuser=ops.prod
+			testemail=nco.spa@noaa.gov
+			#testuser=ops.prod
+			testuser=nwprod
 			testrzdm=ncorzdm
-			testdirectory=/home/people/nco/www/htdocs/pmb/nwprod_wsr
+			testdirectory=/home/people/nco/www/htdocs/pmb/sdm_wsr
 			useexpid=no
+			expid=""
+			envir=prod
+			#PDY=20210215 # For the Canned case
+			;;
+		(ops.para)
+			# these are the production locations, edit them to use test locations
+			testemail=nco.spa@noaa.gov
+			#testuser=ops.prod
+			testuser=nwprod
+			testrzdm=ncorzdm
+			testdirectory=/home/people/nco/www/htdocs/pmb/sdm_wsr
+			useexpid=no
+			expid=""
 			envir=para
 			#PDY=20210215 # For the Canned case
 			;;
@@ -164,7 +182,8 @@ PDY=${PDY:-${curyy}${curmm}${curdd}}
 # Set Working Directories
 ####################################
 export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${ver})}
-export COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup}
+export COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/setup}
+#export COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup}
 
 if [ ! -s $COMOUT ]; then mkdir -p $COMOUT; fi
 echo COMOUT=$COMOUT
@@ -881,8 +900,10 @@ fi
 
 if [[ $testmode = no ]]; then
 	cat  $COMOUT/targdata.d | mail -s WSR_SETUP.$PDY sdm@noaa.gov
+	echo "Email Sent to:  sdm@noaa.gov"
 else
 	cat  $COMOUT/targdata.d | mail -s WSR_SETUP.$PDY $testemail
+	echo "Email Sent to:  $testemail only for testing"
 fi
 
 echo "------------------------------------------------------------------"
@@ -901,5 +922,3 @@ echo "------------------------------------------------------------------"
 #ftpEOF
 
 exit
-
-
