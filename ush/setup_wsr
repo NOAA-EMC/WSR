@@ -34,8 +34,9 @@ case $scriptname in
 		exit
 		;;
 esac
-
-. ../versions/run.ver
+dirname=`dirname $0`;
+. $dirname/../versions/run.ver
+#. ../versions/run.ver
 
 . /usr/share/lmod/lmod/init/profile
 module purge
@@ -56,23 +57,27 @@ if [[ $testmode = yes ]]; then
 	# these testmode settings are only used when testmode=yes
 
 	case $LOGNAME in
-		(SDM)
+#		(SDM)
+ 		(nco.sdm)
 			# these are the production locations, edit them to use test locations
 			testemail=sdm@noaa.gov
 			testuser=wx12sd
 			testrzdm=ncorzdm
 			testdirectory=/home/people/nco/www/htdocs/pmb/sdm_wsr
 			useexpid=no
+			expid=""
 			envir=para
 			#PDY=20210215 # For the Canned case
 			;;
 		(ops.prod)
 			# these are the production locations, edit them to use test locations
-			testemail=ncep.list.spa-helpdesk@noaa.gov
-			testuser=ops.prod
+			testemail=nco.spa@noaa.gov
+			#testuser=ops.prod
+			testuser=nwprod
 			testrzdm=ncorzdm
 			testdirectory=/home/people/nco/www/htdocs/pmb/nwprod_wsr
 			useexpid=no
+			expid=""
 			envir=para
 			#PDY=20210215 # For the Canned case
 			;;
@@ -164,7 +169,8 @@ PDY=${PDY:-${curyy}${curmm}${curdd}}
 # Set Working Directories
 ####################################
 export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${ver})}
-export COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup}
+export COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/setup}
+#export COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup}
 
 if [ ! -s $COMOUT ]; then mkdir -p $COMOUT; fi
 echo COMOUT=$COMOUT
@@ -867,22 +873,24 @@ mv ${COMOUT}/targdata_tmp.d ${COMOUT}/targdata.d
 if [[ $testmode = no ]]; then
 
 	ssh -l wx12sd ncorzdm "mkdir -p /home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY"
-	scp ${COMOUT}/targdata.d wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY
+	scp ${COMOUT}/targdata.d wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY/targdata.d
 	scp ${COMOUT}/targdata.txt.$curhh wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY/targdata.txt
 
 else
 
 	echo "For testing send output text to $testuser on $testrzdm in $testdirectory/test$expid/$PDY"
 	ssh -l $testuser $testrzdm "mkdir -p $testdirectory/test$expid/$PDY"
-	scp ${COMOUT}/targdata.d $testuser@$testrzdm:$testdirectory/test$expid/$PDY
+	scp ${COMOUT}/targdata.d $testuser@$testrzdm:$testdirectory/test$expid/$PDY/targdata.d
 	scp ${COMOUT}/targdata.txt.$curhh $testuser@$testrzdm:$testdirectory/test$expid/$PDY/targdata.txt
 
 fi
 
 if [[ $testmode = no ]]; then
 	cat  $COMOUT/targdata.d | mail -s WSR_SETUP.$PDY sdm@noaa.gov
+	echo "Email Sent to:  sdm@noaa.gov"
 else
 	cat  $COMOUT/targdata.d | mail -s WSR_SETUP.$PDY $testemail
+	echo "Email Sent to:  $testemail only for testing"
 fi
 
 echo "------------------------------------------------------------------"
