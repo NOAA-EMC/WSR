@@ -2,9 +2,40 @@
 # 
 # install wsr executables for dell
 #
+set -eux
+
+hostname
+
+while getopts m: option
+do
+    case "${option}"
+    in
+        m) machine=${OPTARG};;
+    esac
+done
+
+machine=${machine:-wcoss2} #dell, wcoss2
+
+if [ $machine = "dell" ]; then
+  module purge
+  source /usrx/local/prod/lmod/lmod/init/bash
+  module load ips/19.0.5.281
+
+  module list
+elif [ $machine = "wcoss2" ]; then
+  module purge
+  #module load intel/19.1.3.304 PrgEnv-intel
+
+  module list
+fi
+
+
 dirpwd=`pwd`
-execlist="calcperts calcspread circlevr dtsset flights_allnorms rawin_allnorms reformat"
+execlist="calcperts calcspread circlevr flights_allnorms rawin_allnorms reformat"
 execlist="$execlist sig_pac sigvar_allnorms summ_allnorms tcoeffuvt tgr_special xvvest_allnorms"
+if [ $machine = "dell" ]; then
+    execlist="$execlist dtsset"
+fi
 echo execlist=$execlist
 echo
 execdir=../exec
@@ -69,5 +100,4 @@ echo install failed for $nf codes $failstring
 echo
 
 exit
-done
 

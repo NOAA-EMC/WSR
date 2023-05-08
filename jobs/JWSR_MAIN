@@ -8,17 +8,20 @@
 ##############################################################
 
 date
-export PS4=' $SECONDS + '
+export PS4='$SECONDS + $(basename ${0})[$LINENO]'
 set -x
+
+####################################
+# Determine Job Output Name on System
+####################################
+export jobid=${jobid:-"$job.$PBS_JOBID"}
+export pgmout="OUTPUT.${PBS_JOBID}"
+export pgmerr=errfile
+export ver=${ver:-$(echo ${wsr_ver:-v3.3.0}|cut -c1-4)}
 
 export DATA=${DATA:-${DATAROOT:?}/${jobid:?}}
 mkdir -p $DATA
 cd $DATA
-
-####################################
-# File To Log Msgs
-####################################
-export jlogfile=${jlogfile:-$DATA/jlogfile.${jobid:?}}
 
 ####################################
 # Determine Job Output Name on System
@@ -29,7 +32,6 @@ export cycle=t${cyc}z
 
 export SENDCOM=${SENDCOM:-YES}
 export SENDECF=${SENDECF:-YES}
-export SENDDTS=${SENDDTS:-NO}
 export RAWINSONDES=${RAWINSONDES:-NO}
 export PRINTSDM=${PRINTSDM:-YES}
 export XLFRTEOPTS="unit_vars=yes"
@@ -37,7 +39,7 @@ export XLFRTEOPTS="unit_vars=yes"
 export NET=wsr
 export RUN=wsr
 
-export HOMEwsr=${HOMEwsr:-${NWROOT:?}/wsr.${wsr_ver:?}}
+export HOMEwsr=${HOMEwsr:-${PACKAGEROOT:?}/wsr.${wsr_ver:?}}
 export EXECwsr=$HOMEwsr/exec
 export FIXwsr=$HOMEwsr/fix
 
@@ -49,21 +51,23 @@ export FIXwsr=$HOMEwsr/fix
 #export GASCRP=/usrx/local/grads/gslib
 
 ##############################
-# Define GES Directories
+# Define COM directories
 ##############################
-export GESdir=${GESROOT:?}/${envir}/${RUN}
-
-# JY- the following can be removed later after test
-export COMENS=$GESdir
+#export COMIN_setup=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/setup
+#export COMIN_setup=$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-export PDY=$(head -1 $GESdir/targdata.d)
+#export PDY=$(head -1 $COMIN_setup/targdata.d)
 setpdy.sh
 . ./PDY
 
-export COMOUT=${COMROOT:?}/${NET}/${envir}/${RUN}.${PDY}
+export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}}
+export COMIN_setup=${COMIN_setup:-$(compath.py ${envir}/com/${NET}/${ver})/setup}
+#export COMIN_setup=${COMIN_setup:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup}
+export COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/main}
+
 mkdir -p $COMOUT
 
 #######################################################
@@ -90,26 +94,26 @@ export nflights=90
 export nrawin=34
 export phase=1
 if [[ $PDY -ge 20110226 ]]; then
-  export phase=2
+	export phase=2
 fi
 
-export wsrmpexec=mpirun
+export wsrmpexec=mpiexec #mpirun
 echo wsrmpexec=$wsrmpexec
 
 env|sort
 
 ########################################################
 # Execute the script.
-$HOMEwsr/scripts/exwsr_main.sh.ecf
+$HOMEwsr/scripts/exwsr_main.sh
 export err=$?; err_chk
 ########################################################
 
 if [ -s $pgmout ]; then
-  cat $pgmout
+	cat $pgmout
 fi
 
 if [ "${KEEPDATA^^}" != "YES" ]; then
-  rm -rf $DATA
+	rm -rf $DATA
 fi
 
 date
