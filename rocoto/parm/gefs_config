@@ -5,8 +5,8 @@
 # Define DEVELOPMENT Enviorenmenat variables related to the TYPE of test 
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export envir=${envir:-dev}
-export NET=${NET:-gefs}
-export RUN=${RUN:-gefs}
+export NET=${NET:-wsr}
+export RUN=${RUN:-wsr}
 export SENDDBN=${SENDDBN:-NO}
 export SENDDBN_NTC=${SENDDBN_NTC:-NO}
 
