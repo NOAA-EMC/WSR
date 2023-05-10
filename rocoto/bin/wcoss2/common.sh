@@ -26,3 +26,5 @@ export APRUN_CALCINC="mpiexec -n 1"
 . $GEFS_ROCOTO/parm/setbase
 . $GEFS_ROCOTO/parm/gefs_config
 #. $GEFS_ROCOTO/parm/gefs_dev.parm
+
+export COMPATH=${WORKDIR}/$envir/com/${NET}
