@@ -58,7 +58,8 @@ if [[ $testmode = yes ]]; then
 	# these testmode settings are only used when testmode=yes
 
 	case $LOGNAME in
-		(SDM)
+#		(SDM)
+		(nco.sdm)
 			# these are the production locations, edit them to use test locations
 			testemail=sdm@noaa.gov
 			testuser=wx12sd
@@ -93,7 +94,7 @@ if [[ $testmode = yes ]]; then
 			envir=para
 			#PDY=20210215 # For the Canned case
 			;;
-		(Xianwu.Xue)
+		(xianwu.xue)
 			testemail=xianwu.xue@noaa.gov
 			testuser=xianwu.xue
 			testrzdm=emcrzdm
@@ -102,7 +103,7 @@ if [[ $testmode = yes ]]; then
 			envir=dev
 			PTMP=/lfs/h2/emc/ptmp
 			expid=$(basename $(readlink -f `pwd`/../))
-			PDY=20210215 #20210215 20201120
+			PDY=20230504 #20210215 #20210215 20201120
 			export COMPATH=$PTMP/$LOGNAME/o/$expid/$envir/com/${NET}
 			envir=prod #To make compath.py get the right path
 			;;
@@ -181,7 +182,8 @@ PDY=${PDY:-${curyy}${curmm}${curdd}}
 # Set Working Directories
 ####################################
 export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${ver})}
-export COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup}
+export COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/setup}
+#export COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup}
 
 if [ ! -s $COMOUT ]; then mkdir -p $COMOUT; fi
 echo COMOUT=$COMOUT
