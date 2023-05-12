@@ -640,7 +640,7 @@ if [[ $testmode = no ]]; then
 
 else
 	if [ ! -s $COMOUT_graphics ]; then mkdir -p $COMOUT_graphics; fi
-    	cp -rfp *.png $COMOUT_graphics/
+	cp -rfp *.png $COMOUT_graphics/
 
 	ssh -l $testuser $testrzdm "rm -rf  $testdirectory/test$expid/graphics/${PDY}"
 	ssh -l $testuser $testrzdm "mkdir -p $testdirectory/test$expid/graphics/${PDY}"
