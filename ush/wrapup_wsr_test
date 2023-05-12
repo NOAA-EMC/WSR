@@ -93,14 +93,14 @@ if [[ $testmode = yes ]]; then
 			envir=${envir:-para}
 			#PDY=20210215 #20201120 #20210215 #For Canned Data Test
 			;;
-		(Xianwu.Xue)
+		(xianwu.xue)
 			testemail=Xianwu.Xue@noaa.gov
 			testuser=xianwu.xue
 			testrzdm=emcrzdm
 			testdirectory=/home/people/emc/www/htdocs/gmb/xianwu.xue/wsr_sdm
 			useexpid=yes
 			envir=dev
-			expid=$(basename $(readlink -f `pwd`/../../../))
+			expid=$(basename $(readlink -f `pwd`/../))
 			testtmpdir=/lfs/h2/emc/ptmp/$LOGNAME/o
 			PDY=20210215
 			export COMPATH=$testtmpdir/$expid/$envir/com/${NET}

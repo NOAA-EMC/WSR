@@ -2,20 +2,20 @@
 set -eu #x
 
 sWS=$(pwd)
-echo $sWS
+echo ${sWS}
 
 while getopts c:a:r:m:f:b:e: option
 do
-    case "${option}"
-    in
-        c) CompileCode=${OPTARG};;
-        a) CleanAll=${OPTARG};;
-        r) RunRocoto=${OPTARG};;
-        m) machine=${OPTARG};;
-        f) userConfigFile=${OPTARG};;
-        b) AddCrontabToMyCrontab=${OPTARG};;
-        e) RunEnvir=${OPTARG};;
-    esac
+  case "${option}"
+  in
+    c) CompileCode=${OPTARG};;
+    a) CleanAll=${OPTARG};;
+    r) RunRocoto=${OPTARG};;
+    m) machine=${OPTARG};;
+    f) userConfigFile=${OPTARG};;
+    b) AddCrontabToMyCrontab=${OPTARG};;
+    e) RunEnvir=${OPTARG};;
+  esac
 done
 
 CompileCode=${CompileCode:-no}
@@ -27,15 +27,15 @@ AddCrontabToMyCrontab=${AddCrontabToMyCrontab:-no}
 DeleteCrontabFromMyCrontab=${DeleteCrontabFromMyCrontab:-no}
 RunEnvir=${RunEnvir:-emc}
 
-if [ $machine = "nomachine" ]; then
-    if [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then # We are on NOAA Mars or Venus
-        machine=wcoss_dell_p3
-	elif [[ -d /apps/prod ]]; then
-		machine=wcoss2
-    else
-        echo "This is not supported by this script!"
-        exit 55
-    fi
+if [ ${machine} = "nomachine" ]; then
+  if [ -d /scratch1/NCEPDEV ]; then
+    machine=hera
+  elif [[ -d /apps/prod ]]; then # WCOSS2
+    machine=wcoss2
+  else
+    echo "This is not supported by this script!"
+    exit 55
+  fi
 fi
 
 echo $CompileCode
@@ -45,90 +45,85 @@ echo $machine
 echo $userConfigFile
 echo $RunEnvir
 
-if [ $CompileCode = "yes" ]; then
-    cd $sWS/../sorc
+if [ ${CompileCode} = "yes" ]; then
+  cd ${sWS}/../sorc
 
-    ## Build the code and install
-    if [[ $machine == "wcoss_dell_p3" ]]; then
-    	./build_all.sh -m dell
-    elif [[ $machine == "wcoss2" ]]; then
-        ./build_all.sh -m wcoss2
-    else
-        ./build_all.sh -m wcoss2
-    fi
+  ## Build the code and install
+  if [[ ${machine} == "hera" ]]; then
+    ./build_all.sh -m hera
+  elif [[ ${machine} == "wcoss2" ]]; then
+    ./build_all.sh -m wcoss2
+  else
+    echo "unsupported machine!"
+    exit -1
+  fi
 
 fi
 
 
 # for cleanning
-if [ $CleanAll = "yes" ]; then
-    echo "Cleaning ..."
-    
-    rm -rf gefs.xml
-    rm -rf cron_rocoto
-    rm -rf tasks
+if [ ${CleanAll} = "yes" ]; then
+  echo "Cleaning ..."
 
-    cd $sWS/../sorc
+  cd ${sWS}
 
-    rm -rf logs
+  rm -rf gefs.xml
+  rm -rf gefs*.db
+  rm -rf cron_rocoto
+  rm -rf tasks
 
-    #for dir in global_ensadd.fd  global_enspqpf.fd  gefs_ensstat.fd  global_ensppf.fd ; do
-    #    if [ -f $dir ]; then
-    #        cd $dir
-    #        make clean
-    #        cd ..
-    #    fi
-    #done
+  cd ${sWS}/../sorc
 
-    cd ${sWS}/../sorc
-    rm -rf ../exec
+  rm -rf logs
+
+  cd ${sWS}/../sorc
+  rm -rf ../exec
 
 fi # for CleanAll
 
 # for rocoto
 if [ $RunRocoto = "yes" ]; then
-    cd $sWS
-    if [ $machine = "wcoss_dell_p3" ]; then
-        . /usrx/local/prod/lmod/lmod/init/sh
-        module use /gpfs/dell3/usrx/local/dev/emc_rocoto/modulefiles
-        module load lsf/10.1
-        module load ruby/2.5.1
-        module load rocoto/complete
-        module load python/3.6.3
+  cd $sWS
+  if [ $machine = "hera" ]; then
+    module load intel/18.0.5.274
+    module load rocoto/1.3.3
+    module load contrib
+    module load anaconda/latest
 
-    elif [ $machine = "wcoss2" ]; then
-        module purge
-        module load envvar/1.0
+  elif [ $machine = "wcoss2" ]; then
 
-        module load intel/19.1.3.304 PrgEnv-intel
-        module load python/3.8.6
+    module purge
+    module load envvar/1.0
 
-        module list
+    module load PrgEnv-intel/8.3.3
+    module load craype/2.7.17
+    module load intel/19.1.3.304
+    module load cray-mpich/8.1.9
 
-    fi
-    #./py/run_to_get_all.py  $userConfigFile
-    ./py/run_pyGEFS.py -r yes -f $userConfigFile
-    echo "Generated xml and/or ent and updated bin file!"
+    module load python/3.8.6
+
+    module use /apps/ops/test/nco/modulefiles/
+    module load core/rocoto/1.3.5
+
+  fi
+  ./py/run_pyGEFS.py -r yes -f ${userConfigFile}
+  echo "Generated xml and/or ent and updated bin file!"
 fi # For RunRocoto
 
 #echo "crontab"
 # For Crontab
-if [ $AddCrontabToMyCrontab = "yes" ]; then
-    cd $sWS
-    if [ $machine = "wcoss2" ]; then
-        if [ -f $HOME/cron/mycrontab ]; then
-            echo "Adding crontab to $HOME/cron/mycrontab!" 
-        else 
-            mkdir $HOME/cron
-            touch $HOME/cron/mycrontab
-        fi
-    
-        py/add_crontab.py
-        crontab $HOME/cron/mycrontab
-        echo "Added crontab to $HOME/cron/mycrontab!"
+if [ ${AddCrontabToMyCrontab} = "yes" ]; then
+  cd ${sWS}
+  sFile=${HOME}/cron/mycrontab
+  if [ -f ${sFile} ]; then
+    echo "Adding crontab to ${sFile}!"
+  else
+    mkdir ${HOME}/cron
+    touch ${sFile}
+  fi
 
-    elif [ $machine = "wcoss_dell_p3" ]; then
-        py/add_crontab.py
-        echo "Added crontab to $HOME/cron/mycrontab!"
-    fi
+  py/add_crontab.py
+  crontab ${sFile}
+  echo "Added crontab to ${sFile}!"
+
 fi

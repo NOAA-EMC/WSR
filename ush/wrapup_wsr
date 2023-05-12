@@ -21,6 +21,7 @@ envir=${envir:-prod}
 #	. ../../../versions/run.ver
 #fi
 #ver=${ver:-$(echo ${wsr_ver:-v3.3.0}|cut -c1-4)}
+
 dirname=`dirname $0`
 . $dirname/../versions/run.ver
 
@@ -56,7 +57,8 @@ if [[ $testmode = yes ]]; then
 
 	# these test settings are only used when testmode=yes
 	case $LOGNAME in
-		(SDM)
+#		(SDM)
+		(nco.sdm)
 			# these are the production locations, edit them to use test locations
 			testemail=sdm@noaa.gov
 			testuser=wx12sd
@@ -79,14 +81,26 @@ if [[ $testmode = yes ]]; then
 			envir=${envir:-para}
 			#PDY=20210215 #20201120 #20210215 #For Canned Data Test
 			;;
-		(Xianwu.Xue)
+		(ops.para)
+			# these are the production locations, edit them to use test locations
+			testemail=nco.spa@noaa.gov
+			#testuser=ops.prod
+			testuser=nwprod
+			testrzdm=ncorzdm
+			testdirectory=/home/people/nco/www/htdocs/pmb/nwprod_wsr
+			useexpid=no
+			expid=""
+			envir=${envir:-para}
+			#PDY=20210215 #20201120 #20210215 #For Canned Data Test
+			;;
+		(xianwu.xue)
 			testemail=Xianwu.Xue@noaa.gov
 			testuser=xianwu.xue
 			testrzdm=emcrzdm
 			testdirectory=/home/people/emc/www/htdocs/gmb/xianwu.xue/wsr_sdm
 			useexpid=yes
 			envir=dev
-			expid=$(basename $(readlink -f `pwd`/../../../))
+			expid=$(basename $(readlink -f `pwd`/../))
 			testtmpdir=/lfs/h2/emc/ptmp/$LOGNAME/o
 			PDY=20210215
 			export COMPATH=$testtmpdir/$expid/$envir/com/${NET}
