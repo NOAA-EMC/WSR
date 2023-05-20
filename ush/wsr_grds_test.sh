@@ -26,18 +26,25 @@ envir=${envir:-prod}
 #	. ../../../versions/run.ver
 #fi
 #ver=${ver:-$(echo ${wsr_ver:-v3.3.0}|cut -c1-4)}
-. ../../../versions/run.ver
+dirname=`dirname $0`
+. $dirname/../versions/run.ver
+
+#. ../../../versions/run.ver
 
 #shellname=ksh
 . /usr/share/lmod/lmod/init/profile
 module purge
 
-module load envvar/1.0
+module load envvar/${envvar_ver}
+module load prod_envir/${prod_envir_ver}
+module load prod_util/${prod_util_ver}
 
-module load prod_envir/2.0.5
-module load prod_util/2.0.9
+#module load envvar/1.0
+#module load prod_envir/2.0.5
+#module load prod_util/2.0.9
 #module use /apps/test/lmodules/core
 #module load GrADS/2.2.1
+
 module use -a /apps/test/modules
 module load GrADS/2.2.1-cce-11.0.4
 
@@ -69,7 +76,8 @@ if [[ $testmode = yes ]]; then
 
 	# these test settings are only used when testmode=yes
 	case $LOGNAME in
-		(SDM)
+#		(SDM)
+		(nco.sdm)
 			# these are the production locations, edit them to use test locations
 			testenvir=para
 			testemail=sdm@noaa.gov
@@ -79,19 +87,38 @@ if [[ $testmode = yes ]]; then
 			export PRINTSDM=NO
 			export sdmprinter=hp26_sdm
 			useexpid=no
+			expid=""
+			testtmpdir=/lfs/h1/nco/ptmp/$LOGNAME/
 			;;
 		(ops.prod)
 			# these are the production locations, edit them to use test locations
-			testenvir=para
-			testemail=ncep.list.spa-helpdesk@noaa.gov
-			testuser=ops.prod
+			testenvir=prod
+			testemail=nco.spa@noaa.gov
+			#testuser=ops.prod
+			testuser=nwprod
 			testrzdm=ncorzdm
 			testdirectory=/home/people/nco/www/htdocs/pmb/nwprod_wsr
 			export PRINTSDM=NO
 			export sdmprinter=hp26_sdm
 			useexpid=no
+			expid=""
+			testtmpdir=/lfs/h1/nco/ptmp/$LOGNAME/
 			;;
-		(Xianwu.Xue)
+		(ops.para)
+			# these are the production locations, edit them to use test locations
+			testenvir=para
+			testemail=nco.spa@noaa.gov
+			#testuser=ops.prod
+			testuser=nwprod
+			testrzdm=ncorzdm
+			testdirectory=/home/people/nco/www/htdocs/pmb/nwpara_wsr
+			export PRINTSDM=NO
+			export sdmprinter=hp26_sdm
+			useexpid=no
+			expid=""
+			testtmpdir=/lfs/h1/nco/ptmp/$LOGNAME/
+			;;
+		(xianwu.xue)
 			testenvir=dev
 			testemail=Xianwu.Xue@noaa.gov
 			testuser=xianwu.xue
@@ -102,12 +129,12 @@ if [[ $testmode = yes ]]; then
 			export sdmprinter=
 			useexpid=yes
 			testtmpdir=/lfs/h2/emc/ptmp/$LOGNAME/o
-			expid=$(basename $(readlink -f `pwd`/../../../)) #${EXPID:-port2wcoss2_new}
+			expid=$(basename $(readlink -f `pwd`/../)) #${EXPID:-port2wcoss2_new}
 			envir=$testenvir
 			testbase=null
-			HOMEwsr=`pwd`/../../../
-			FIXwsr=`pwd`/../../../fix
-			PDY=20210215 #20201120 #20210215
+			HOMEwsr=`pwd`/../
+			FIXwsr=`pwd`/../fix
+			PDY=20230504 #20210215 #20201120 #20210215
 			export DATAROOT=$testtmpdir/$expid/tmp
 			export COMPATH=$testtmpdir/$expid/$envir/com/${NET}
 			export testenvir=prod #To make compath.py get the right path
@@ -144,7 +171,7 @@ if [[ $testmode = yes ]]; then
 			dfd=`pwd`
 		fi
 		#dfd=/nwprod/ush
-		expid=null
+		expid=${expid:-null}
 		dfdtestdone=no
 		dfdt=$dfd
 		while [[ $dfdtestdone = no ]]
@@ -156,7 +183,7 @@ if [[ $testmode = yes ]]; then
 			dfdtb=`basename $dfdt`
 			if [[ $dfdtb = '/' ]]; then
 				dfdtestdone=yes
-				expid=test
+				expid=${expid:-test}
 			else
 				dfdfound=no
 				case $dfdtb in
@@ -241,9 +268,11 @@ curmm=`date -u +%m`
 curdd=`date -u +%d`
 PDY=${PDY:-${curyy}${curmm}${curdd}}
 
-export COMIN_setup=${COMIN_setup:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup}
+export COMIN_setup=${COMIN_setup:-$(compath.py ${envir}/com/${NET}/${ver})/setup}
+#export COMIN_setup=${COMIN_setup:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup}
 export COMIN_main=${COMIN_main:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/main}
-export COMOUT_graphics=${COMOUT_graphics:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/graphics}
+export COMOUT_graphics=${COMOUT_graphics:-$(compath.py ${envir}/com/${NET}/${ver})/graphics/${PDY}}
+#export COMOUT_graphics=${COMOUT_graphics:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/graphics}
 
 export RAWINSONDES=${RAWINSONDES:-"YES"}
 if [[ $testmode = no ]]; then
@@ -296,7 +325,7 @@ cases=`head -2 $COMIN_setup/targdata.d | tail -1`
 # JY else
 cp $FIXwsr/wsr_track.* .
 # JY fi
-cp $HOMEwsr/rocoto/dev/grads/*.gs $DATA/.
+cp $HOMEwsr/ush/grads/*.gs $DATA/.
 
 i=1
 while test ${i} -le ${cases}
@@ -390,7 +419,7 @@ do
 		mv        ec.ps     VR_${vrlat}N${vrlonewest}_flights_${lt1}_${lt2}.ps
 		if test "$PRINTSDM" = "YES"
 		then
-			if [ $lt1 -eq 48 || $lt1 -eq 24 ]
+			if [[ $lt1 -eq 48 || $lt1 -eq 24 ]]
 			then
 				lpr -h -P"$sdmprinter" VR_${vrlat}N${vrlonewest}_flights_${lt1}_${lt2}.ps
 			fi
@@ -605,13 +634,13 @@ if [[ $testmode = no ]]; then
 	# uncomment these if needed
 	# ssh -l wx12sd ncorzdm "cp /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/allow.cfg /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}"
 	# ssh -l wx12sd ncorzdm "cp /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/index.php /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}"
-	ssh -l wx12sd ncorzdm "cp $HOMEwsr/rocoto/dev/grads/allow.cfg /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}"
-	ssh -l wx12sd ncorzdm "cp $HOMEwsr/rocoto/dev/grads/index.php /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}"
+	ssh -l wx12sd ncorzdm "cp $HOMEwsr/ush/grads/allow.cfg /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}"
+	ssh -l wx12sd ncorzdm "cp $HOMEwsr/ush/grads/index.php /home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}"
 	scp *.png wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/graphics/${PDY}
 
 else
 	if [ ! -s $COMOUT_graphics ]; then mkdir -p $COMOUT_graphics; fi
-    cp -rfp *.png $COMOUT_graphics/
+	cp -rfp *.png $COMOUT_graphics/
 
 	ssh -l $testuser $testrzdm "rm -rf  $testdirectory/test$expid/graphics/${PDY}"
 	ssh -l $testuser $testrzdm "mkdir -p $testdirectory/test$expid/graphics/${PDY}"

@@ -23,7 +23,8 @@
 # directory are included, so if no exclude patterns match that file, it will be
 # transferred.
 
-_GESROOT_/_ENVIR_/wsr/_PDY_/ _REMOTEPATH_/nwges/wsr/_PDY_/
+#_GESROOT_/_ENVIR_/wsr/_PDY_/ _REMOTEPATH_/nwges/wsr/_PDY_/
+_COMROOT_/wsr/_SHORTVER_/wsr._PDY_/prep/    _REMOTEPATH_/nwges/wsr/_PDY_/
 + /nc??????????_??_ens.d
 - *
 E

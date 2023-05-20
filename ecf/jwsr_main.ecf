@@ -14,18 +14,12 @@ export model=wsr
 
 export cyc=%CYC%
 
-cd $PBS_O_WORKDIR
-
 module load envvar/$envvar_ver
 module load intel/$intel_ver
 module load PrgEnv-intel/$PrgEnv_intel_ver
-
 module load craype/$craype_ver
 module load cray-mpich/$cray_mpich_ver
 module load cray-pals/$cray_pals_ver
-
-
-
 # module load cfp/$cfp_ver
 # export USE_CFP=YES
 module list
@@ -36,9 +30,6 @@ set -x
 export MP_TASK_AFFINITY=core
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
-
-# For Canned Data
-# export PDY='20210215'
 
 ${HOMEwsr:?}/jobs/JWSR_MAIN
 

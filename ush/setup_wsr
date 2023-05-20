@@ -34,6 +34,7 @@ case $scriptname in
 		exit
 		;;
 esac
+
 dirname=`dirname $0`;
 . $dirname/../versions/run.ver
 #. ../versions/run.ver
@@ -57,7 +58,8 @@ if [[ $testmode = yes ]]; then
 	# these testmode settings are only used when testmode=yes
 
 	case $LOGNAME in
-		(SDM)
+#		(SDM)
+		(nco.sdm)
 			# these are the production locations, edit them to use test locations
 			testemail=sdm@noaa.gov
 			testuser=wx12sd
@@ -74,13 +76,25 @@ if [[ $testmode = yes ]]; then
 			#testuser=ops.prod
 			testuser=nwprod
 			testrzdm=ncorzdm
-			testdirectory=/home/people/nco/www/htdocs/pmb/nwprod_wsr
+			testdirectory=/home/people/nco/www/htdocs/pmb/sdm_wsr
+			useexpid=no
+			expid=""
+			envir=prod
+			#PDY=20210215 # For the Canned case
+			;;
+		(ops.para)
+			# these are the production locations, edit them to use test locations
+			testemail=nco.spa@noaa.gov
+			#testuser=ops.prod
+			testuser=nwprod
+			testrzdm=ncorzdm
+			testdirectory=/home/people/nco/www/htdocs/pmb/sdm_wsr
 			useexpid=no
 			expid=""
 			envir=para
 			#PDY=20210215 # For the Canned case
 			;;
-		(Xianwu.Xue)
+		(xianwu.xue)
 			testemail=xianwu.xue@noaa.gov
 			testuser=xianwu.xue
 			testrzdm=emcrzdm
@@ -89,7 +103,7 @@ if [[ $testmode = yes ]]; then
 			envir=dev
 			PTMP=/lfs/h2/emc/ptmp
 			expid=$(basename $(readlink -f `pwd`/../))
-			PDY=20210215
+			PDY=20230504 #20210215 #20210215 20201120
 			export COMPATH=$PTMP/$LOGNAME/o/$expid/$envir/com/${NET}
 			envir=prod #To make compath.py get the right path
 			;;
@@ -168,7 +182,8 @@ PDY=${PDY:-${curyy}${curmm}${curdd}}
 # Set Working Directories
 ####################################
 export COMIN=${COMIN:-$(compath.py ${envir}/com/${NET}/${ver})}
-export COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup}
+export COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/setup}
+#export COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/setup}
 
 if [ ! -s $COMOUT ]; then mkdir -p $COMOUT; fi
 echo COMOUT=$COMOUT
@@ -871,14 +886,14 @@ mv ${COMOUT}/targdata_tmp.d ${COMOUT}/targdata.d
 if [[ $testmode = no ]]; then
 
 	ssh -l wx12sd ncorzdm "mkdir -p /home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY"
-	scp ${COMOUT}/targdata.d wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY
+	scp ${COMOUT}/targdata.d wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY/targdata.d
 	scp ${COMOUT}/targdata.txt.$curhh wx12sd@ncorzdm:/home/people/nco/www/htdocs/pmb/sdm_wsr/$PDY/targdata.txt
 
 else
 
 	echo "For testing send output text to $testuser on $testrzdm in $testdirectory/test$expid/$PDY"
 	ssh -l $testuser $testrzdm "mkdir -p $testdirectory/test$expid/$PDY"
-	scp ${COMOUT}/targdata.d $testuser@$testrzdm:$testdirectory/test$expid/$PDY
+	scp ${COMOUT}/targdata.d $testuser@$testrzdm:$testdirectory/test$expid/$PDY/targdata.d
 	scp ${COMOUT}/targdata.txt.$curhh $testuser@$testrzdm:$testdirectory/test$expid/$PDY/targdata.txt
 
 fi
@@ -907,5 +922,3 @@ echo "------------------------------------------------------------------"
 #ftpEOF
 
 exit
-
-
