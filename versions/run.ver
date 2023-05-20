@@ -1,6 +1,6 @@
-export wsr_ver=v3.3.0                  ## for ush/setup_wsr, ect
+export wsr_ver=v3.3.1                  ## for ush/setup_wsr, ect
 
-export ver_gefs=v12.2
+export ver_gefs=v12.3
 export ver_naefs=v6.1
 
 export envvar_ver=1.0                  ## for ush/setup_wsr, ect

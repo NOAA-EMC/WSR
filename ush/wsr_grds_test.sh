@@ -118,7 +118,7 @@ if [[ $testmode = yes ]]; then
 			expid=""
 			testtmpdir=/lfs/h1/nco/ptmp/$LOGNAME/
 			;;
-		(Xianwu.Xue)
+		(xianwu.xue)
 			testenvir=dev
 			testemail=Xianwu.Xue@noaa.gov
 			testuser=xianwu.xue
@@ -129,12 +129,12 @@ if [[ $testmode = yes ]]; then
 			export sdmprinter=
 			useexpid=yes
 			testtmpdir=/lfs/h2/emc/ptmp/$LOGNAME/o
-			expid=$(basename $(readlink -f `pwd`/../../../)) #${EXPID:-port2wcoss2_new}
+			expid=$(basename $(readlink -f `pwd`/../)) #${EXPID:-port2wcoss2_new}
 			envir=$testenvir
 			testbase=null
-			HOMEwsr=`pwd`/../../../
-			FIXwsr=`pwd`/../../../fix
-			PDY=20210215 #20201120 #20210215
+			HOMEwsr=`pwd`/../
+			FIXwsr=`pwd`/../fix
+			PDY=20230504 #20210215 #20201120 #20210215
 			export DATAROOT=$testtmpdir/$expid/tmp
 			export COMPATH=$testtmpdir/$expid/$envir/com/${NET}
 			export testenvir=prod #To make compath.py get the right path
@@ -640,7 +640,7 @@ if [[ $testmode = no ]]; then
 
 else
 	if [ ! -s $COMOUT_graphics ]; then mkdir -p $COMOUT_graphics; fi
-    	cp -rfp *.png $COMOUT_graphics/
+	cp -rfp *.png $COMOUT_graphics/
 
 	ssh -l $testuser $testrzdm "rm -rf  $testdirectory/test$expid/graphics/${PDY}"
 	ssh -l $testuser $testrzdm "mkdir -p $testdirectory/test$expid/graphics/${PDY}"
