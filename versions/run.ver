@@ -1,6 +1,6 @@
 export wsr_ver=v3.3.0                  ## for ush/setup_wsr, ect
 
-export ver_gefs=v12.2
+export ver_gefs=v12.3
 export ver_naefs=v6.1
 
 export envvar_ver=1.0                  ## for ush/setup_wsr, ect
@@ -18,3 +18,7 @@ export libjpeg_ver=9c
 export grib_util_ver=1.2.3
 
 export cfp_ver=2.0.4
+#HMU Added below for testing ecmwf upgrade in June 2023
+#export PDY=${PDY:-20230504}
+#export ECMWF_FILE_EXT="78"
+#export DCOMROOT=/lfs/h1/ops/dev/dcom
