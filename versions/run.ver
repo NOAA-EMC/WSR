@@ -18,3 +18,7 @@ export libjpeg_ver=9c
 export grib_util_ver=1.2.3
 
 export cfp_ver=2.0.4
+#HMU Added below for testing ecmwf upgrade in June 2023
+#export PDY=${PDY:-20230504}
+#export ECMWF_FILE_EXT="78"
+#export DCOMROOT=/lfs/h1/ops/dev/dcom

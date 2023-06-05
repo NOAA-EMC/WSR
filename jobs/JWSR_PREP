@@ -40,6 +40,8 @@ export jdim=37
 export ifort=1
 export icopygb=1
 
+# Specifically for testing ECMWF upgrade where the file name changes
+export ECMWF_FILE_EXT=${ECMWF_FILE_EXT:-1}
 ####################################
 # Determine Job Output Name on System
 ####################################
