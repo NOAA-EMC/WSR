@@ -160,7 +160,7 @@ if [[ $ifort -eq 1 ]]; then
 			###################################
 			# Copygb to convert - default     #
 			###################################
-			ensfile_lt=${ecdir}/DCE${ECDATE1}00${ECDATE2[$i]}001
+			ensfile_lt=${ecdir}/DCE${ECDATE1}00${ECDATE2[$i]}00${ECMWF_FILE_EXT}
 
 			ls -l $ensfile_lt
 			nsleep=0
