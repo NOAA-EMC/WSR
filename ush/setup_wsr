@@ -34,6 +34,7 @@ case $scriptname in
 		exit
 		;;
 esac
+
 dirname=`dirname $0`;
 . $dirname/../versions/run.ver
 #. ../versions/run.ver
@@ -58,7 +59,7 @@ if [[ $testmode = yes ]]; then
 
 	case $LOGNAME in
 #		(SDM)
- 		(nco.sdm)
+		(nco.sdm)
 			# these are the production locations, edit them to use test locations
 			testemail=sdm@noaa.gov
 			testuser=wx12sd
@@ -75,13 +76,25 @@ if [[ $testmode = yes ]]; then
 			#testuser=ops.prod
 			testuser=nwprod
 			testrzdm=ncorzdm
-			testdirectory=/home/people/nco/www/htdocs/pmb/nwprod_wsr
+			testdirectory=/home/people/nco/www/htdocs/pmb/sdm_wsr
+			useexpid=no
+			expid=""
+			envir=prod
+			#PDY=20210215 # For the Canned case
+			;;
+		(ops.para)
+			# these are the production locations, edit them to use test locations
+			testemail=nco.spa@noaa.gov
+			#testuser=ops.prod
+			testuser=nwprod
+			testrzdm=ncorzdm
+			testdirectory=/home/people/nco/www/htdocs/pmb/sdm_wsr
 			useexpid=no
 			expid=""
 			envir=para
 			#PDY=20210215 # For the Canned case
 			;;
-		(Xianwu.Xue)
+		(xianwu.xue)
 			testemail=xianwu.xue@noaa.gov
 			testuser=xianwu.xue
 			testrzdm=emcrzdm
@@ -90,7 +103,7 @@ if [[ $testmode = yes ]]; then
 			envir=dev
 			PTMP=/lfs/h2/emc/ptmp
 			expid=$(basename $(readlink -f `pwd`/../))
-			PDY=20210215
+			PDY=20230504 #20210215 #20210215 20201120
 			export COMPATH=$PTMP/$LOGNAME/o/$expid/$envir/com/${NET}
 			envir=prod #To make compath.py get the right path
 			;;
@@ -909,5 +922,3 @@ echo "------------------------------------------------------------------"
 #ftpEOF
 
 exit
-
-
