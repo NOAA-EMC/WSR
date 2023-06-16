@@ -23,6 +23,15 @@ export APRUN_CHGRES="mpiexec -n 1"
 #export aprun_gec00="mpirun -n 1"
 export APRUN_CALCINC="mpiexec -n 1"
 
+#export HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/wsr/HOMEdata_WSR
+export HOMEdata=/lfs/h1/ops
+
+#export COMPATH=$HOMEdata/canned/com/gefs:$HOMEdata/canned/com/naefs:${WORKDIR}/$envir/com/${NET} #$COMROOT/$RUN
+#export DCOMROOT=${HOMEdata}/canned/dcom
+
+export COMPATH=${WORKDIR}/$envir/com/${NET}
+
+
 . $GEFS_ROCOTO/parm/setbase
 . $GEFS_ROCOTO/parm/gefs_config
 #. $GEFS_ROCOTO/parm/gefs_dev.parm
