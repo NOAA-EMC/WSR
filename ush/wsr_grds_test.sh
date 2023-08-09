@@ -137,9 +137,29 @@ if [[ $testmode = yes ]]; then
 			PDY=20230504 #20210215 #20201120 #20210215
 			export DATAROOT=$testtmpdir/$expid/tmp
 			export COMPATH=$testtmpdir/$expid/$envir/com/${NET}
-			export testenvir=prod #To make compath.py get the right path
-			
+			export testenvir=prod #To make compath.py get the right path			
 			;;
+                (eric.sinsky)
+                        testenvir=dev
+                        testemail=Eric.Sinsky@noaa.gov
+                        testuser=esinsky
+                        testrzdm=emcrzdm
+                        envir=dev
+                        testdirectory=/home/www/emc/htdocs/gmb/esinsky/wsr_sdm
+                        export PRINTSDM=YES
+                        export sdmprinter=
+                        useexpid=yes
+                        testtmpdir=/lfs/h2/emc/ptmp/$LOGNAME/o
+                        expid=$(basename $(readlink -f `pwd`/../)) #${EXPID:-port2wcoss2_new}
+                        envir=$testenvir
+                        testbase=null
+                        HOMEwsr=`pwd`/../
+                        FIXwsr=`pwd`/../fix
+                        PDY=20230730 #20210215 #20201120 #20210215
+                        export DATAROOT=$testtmpdir/$expid/tmp
+                        export COMPATH=$testtmpdir/$expid/$envir/com/${NET}
+                        export testenvir=prod #To make compath.py get the right path                                                                                                                                                     
+                        ;;
 		(*)
 			echo Please add test settings to $0 for LOGNAME=$LOGNAME
 			exit
