@@ -40,7 +40,7 @@ export jdim=37
 export ifort=1
 export icopygb=1
 
-# Specifically for testing ECMWF upgrade where the file name changes
+# Specifically for testing ECMWF upgrade where the file name changes 
 export ECMWF_FILE_EXT=${ECMWF_FILE_EXT:-1}
 ####################################
 # Determine Job Output Name on System
@@ -75,8 +75,8 @@ setpdy.sh
 ##############################
 # Define COM directories
 ##############################
-export COMINgens=${COMINgens:-$(compath.py prod/com/gefs/${ver_gefs})}
-export COMINcmce=${COMINcmce:-$(compath.py prod/naefs/${ver_naefs})}
+export COMINgens=${COMINgens:-$(compath.py prod/com/gefs/${gefs_ver})}
+export COMINcmce=${COMINcmce:-$(compath.py prod/naefs/${naefs_ver})}
 export DCOMROOT=${DCOMROOT:-${DCOMROOT}}
 export COMOUT=${COMOUT:-$(compath.py ${envir}/com/${NET}/${ver})/${RUN}.${PDY}/prep}
 
