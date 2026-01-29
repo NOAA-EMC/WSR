@@ -4,7 +4,8 @@
 #PBS -q %QUEUE%
 #PBS -A %PROJ%-%PROJENVIR%
 #PBS -l walltime=1:20:00
-#PBS -l place=vscatter,select=1:ncpus=32:mem=3GB:mpiprocs=16:ompthreads=1
+#PBS -l thp=true
+#PBS -l place=vscatter:exclhost,select=1:ncpus=32:mem=220GB:mpiprocs=32:ompthreads=1:prepost=true
 #PBS -l debug=true
 
 export model=wsr
