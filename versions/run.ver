@@ -1,4 +1,4 @@
-export wsr_ver=v3.3.2                  ## for ush/setup_wsr, ect
+export wsr_ver=v3.3.4                  ## for ush/setup_wsr, ect, need to macth with wsr package version
 
 export gefs_ver=v12.3
 export naefs_ver=v7.0
@@ -18,7 +18,3 @@ export libjpeg_ver=9c
 export grib_util_ver=1.2.3
 
 export cfp_ver=2.0.4
-#HMU Added below for testing ecmwf upgrade in June 2023
-#export PDY=${PDY:-20230504}
-#export ECMWF_FILE_EXT="78"
-#export DCOMROOT=/lfs/h1/ops/dev/dcom
