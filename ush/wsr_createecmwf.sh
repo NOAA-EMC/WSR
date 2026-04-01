@@ -172,7 +172,7 @@ if [[ $ifort -eq 1 ]]; then
 			done
 			filesiz_dce=$(sizeof ${ensfile_dce})
 			filesiz_dcd=$(sizeof ${ensfile_dcd})
-			if [[ $filesiz_dce -ge 135000000 || $filesiz_dcd -gt 0 ]]; then
+			if [[ $filesiz_dce -ge 135000000 || $filesiz_dcd -gt 2740000 ]]; then
 
 				> ecens.inv
 				[[ -s $ensfile_dcd ]] && ${WGRIB:?} -s -PDS $ensfile_dcd >> ecens.inv
