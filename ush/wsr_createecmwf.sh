@@ -191,18 +191,17 @@ if [[ $ifort -eq 1 ]]; then
 						[[ $nm -le 9 ]] && nm=0$nm
 						hex=$(echo "obase=16;ibase=10; $nm" | bc)
 						[[ $nm -le 15 ]] && hex=0${hex}
-
-                                                if [[ $nm -eq 0 ]]; then
-                                                    if [[ ${lt[$i]} == "00" ]]; then
-                                                        search_pattern="${var[varid]}.*:type=analysis:"
-                                                    else
-                                                        search_pattern="${var[varid]}.*:type=9:"
-                                                    fi
-                                                    src_file=$ensfile_dcd
-                                                else
-                                                    search_pattern="${var[varid]}.*${hex}3300*"
-                                                    src_file=$ensfile_dce
-                                                fi
+						if [[ $nm -eq 0 ]]; then
+							if [[ ${lt[$i]} == "00" ]]; then
+								search_pattern="${var[varid]}.*:type=analysis:"
+							else
+								search_pattern="${var[varid]}.*:type=9:"
+							fi
+							src_file=$ensfile_dcd
+						else
+							search_pattern="${var[varid]}.*${hex}3300*"
+							src_file=$ensfile_dce
+						fi
 						cat <<- EOF >> $cmdfile
 							/bin/egrep -i "${search_pattern}" ecens.inv |cut -f1-2 -d :|${WGRIB:?} -i -grib $src_file -o ${WORK}/pgb.${fnum}
 							if [[ $icopygb -eq 1 ]]; then
