@@ -191,6 +191,7 @@ if [[ $ifort -eq 1 ]]; then
 						[[ $nm -le 9 ]] && nm=0$nm
 						hex=$(echo "obase=16;ibase=10; $nm" | bc)
 						[[ $nm -le 15 ]] && hex=0${hex}
+
 						if [[ $nm -eq 0 ]]; then
 							if [[ ${lt[$i]} == "00" ]]; then
 								search_pattern="${var[varid]}.*:type=analysis:"
