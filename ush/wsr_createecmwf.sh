@@ -63,8 +63,8 @@ var[6]=":V:200 mb:"
 var[7]=":T:850 mb:"
 var[8]=":T:500 mb:"
 var[9]=":T:200 mb:"
-var[10]=":TP:"
-var[11]=":MSL:"
+var[10]=":TP:sfc:"
+var[11]=":MSL:sfc:"
 var[12]=":GH:500 mb:"
 var[13]=":U:700 mb:"
 var[14]=":V:700 mb:"
@@ -161,7 +161,11 @@ if [[ $ifort -eq 1 ]]; then
 			# Copygb to convert - default     #
 			###################################
 			ensfile_dce=${ecdir}/DCE${ECDATE1}00${ECDATE2[$i]}00${ECMWF_FILE_EXT}
-			ensfile_dcd=${ecdir}/DCD${ECDATE1}00${ECDATE2[$i]}00${ECMWF_FILE_EXT}
+			if [[ ${lt[$i]} == "00" ]]; then
+				ensfile_dcd=${ecdir}/DCD${ECDATE1}00${ECDATE2[$i]}01${ECMWF_FILE_EXT}
+			else
+				ensfile_dcd=${ecdir}/DCD${ECDATE1}00${ECDATE2[$i]}00${ECMWF_FILE_EXT}
+			fi
 
 			ls -l $ensfile_dce
 			ls -l $ensfile_dcd
@@ -191,10 +195,9 @@ if [[ $ifort -eq 1 ]]; then
 						[[ $nm -le 9 ]] && nm=0$nm
 						hex=$(echo "obase=16;ibase=10; $nm" | bc)
 						[[ $nm -le 15 ]] && hex=0${hex}
-
 						if [[ $nm -eq 0 ]]; then
 							if [[ ${lt[$i]} == "00" ]]; then
-								search_pattern="${var[varid]}.*:type=analysis:"
+								search_pattern="${var[varid]}anl:"
 							else
 								search_pattern="${var[varid]}.*:type=9:"
 							fi
