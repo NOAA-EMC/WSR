@@ -1,4 +1,4 @@
-export wsr_ver=v3.3.4                  ## for ush/setup_wsr, ect, need to macth with wsr package version
+export wsr_ver=v3.3.5                  ## for ush/setup_wsr, ect, need to macth with wsr package version
 
 export gefs_ver=v12.3
 export naefs_ver=v7.0
